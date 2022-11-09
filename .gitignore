@@ -1,3 +1,8 @@
+# Hide IDE files
+build
+**/CMakeFiles
+cmake-build-debug
+
 # Prerequisites
 *.d
 
