@@ -6,5 +6,3 @@ This repository is set up such that no one but the owner has permissions to push
 
 ## Setup
 This project comes with setup for cmake, but does **NOT** include any build tools.
-
-ignore in main
