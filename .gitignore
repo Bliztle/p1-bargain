@@ -3,6 +3,7 @@ build
 **/CMakeFiles
 **/cmake-build-debug
 **/.vscode
+**/.idea
 
 # Prerequisites
 *.d
