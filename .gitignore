@@ -1,7 +1,8 @@
 # Hide IDE files
 build
 **/CMakeFiles
-cmake-build-debug
+**/cmake-build-debug
+**/.vscode
 
 # Prerequisites
 *.d
