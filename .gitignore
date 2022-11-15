@@ -1,6 +1,7 @@
 # Hide IDE files
 build
 **/CMakeFiles
+**/CMakeCache.txt
 **/cmake-build-debug
 **/.vscode
 **/.idea
