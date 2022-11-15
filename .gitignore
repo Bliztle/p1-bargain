@@ -6,11 +6,12 @@ build
 **/.idea
 
 # Fix curl build issues for clion windows, by keeping a couple of dlls tracked. Done in pairs because git doesn't allow unignoring a while path at a time...
+*.dll
 **/cmake-build-debug
-!cmake-build-debug
+!cmake-build-debug/
 
 cmake-build-debug/*
-!cmake-build-debug/src
+!cmake-build-debug/src/
 
 cmake-build-debug/src/*
 !cmake-build-debug/src/libcurl-d.dll
@@ -44,7 +45,7 @@ cmake-build-debug/src/*
 *.lo
 
 # Shared objects (inc. Windows DLLs)
-*.dll
+#*.dll dll is moved further up
 *.so
 *.so.*
 *.dylib
