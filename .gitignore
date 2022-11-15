@@ -3,6 +3,7 @@ build
 **/CMakeFiles
 **/CMakeCache.txt
 **/.vscode
+*.code-workspace
 **/.idea
 
 # Fix curl build issues for clion windows, by keeping a couple of dlls tracked. Done in pairs because git doesn't allow unignoring a while path at a time...
