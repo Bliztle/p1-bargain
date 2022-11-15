@@ -1,12 +1,11 @@
 #include <stdio.h>
-// #include "../libraries/curl-7.86.0/include/curl/curl.h"
-#include "../fetch/curl.h"
+#include "../libraries/curl-7.86.0/include/curl/curl.h"
 
 void CurlTest();
 
 int main()
 {
-    printf("Hello, World! - With a test!\n");
+    printf("Hello, World! - With a testottwo!\n");
     printf("\nAs if we would write any tests...\n");
     printf("\nI don't know what you're talking about\n");
     CurlTest();

@@ -1,5 +1,0 @@
-message("-- Linking curl at curl-t-2")
-add_library(libcurlfromhere, libcurl.dll)
-# add_library(CURL_T_2, libcurl.dll)
-# set_target_properties(CURL_T_2 PROPERTIES LINKER_LANGUAGE C)
-set_target_properties(IAMANLILIB PROPERTIES LINKER_LANGUAGE C)
