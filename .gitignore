@@ -2,9 +2,22 @@
 build
 **/CMakeFiles
 **/CMakeCache.txt
-**/cmake-build-debug
 **/.vscode
 **/.idea
+
+# Fix curl build issues for clion windows, by keeping a couple of dlls tracked. Done in pairs because git doesn't allow unignoring a while path at a time...
+**/cmake-build-debug
+!cmake-build-debug
+
+cmake-build-debug/*
+!cmake-build-debug/src
+
+cmake-build-debug/src/*
+!cmake-build-debug/src/libcurl-d.dll
+!cmake-build-debug/src/zlibd1.dll
+
+
+############################################# Below is default stuff #############################################
 
 # Prerequisites
 *.d
