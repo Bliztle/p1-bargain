@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "../libraries/curl-7.86.0/include/curl/curl.h"
+#include <curl/curl.h>
 
 void CurlTest();
 
