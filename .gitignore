@@ -18,6 +18,8 @@ cmake-build-debug/src/*
 !cmake-build-debug/src/libcurl-d.dll
 !cmake-build-debug/src/zlibd1.dll
 
+# Ignore changes to token file
+
 
 ############################################# Below is default stuff #############################################
 
