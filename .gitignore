@@ -17,6 +17,8 @@ cmake-build-debug/*
 cmake-build-debug/src/*
 !cmake-build-debug/src/libcurl-d.dll
 !cmake-build-debug/src/zlibd1.dll
+!cmake-build-debug/src/ucrtbased.dll
+!cmake-build-debug/src/vcruntime140d.dll
 
 # Ignore changes to token file
 src/api/salling-token.txt
