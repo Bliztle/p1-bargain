@@ -19,7 +19,7 @@ cmake-build-debug/src/*
 !cmake-build-debug/src/zlibd1.dll
 
 # Ignore changes to token file
-
+src/api/salling-token.txt
 
 ############################################# Below is default stuff #############################################
 
