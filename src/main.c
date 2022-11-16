@@ -2,9 +2,11 @@
 #include <curl/curl.h>
 #include "api/fetch.h"
 
-int main()
+char *CURRENT_DIRECTORY;
+
+int main(int argc, char **args)
 {
+    CURRENT_DIRECTORY = args[0];
     printf("Hello, World!\n");
-    fetch_example();
     return 0;
 }
