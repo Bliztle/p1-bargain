@@ -11,7 +11,7 @@ typedef struct
     double price;
     double size;
     item_unit_e unit;
-    double price_per_unit
+    double price_per_unit;
 } item_s;
 
 typedef enum
