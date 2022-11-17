@@ -1,2 +1,4 @@
 [filter "ignoretokens"]
 	clean = sed -r 's/^(\\w+) .*$/\\1 <Your api key here>/'
+[filter "ignorevalues"]
+	clean = sed -r 's/^(\\w+) .*$/\\1 <Your \\1 here>/'
