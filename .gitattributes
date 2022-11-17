@@ -1,2 +1,2 @@
-tokens.conf filter=ignoretokens
-settings.conf filter=ignorevalues
+**/tokens.conf filter=ignoretokens
+**/settings.conf filter=ignorevalues
