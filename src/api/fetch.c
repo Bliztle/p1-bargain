@@ -5,12 +5,6 @@
 #include <string.h>
 #include <curl/curl.h>
 
-// int main(int argc, char **args)
-// {
-//     fetch_salling_test();
-//     return 0;
-// }
-
 // TODO: Remove this when proper functions have been implemented
 void fetch_example()
 {
