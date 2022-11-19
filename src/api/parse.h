@@ -25,7 +25,8 @@ typedef struct
     char uid[37]; // Exact size of a UUID, as used by salling. Coop just uses 3-digit ints which we cast to strings
     char name[50];
     char address[50]; // Denmarks longest street name is 27 characters, so this is plenty https://stiften.dk/artikel/aarhus-har-landets-l%C3%A6ngste-vejnavne
-    double coords[2]; // [lat, long]
+    double lat;
+    double lon;
     store_chain_e chain;
     int distance; // in meters
 } store_s;
