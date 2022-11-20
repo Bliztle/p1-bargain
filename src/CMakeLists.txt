@@ -6,4 +6,4 @@ target_link_libraries(main libcurl)
 add_subdirectory(api)
 configure_file(settings.conf settings.conf COPYONLY)
 
-add_executable(io io.c)
+add_executable(config config.c)
