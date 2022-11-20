@@ -4,4 +4,27 @@ typedef enum
     CONFIG_FAILLURE
 } config_status_e;
 
+typedef enum
+{
+    SETTINGS,
+    TOKENS
+} config_files_e;
+
+typedef enum
+{
+    ADDRESS,
+    COORDS,
+    DEVIANCE,
+    DISTANCE,
+    PATH
+} config_settings_e;
+
+typedef enum
+{
+    SALLING,
+    COOP
+} config_tokens_e;
+
+static const char *settings_map[];
+
 config_status_e config_write_value(char *file_path, char *key, char *value);

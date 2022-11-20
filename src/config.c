@@ -3,6 +3,24 @@
 #include <stdlib.h>
 #include <string.h>
 
+static const char *file_map[] = {
+    [SETTINGS] = "settings.conf",
+    [TOKENS] = "tokens.conf",
+};
+
+static const char *settings_map[] = {
+    [ADDRESS] = "address",
+    [COORDS] = "coords",
+    [DEVIANCE] = "deviance",
+    [DISTANCE] = "distance",
+    [PATH] = "path",
+};
+
+static const char *tokens_map[] = {
+    [SALLING] = "salling",
+    [COOP] = "coop",
+};
+
 int main()
 {
     printf("IO Main\n");
@@ -88,4 +106,30 @@ config_status_e config_write_value(char *file_path, char *key, char *value)
     free(result);
 
     return CONFIG_SUCCESS;
+}
+
+/**
+ * Settings wrapper for config_write_value.
+ *
+ * @returns a config status indicating wether or not the opperation was successful
+ *
+ * @param key enum key for the setting to write
+ * @param value value to write
+ */
+config_status_e config_write_setting(config_settings_e key, char *value)
+{
+    return config_write_value(file_map[SETTINGS], settings_map[key], value);
+}
+
+/**
+ * Tokens wrapper for config_write_value.
+ *
+ * @returns a config status indicating wether or not the opperation was successful
+ *
+ * @param key enum key for token to write
+ * @param value value to write
+ */
+config_status_e config_write_token(config_tokens_e key, char *value)
+{
+    return config_write_value(file_map[TOKENS], tokens_map[key], value);
 }
