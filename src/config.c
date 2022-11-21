@@ -24,11 +24,10 @@ static const char *tokens_map[] = {
 int main()
 {
     printf("IO Main\n");
-    // file_write_value_poc("settings.conf", "distance", "1234");
-    // file_write_value_poc2("settings.conf", "nothing", "lmao");
-    // file_write_value_poc2("settings.conf", "distance", "1234");
-    config_write_value("settings.conf", "address", "A string with spaces");
-    config_write_value("settings.conf", "appended", "some other string");
+    // config_write_value("settings.conf", "address", "A string with spaces");
+    // config_write_value("settings.conf", "appended", "some other string");
+    config_write_setting(PATH, "./din/mær");
+    config_write_setting(DISTANCE, "7");
     return 0;
 }
 
@@ -45,7 +44,7 @@ int main()
  */
 config_status_e config_write_value(char *file_path, char *key, char *value)
 {
-    if (strstr(value, "\n") == NULL)
+    if (strstr(value, "\n") != NULL)
         return CONFIG_FAILLURE;
 
     // Create new value
