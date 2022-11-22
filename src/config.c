@@ -91,10 +91,10 @@ config_status_e config_write_value(char *file_path, char *key, char *value)
     char *result_end = result + result_length;
 
     // Combine and write result
-    char *result_ptr = _memccpy(result, content, '\0', result_length);
-    result_ptr = _memccpy(result_ptr - 1, new_key_value, '\0', result_end - result_ptr);
+    char *result_ptr = memccpy(result, content, '\0', result_length);
+    result_ptr = memccpy(result_ptr - 1, new_key_value, '\0', result_end - result_ptr);
     if (result_ptr)
-        result_ptr = _memccpy(result_ptr - 1, rest, '\0', result_end - result_ptr);
+        result_ptr = memccpy(result_ptr - 1, rest, '\0', result_end - result_ptr);
 
     file = fopen(file_path, "w");
     fprintf(file, "%s", result);
