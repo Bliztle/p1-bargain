@@ -52,6 +52,7 @@ void menu_basket_add(basket_item_s items);
 /// HELPER FUNCTIONS
 /**
  * Handles user input and calls functions depending on the input
- * @param __func__ the name of the function calling this function
+ * @param user_input the user input
+ * @param func_name the name of the function calling this function
 */
-void get_settings_input(const char* func_name);
+void get_settings_input(char* user_input, const char* func_name);
