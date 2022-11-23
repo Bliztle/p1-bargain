@@ -70,9 +70,11 @@ int get_command(char* user_input, const char* func_name) {
     }
     else if (!strcmp(user_input, HELP_CMD)) {
         printf("Help menu\n");
+        return 0;
     }
-
-    return 0;
+    else {
+        return -1;
+    }
 }
 
 void menu_edit_path(char* user_input) {
