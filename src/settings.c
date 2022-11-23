@@ -30,9 +30,5 @@ void menu_settings() {
                 fprintf(stderr, "Error: invalid command");
                 break;
         }
-
-        if (user_input[0] == quit_command[0] && user_input[1] == quit_command[1]) {
-            return;
-        }
     }
 }
