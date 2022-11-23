@@ -5,6 +5,12 @@ typedef enum
     UNITS
 } item_unit_e;
 
+typedef enum
+{
+    KVICKLY,
+    FAKTA
+} store_chain_e;
+
 typedef struct
 {
     char name[100];
@@ -12,13 +18,7 @@ typedef struct
     double size;
     item_unit_e unit;
     double price_per_unit;
-} item_s;
-
-typedef enum
-{
-    KVICKLY,
-    FAKTA
-} store_chain_e;
+} store_item_s;
 
 typedef struct
 {
@@ -28,8 +28,20 @@ typedef struct
     double lat;
     double lon;
     store_chain_e chain;
+    store_item_s *store_items;
     int distance; // in meters
 } store_s;
+
+typedef struct
+{
+    char name[100];
+    double price;
+    double size;
+    item_unit_e unit;
+    double price_per_unit;
+    int count;
+} basket_item_s;
+
 
 typedef struct
 {

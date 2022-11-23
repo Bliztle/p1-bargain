@@ -1,15 +1,11 @@
 /// INCLUDES
 #include <stdio.h>
 #include <string.h>
+#include "api/parse.h"
 
 /// DEFINES
 #define QUIT_CMD "!q"
 #define HELP_CMD "!h"
-
-/// TYPEDEFS
-typedef struct {
-    // TODO: add settings
-} basket_item_s;
 
 /// FUNCTION PROTOTYPES
 /**

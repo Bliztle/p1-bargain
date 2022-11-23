@@ -100,3 +100,11 @@ void menu_edit_deviation(char* user_input) {
 
     get_command(user_input, __func__);
 }
+
+void menu_basket_remove(basket_item_s items) {
+    
+}
+
+void menu_basket_add(basket_item_s) {
+
+}
