@@ -16,54 +16,17 @@ void menu_settings() {
 
 void get_settings_input(char* user_input, const char* func_name) {
     while (1) {
-        print_menu();
-
         scanf("%s", user_input);
-        char first_char = user_input[0];
 
-        if (user_input[0] == '!') { // Could be changed to a variable instead
-            if (strlen(user_input) != 2) {
-                printf("This is not a command\n");
-            }
-
-            switch (user_input[1]) {
-                case 'q':
-                    return;
-
-                case 'h':
-                    printf("Help menu\n");
-                    break;
-
-                default:
-                    printf("This is not a command\n");
-                    break;
-            }
+        if (!strcmp(user_input, QUIT_CMD)) {
+            return;
         }
-        else if (strlen(user_input) == 1) {
-
-            switch (first_char) {
-                case '1':
-                    printf("Edit savepath\n");
-                    break;
-
-                case '2':
-                    printf("Edit address\n");
-                    break;
-
-                case '3':
-                    printf("Edit distance\n");
-                    break;
-
-                case '4':
-                    printf("Edit deviation\n");
-                    break;
-
-                default:
-                    printf("Invalid input\n");
-                    break;
-            }
+        else if (!strcmp(user_input, HELP_CMD)) {
+            printf("Help menu\n");
         }
-
+        else {
+            fprintf(stderr, "Error: Invalid command\n");
+        }
     }
 }
 
