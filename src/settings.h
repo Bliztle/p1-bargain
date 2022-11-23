@@ -44,3 +44,8 @@ void menu_basket_remove(basket_item_s items);
  * @param items
 */
 void menu_basket_add(basket_item_s items);
+
+/**
+ * Prints current settings in the terminal for the user
+*/
+void print_menu();
