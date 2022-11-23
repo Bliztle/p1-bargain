@@ -11,22 +11,23 @@ int main(void) {
 void menu_settings() {
     char user_input[100];
 
-    get_settings_input(user_input, __func__);
+    while (1) {
+        print_menu();
+        get_settings_input(user_input, __func__);
+    }
 }
 
 void get_settings_input(char* user_input, const char* func_name) {
-    while (1) {
-        scanf("%s", user_input);
+    scanf("%s", user_input);
 
-        if (!strcmp(user_input, QUIT_CMD)) {
-            return;
-        }
-        else if (!strcmp(user_input, HELP_CMD)) {
-            printf("Help menu\n");
-        }
-        else {
-            fprintf(stderr, "Error: Invalid command\n");
-        }
+    if (!strcmp(user_input, QUIT_CMD)) {
+        return;
+    }
+    else if (!strcmp(user_input, HELP_CMD)) {
+        printf("Help menu\n");
+    }
+    else {
+        fprintf(stderr, "Error: Invalid command\n");
     }
 }
 
