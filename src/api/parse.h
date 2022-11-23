@@ -24,6 +24,15 @@ typedef enum
 
 typedef struct
 {
+    char name[100];
+    double price;
+    double size;
+    item_unit_e unit;
+    double price_per_unit;
+} store_item_s;
+
+typedef struct
+{
     char uid[37]; // Exact size of a UUID, as used by salling. Coop just uses 3-digit ints which we cast to strings
     char name[50];
     char address[50]; // Denmarks longest street name is 27 characters, so this is plenty https://stiften.dk/artikel/aarhus-har-landets-l%C3%A6ngste-vejnavne
@@ -33,6 +42,19 @@ typedef struct
     store_item_s *store_items;
     int distance; // in meters
 } store_s;
+
+
+
+typedef struct
+{
+    char name[100];
+    double price;
+    double size;
+    item_unit_e unit;
+    double price_per_unit;
+    int count;
+} basket_item_s;
+
 
 typedef struct
 {
