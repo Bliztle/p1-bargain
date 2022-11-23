@@ -48,3 +48,10 @@ void menu_basket_remove(basket_item_s items);
  * @param items
 */
 void menu_basket_add(basket_item_s items);
+
+/// HELPER FUNCTIONS
+/**
+ * Handles user input and calls functions depending on the input
+ * @param __func__ the name of the function calling this function
+*/
+void get_settings_input(char* func_name);

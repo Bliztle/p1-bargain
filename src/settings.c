@@ -9,7 +9,12 @@ int main(void) {
 }
 
 void menu_settings() {
-    char user_input[2];
+    get_settings_input(__func__);
+}
+
+void get_settings_input(char* func_name) {
+    printf("function name: %s", func_name);
+    char user_input[100];
 
     while (1) {
         scanf("%s", user_input);
