@@ -1,5 +1,6 @@
 /// INCLUDES
 #include <stdio.h>
+#include <string.h>
 
 /// TYPEDEFS
 typedef struct {
