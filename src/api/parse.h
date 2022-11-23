@@ -14,6 +14,8 @@ typedef struct
     double price_per_unit;
 } item_s;
 
+
+
 typedef enum
 {
     KVICKLY,
@@ -28,6 +30,7 @@ typedef struct
     double lat;
     double lon;
     store_chain_e chain;
+    store_item_s *store_items;
     int distance; // in meters
 } store_s;
 
