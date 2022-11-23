@@ -2,6 +2,10 @@
 #include <stdio.h>
 #include <string.h>
 
+/// DEFINES
+#define QUIT_CMD "!q"
+#define HELP_CMD "!h"
+
 /// TYPEDEFS
 typedef struct {
     // TODO: add settings

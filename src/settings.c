@@ -1,7 +1,7 @@
 #include "settings.h"
 
 int main(void) {
-    printf("build\n");
+    printf("build success\n\n");
 
     menu_settings();
 
@@ -9,28 +9,21 @@ int main(void) {
 }
 
 void menu_settings() {
-    char* quit_command = "!q";
-    char user_input[100];
+    char user_input[2];
 
     while (1) {
         print_menu();
 
         scanf("%s", user_input);
 
-        switch (user_input[0]) {
-            case '!':
-                switch (user_input[1]) {
-                    case 'h':
-                        break;
-                    case 'q':
-                        return;
-                    default:
-                        fprintf(stderr, "Error: invalid command");
-                        return;
-                }
-            default:
-                fprintf(stderr, "Error: invalid command");
-                break;
+        if (!strcmp(user_input, QUIT_CMD)) {
+            return;
+        }
+        else if (!strcmp(user_input, HELP_CMD)) {
+            printf("Help menu\n");
+        }
+        else {
+            fprintf(stderr, "Error: Invalid command\n");
         }
     }
 }
