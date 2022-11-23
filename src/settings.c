@@ -77,34 +77,140 @@ int get_command(char* user_input, const char* func_name) {
     }
 }
 
+int std_edit(char* user_input, const char* func_name) {
+    //* print_setting();
+
+    //* read_new_setting();
+
+    return get_command(user_input, __func__);
+}
+
 void menu_edit_path(char* user_input) {
-    printf("Edit savepath\n");
+    while (1) {
+        if (std_edit(user_input, __func__) == 1) {
+            return;
+        }
+
+        if (validate_path) {
+            //* write_to_file();
+
+            return;
+        }
+        else {
+            fprintf(stderr, "Error: Invalid command\n");
+        }
+    }
+    
 
     get_command(user_input, __func__);
+}
+
+int validate_path() {
+    // TODO
 }
 
 void menu_edit_address(char* user_input) {
-    printf("Edit adress\n");
+    while (1) {
+        if (std_edit(user_input, __func__) == 1) {
+            return;
+        }
 
-    get_command(user_input, __func__);
+        get_coord();
+
+        if (validate_coord) {
+            //* write_to_file();
+
+            return;
+        }
+        else {
+            fprintf(stderr, "Error: Invalid command\n");
+        }
+    }
 }
 
-void menu_edit_distance(char* user_input) {
-    printf("Edit adress\n");
+void get_coord() {
+    // TODO
+}
 
-    get_command(user_input, __func__);
+int validate_coord() {
+    // TODO
+}
+
+
+void menu_edit_distance(char* user_input) {
+    while (1) {
+        if (std_edit(user_input, __func__) == 1) {
+            return;
+        }
+
+        if (validate_distance) {
+            //* write_to_file();
+
+            return;
+        }
+        else {
+            fprintf(stderr, "Error: Invalid command\n");
+        }
+    }
+}
+
+int validate_distance() {
+    // TODO
 }
 
 void menu_edit_deviation(char* user_input) {
-    printf("Edit deviation\n");
+    while (1) {
+        if (std_edit(user_input, __func__) == 1) {
+            return;
+        }
 
-    get_command(user_input, __func__);
+        if (validate_deviation) {
+            //* write_to_file();
+
+            return;
+        }
+        else {
+            fprintf(stderr, "Error: Invalid command\n");
+        }
+    }
 }
 
-void menu_basket_remove(basket_item_s items) {
-    
+int validate_deviation() {
+    // TODO
 }
 
-void menu_basket_add(basket_item_s items) {
-    
+void menu_basket_remove(char* user_input, basket_item_s items) {
+    // TODO
+}
+
+void menu_basket_add(char* user_input, basket_item_s items) {
+    while (1) {
+        //* print_basket();
+
+        while (1) {
+            //* get_data();
+
+            int res = get_command(user_input, __func__);
+
+            if (res == 1) {
+                return;
+            }
+
+            if (validate_data()) {
+                add_to_basket();
+                break;
+            }
+            else {
+                fprintf(stderr, "Error: Item invalid\n");
+            }
+        }
+    }
+}
+
+int validate_data() {
+    // TODO
+}
+
+void add_to_basket() {
+    // TODO
 }
