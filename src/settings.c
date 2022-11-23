@@ -12,7 +12,7 @@ void menu_settings() {
     get_settings_input(__func__);
 }
 
-void get_settings_input(char* func_name) {
+void get_settings_input(const char* func_name) {
     printf("function name: %s", func_name);
     char user_input[100];
 
