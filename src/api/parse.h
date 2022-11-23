@@ -42,7 +42,6 @@ typedef struct
     int count;
 } basket_item_s;
 
-
 typedef struct
 {
     char id[20];
