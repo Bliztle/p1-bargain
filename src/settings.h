@@ -13,29 +13,33 @@ typedef struct {
 
 /// FUNCTION PROTOTYPES
 /**
- * Returns if user inputs !q, otherwise redirects to other settings
+ * Prints the current export path, then changes it based on user input, and updates the path in settings.conf
+ * @param user_input the user input
  */
-void menu_settings();
-
-/**
- * Prints the current value of deviation, then changes it based on user input, and updates the deviation in settings.conf
- */
-void menu_edit_deviation();
-
-/**
- * Prints the current value of distance, then changes it based on user input, and updates the distance in settings.conf
- */
-void menu_edit_distance();
+void menu_edit_path(char* user_input);
 
 /**
  * Prints the current value of address, then changes it based on user input, and updates the coordinates in settings.conf
+ * @param user_input the user input
  */
-void menu_edit_address();
+void menu_edit_address(char* user_input);
 
 /**
- * Prints the current export path, then changes it based on user input, and updates the path in settings.conf
+ * Prints the current value of distance, then changes it based on user input, and updates the distance in settings.conf
+ * @param user_input the user input
  */
-void menu_edit_path();
+void menu_edit_distance(char* user_input);
+
+/**
+ * Prints the current value of deviation, then changes it based on user input, and updates the deviation in settings.conf
+ * @param user_input the user input
+ */
+void menu_edit_deviation(char* user_input);
+
+/**
+ * Returns if user inputs !q, otherwise redirects to other settings
+ */
+void menu_settings();
 
 /**
  * Removes an item from the basket
@@ -56,8 +60,8 @@ void print_menu();
 
 /// HELPER FUNCTIONS
 /**
- * Handles user input and calls functions depending on the input
+ * Handles user command and calls functions depending on the input
  * @param user_input the user input
  * @param func_name the name of the function calling this function
 */
-void get_settings_input(char* user_input, const char* func_name);
+int get_command(char* user_input, const char* func_name);

@@ -15,47 +15,35 @@ void menu_settings() {
         print_menu();
 
         scanf("%s", user_input);
-        get_settings_input(user_input, __func__);
-
-        char first_char = user_input[0];
 
         if (strlen(user_input) == 1) {
+            char first_char = user_input[0];
+
             switch (first_char) {
                 case '1':
-                    printf("Edit savepath\n");
-                    break;
+                    menu_edit_path(user_input);
+                    return;
 
                 case '2':
-                    printf("Edit address\n");
-                    break;
+                    menu_edit_address(user_input);
+                    return;
 
                 case '3':
-                    printf("Edit distance\n");
-                    break;
+                    menu_edit_distance(user_input);
+                    return;
 
                 case '4':
-                    printf("Edit deviation\n");
-                    break;
-
-                default:
-                    printf("Invalid input\n");
-                    break;
+                    menu_edit_deviation(user_input);
+                    return;
             }
+        } 
+
+        int res = get_command(user_input, __func__);
+
+        if (res == 1) {
+            break;
         }
 
-    }
-}
-
-void get_settings_input(char* user_input, const char* func_name) {
-    scanf("%s", user_input);
-
-    if (!strcmp(user_input, QUIT_CMD)) {
-        return;
-    }
-    else if (!strcmp(user_input, HELP_CMD)) {
-        printf("Help menu\n");
-    }
-    else {
         fprintf(stderr, "Error: Invalid command\n");
     }
 }
@@ -74,4 +62,39 @@ void print_menu() {
     printf("4. Change deviation\nCurrent deviation is: %.2lf\n\n", deviation);
 
     printf("Please enter the setting you wish to edit> ");
+}
+
+int get_command(char* user_input, const char* func_name) {
+    if (!strcmp(user_input, QUIT_CMD)) {
+        return 1;
+    }
+    else if (!strcmp(user_input, HELP_CMD)) {
+        printf("Help menu\n");
+    }
+
+    return 0;
+}
+
+void menu_edit_path(char* user_input) {
+    printf("Edit savepath\n");
+
+    get_command(user_input, __func__);
+}
+
+void menu_edit_address(char* user_input) {
+    printf("Edit adress\n");
+
+    get_command(user_input, __func__);
+}
+
+void menu_edit_distance(char* user_input) {
+    printf("Edit adress\n");
+
+    get_command(user_input, __func__);
+}
+
+void menu_edit_deviation(char* user_input) {
+    printf("Edit deviation\n");
+
+    get_command(user_input, __func__);
 }
