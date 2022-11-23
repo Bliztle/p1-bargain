@@ -9,13 +9,29 @@ int main(void) {
 }
 
 void menu_settings() {
-    char* str1 = "!q";
-    char str2[100];
+    char* quit_command = "!q";
+    char user_input[100];
 
     while (1) {
-        scanf("%s", str2);
+        scanf("%s", user_input);
 
-        if (str1[1] == str2[1] && str1[2] == str2[2]) {
+        switch (user_input[0]) {
+            case '!':
+                switch (user_input[1]) {
+                    case 'h':
+                        break;
+                    case 'q':
+                        return;
+                    default:
+                        fprintf(stderr, "Error: invalid command");
+                        return;
+                }
+            default:
+                fprintf(stderr, "Error: invalid command");
+                break;
+        }
+
+        if (user_input[0] == quit_command[0] && user_input[1] == quit_command[1]) {
             return;
         }
     }
