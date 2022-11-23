@@ -9,8 +9,12 @@ int main(void) {
 }
 
 void menu_settings() {
-    char user_input[2];
+    char user_input[100];
 
+    get_settings_input(user_input, __func__);
+}
+
+void get_settings_input(char* user_input, const char* func_name) {
     while (1) {
         print_menu();
 
