@@ -26,7 +26,7 @@ void menu_settings() {
 
         scanf("%s", user_input);
 
-        //Edit the chosen setting from numeration
+        // Edit the chosen setting from numeration
         if (strlen(user_input) == 1) {
             char first_char = user_input[0];
 
@@ -54,7 +54,7 @@ void menu_settings() {
         }
 
         // Input didn't relate to any command or setting, so try again
-        fprintf(stderr, "Error: Invalid command\n");
+        fprintf(stderr, RED "Error: Invalid command\n" RESET);
     }
 }
 
@@ -111,7 +111,7 @@ void settings_edit(int setting) {
             return;
         }
         else {
-            fprintf(stderr, "Error: Invalid input\n");
+            fprintf(stderr, RED "Error: Invalid input\n" RESET);
         }
     }
 }
@@ -143,17 +143,19 @@ int settings_validate_path(char *new_input) {
 
     // Since it technically still could be a folder, we open the file
     FILE* file = fopen(new_input, "r");
+
     if (file == NULL) { // A folder cannot be opened by fopen()
-        perror("error");
+        perror(RED "error" RESET);
         return 0;
     }
 
     fclose(file);
+    
     return 1;
 }
 
 int settings_validate_deviation(char *new_input) {
-    //Converts string to double and checks if it's valid as a deviation
+    // Converts string to double and checks if it's valid as a deviation
     char *endptr;
     double deviation = strtod(new_input, &endptr);
 
@@ -163,7 +165,7 @@ int settings_validate_deviation(char *new_input) {
 }
 
 int settings_validate_distance(char *new_input) {
-    //Converts string to double and checks if it's valid as a distance
+    // Converts string to double and checks if it's valid as a distance
     char *endptr;
     double distance = strtod(new_input, &endptr);
 

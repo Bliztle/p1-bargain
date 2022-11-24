@@ -8,6 +8,9 @@
 #define QUIT_CMD "!q"
 #define HELP_CMD "!h"
 
+#define RED "\033[31m" // Color for error messages 
+#define RESET "\033[0m" // Reset to default
+
 /// TYPEDEFS
 typedef enum {
     PATH, // 0
