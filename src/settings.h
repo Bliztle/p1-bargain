@@ -34,7 +34,7 @@ void settings_get_coord();
  * @param user_input users input
  * @param setting the setting to change
  */
-void settings_edit(char* user_input, int setting);
+void settings_edit(int setting);
 
 /**
  * @brief Validates settings
@@ -42,31 +42,31 @@ void settings_edit(char* user_input, int setting);
  * @param setting the setting to validate
  * @return true or false
  */
-int settings_validate(char *value, int setting);
+int settings_validate(char *new_input, int setting);
 
 /**
  * Validates address
  * @return true or false
  */
-int settings_validate_address(char *value);
+int settings_validate_address(char *new_input);
 
 /**
  * @brief Validates distance
  * @return true or false
  */
-int settings_validate_distance(char *value);
+int settings_validate_distance(char *new_input);
 
 /**
  * @brief Validates the deviation
  * @return true or false
 */
-int settings_validate_deviation(char *value);
+int settings_validate_deviation(char *new_input);
 
 /**
  * @brief Validates the path
  * @return true or false
 */
-int settings_validate_path(char *value);
+int settings_validate_path(char *new_input);
 
 //! TEMP FUNCTIONS
 /**

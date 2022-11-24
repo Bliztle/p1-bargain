@@ -14,7 +14,7 @@ void menu_settings() {
     char user_input[100];
 
     while (1) {
-        //print_menu();
+        settings_print_menu();
 
         scanf("%s", user_input);
 
@@ -23,19 +23,19 @@ void menu_settings() {
 
             switch (first_char) {
                 case '1':
-                    settings_edit(user_input, PATH);
+                    settings_edit(PATH);
                     return;
 
                 case '2':
-                    settings_edit(user_input, ADDRESS);
+                    settings_edit(ADDRESS);
                     return;
 
                 case '3':
-                    settings_edit(user_input, DISTANCE);
+                    settings_edit(DISTANCE);
                     return;
 
                 case '4':
-                    settings_edit(user_input, DEVIATION);
+                    settings_edit(DEVIATION);
                     return;
             }
         } 
@@ -77,7 +77,7 @@ int settings_get_command(char* user_input) {
     }
 }
 
-void settings_edit(char* user_input, int setting) {
+void settings_edit(int setting) {
     while (1) {
         //* print_setting();
 
@@ -120,8 +120,8 @@ int settings_validate(char *value,int setting) {
     }
 }
 
-int settings_validate_path(char *value) {
-    FILE* file = fopen(value, "r");
+int settings_validate_path(char *new_input) {
+    FILE* file = fopen(new_input, "r");
 
     if (file == NULL) {
         perror("error");
@@ -132,25 +132,25 @@ int settings_validate_path(char *value) {
     return 1;
 }
 
-int settings_validate_deviation(char *value) {
+int settings_validate_deviation(char *new_input) {
     char *endptr;
-    double deviation = strtod(value, &endptr);
+    double deviation = strtod(new_input, &endptr);
 
     if (deviation >= 0) return 1;
 
     return 0;
 }
 
-int settings_validate_distance(char *value) {
+int settings_validate_distance(char *new_input) {
     char *endptr;
-    double distance = strtod(value, &endptr);
+    double distance = strtod(new_input, &endptr);
 
     if (distance >= 0) return 1;
 
     return 0;
 }
 
-int settings_validate_address(char *value) {
+int settings_validate_address(char *new_input) {
     // TODO
 }
 
