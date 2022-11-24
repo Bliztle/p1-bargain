@@ -8,8 +8,7 @@
 #define HELP_CMD "!h"
 
 /// TYPEDEFS
-
-enum settings {savepath_e, address_e, distance_e, deviation_e};
+typedef enum {SAVEPATH, ADRESS, DISTANCE, DEVIATION} settings_e;
 
 /// FUNCTION PROTOTYPES
 /**
@@ -90,3 +89,5 @@ int settings_validate_deviation(void *value);
  * @return true or false
 */
 int settings_validate_path();
+
+void settings_edit(char* user_input, int setting);
