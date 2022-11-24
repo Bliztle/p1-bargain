@@ -33,23 +33,22 @@ void menu_settings() {
             switch (first_char) {
                 case '1':
                     settings_edit(PATH);
-                    return;
+                    break;
 
                 case '2':
                     settings_edit(ADDRESS);
-                    return;
+                    break;
 
                 case '3':
                     settings_edit(DISTANCE);
-                    return;
+                    break;
 
                 case '4':
                     settings_edit(DEVIATION);
-                    return;
+                    break;
             }
         } 
-
-        // Check if input is a command
+        // If !q quit the loop
         else if (settings_get_command(user_input) == 1) {
             break;
         }
