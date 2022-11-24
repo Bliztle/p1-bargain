@@ -154,6 +154,7 @@ int settings_validate_path(char *new_input) {
 }
 
 int settings_validate_deviation(char *new_input) {
+    //Converts string to double and checks if it's valid as a deviation
     char *endptr;
     double deviation = strtod(new_input, &endptr);
 
@@ -163,6 +164,7 @@ int settings_validate_deviation(char *new_input) {
 }
 
 int settings_validate_distance(char *new_input) {
+    //Converts string to double and checks if it's valid as a distance
     char *endptr;
     double distance = strtod(new_input, &endptr);
 
