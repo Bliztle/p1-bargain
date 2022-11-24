@@ -139,7 +139,7 @@ int settings_validate_path(char *new_input) {
 
     // Make sure the file type is right
     char file_type[] = ".txt";
-    if ( !(strstr(new_input, file_type) == file_type) ) return 0;
+    if (strstr(new_input, file_type) != file_type) return 0;
 
     // Since it technically still could be a folder, we open the file
     FILE* file = fopen(new_input, "r");
