@@ -10,7 +10,7 @@
  * @param requested_item item to search for
  * @param all_items_in_store list of all items to search through
 */
-store_item_s find_best_match(store_item_s requested_item, store_item_s *all_items_in_store) {
+store_item_s items_find_best_match(store_item_s requested_item, store_s store) {
     double variance = 0.10; // TODO read from conf file
     store_item_s best_item ={
         .price_per_unit = 500000, //Has to be initialized for first comparison
@@ -28,7 +28,7 @@ store_item_s find_best_match(store_item_s requested_item, store_item_s *all_item
             all_items_in_store[n].unit == requested_item.unit &&
             all_items_in_store[n].price_per_unit < best_item.price_per_unit) {
 
-                int count = is_in_variation(all_items_in_store[n].size, variance, requested_item.size);
+                int count = items_is_in_variation(all_items_in_store[n].size, variance, requested_item.size);
                 
                 if (count > 0) {
 
@@ -43,9 +43,25 @@ store_item_s find_best_match(store_item_s requested_item, store_item_s *all_item
 
                     best_item = t;
                     item_found = 1;
+
                 }
         }
     }
+
+    if (item_found) {
+
+        store.found_items[store.found_items_count + 1] = best_item;
+        store.found_items_count++;
+        return item_found;
+    } else {
+
+        store.missing_items[store.missing_items_count + 1] = requested_item;
+        store.missing_items_count++;
+        return item_found;
+    }
+
+
+
 
    return best_item;
 }
@@ -59,7 +75,7 @@ store_item_s find_best_match(store_item_s requested_item, store_item_s *all_item
  * @param variance acceptable percentage variance given as a number between 0 and 1
  * @param requested_size the amount to match, within the variance
 */
-int is_in_variation(double store_item_size, double variance, double requested_size) {
+int items_is_in_variation(double store_item_size, double variance, double requested_size) {
 
     double min_size = requested_size * (1 - variance);
     double max_size = requested_size * (1 + variance);
@@ -80,10 +96,10 @@ int is_in_variation(double store_item_size, double variance, double requested_si
  * @param store the store to look for items in
  * 
 */
-void filter_items(store_item_s* basket, int basket_size, store_s store) {
+void items_filter_items(store_item_s* basket, int basket_size, store_s store) {
 
     for (int n = 0; n < basket_size; n++) {
 
-        basket[n] = find_best_match(basket[n], store.store_items);
+        basket[n] = items_find_best_match(basket[n], store.items);
     }
 }

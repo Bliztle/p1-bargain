@@ -15,7 +15,6 @@ typedef struct
 } item_s;
 
 
-
 typedef enum
 {
     KVICKLY,
@@ -58,7 +57,10 @@ typedef struct
     int distance; // in meters
 
     store_item_s *items;
-    int item_count;
+    int items_count;
+
+    store_item_s *found_items;
+    int found_items_count;
 
     store_item_s *missing_items;
     int missing_items_count;
