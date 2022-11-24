@@ -38,7 +38,7 @@ void menu_settings() {
             }
         } 
         
-        if (get_command(user_input) == 1) {
+        if (settings_get_command(user_input) == 1) {
             break;
         }
 
@@ -46,7 +46,7 @@ void menu_settings() {
     }
 }
 
-void print_menu() {
+void settings_print_menu() {
     char savepath[] = "IDK lol";
     printf("1. Change savepath\nCurrent savepath is: %s\n\n", savepath);
 
@@ -62,7 +62,7 @@ void print_menu() {
     printf("Please enter the setting you wish to edit> ");
 }
 
-int get_command(char* user_input) {
+int settings_get_command(char* user_input) {
     if (!strcmp(user_input, QUIT_CMD)) {
         return 1;
     }
@@ -75,21 +75,21 @@ int get_command(char* user_input) {
     }
 }
 
-int std_edit(char* user_input) {
+int settings_std_edit(char* user_input) {
     //* print_setting();
 
     //* read_new_setting();
 
-    return get_command(user_input);
+    return settings_get_command(user_input);
 }
 
 void menu_edit_path(char* user_input) {
     while (1) {
-        if (std_edit(user_input) == 1) {
+        if (settings_std_edit(user_input) == 1) {
             return;
         }
 
-        if (validate_path) {
+        if (settings_validate_path) {
             //* write_to_file();
 
             return;
@@ -100,22 +100,22 @@ void menu_edit_path(char* user_input) {
     }
     
 
-    get_command(user_input);
+    settings_get_command(user_input);
 }
 
-int validate_path() {
+int settings_validate_path() {
     // TODO
 }
 
 void menu_edit_address(char* user_input) {
     while (1) {
-        if (std_edit(user_input) == 1) {
+        if (settings_std_edit(user_input) == 1) {
             return;
         }
 
-        get_coord();
+        settings_get_coord();
 
-        if (validate_coord) {
+        if (settings_validate_coord) {
             //* write_to_file();
 
             return;
@@ -126,22 +126,22 @@ void menu_edit_address(char* user_input) {
     }
 }
 
-void get_coord() {
+void settings_get_coord() {
     // TODO
 }
 
-int validate_coord() {
+int settings_validate_coord() {
     // TODO
 }
 
 
 void menu_edit_distance(char* user_input) {
     while (1) {
-        if (std_edit(user_input) == 1) {
+        if (settings_std_edit(user_input) == 1) {
             return;
         }
 
-        if (validate_distance) {
+        if (settings_validate_distance) {
             //* write_to_file();
 
             return;
@@ -152,17 +152,17 @@ void menu_edit_distance(char* user_input) {
     }
 }
 
-int validate_distance() {
+int settings_validate_distance() {
     // TODO
 }
 
 void menu_edit_deviation(char* user_input) {
     while (1) {
-        if (std_edit(user_input) == 1) {
+        if (settings_std_edit(user_input) == 1) {
             return;
         }
 
-        if (validate_deviation) {
+        if (settings_validate_deviation) {
             //* write_to_file();
 
             return;
@@ -173,40 +173,10 @@ void menu_edit_deviation(char* user_input) {
     }
 }
 
-int validate_deviation() {
+int settings_validate_deviation() {
     // TODO
 }
 
-void menu_basket_remove(char* user_input, basket_item_s items) {
-    // TODO
-}
+int settings_validate_setting() {
 
-void menu_basket_add(char* user_input, basket_item_s items) {
-    while (1) {
-        //* print_basket();
-
-        while (1) {
-            //* get_data();
-
-            if (get_command(user_input)) {
-                return;
-            }
-
-            if (validate_data()) {
-                add_to_basket();
-                break;
-            }
-            else {
-                fprintf(stderr, "Error: Item invalid\n");
-            }
-        }
-    }
-}
-
-int validate_data() {
-    // TODO
-}
-
-void add_to_basket() {
-    // TODO
 }
