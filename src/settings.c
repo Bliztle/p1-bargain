@@ -22,19 +22,19 @@ void menu_settings() {
 
             switch (first_char) {
                 case '1':
-                    menu_edit_path(user_input);
+                    settings_edit(user_input, PATH);
                     return;
 
                 case '2':
-                    menu_edit_address(user_input);
+                    settings_edit(user_input, ADDRESS);
                     return;
 
                 case '3':
-                    menu_edit_distance(user_input);
+                    settings_edit(user_input, DISTANCE);
                     return;
 
                 case '4':
-                    menu_edit_deviation(user_input);
+                    settings_edit(user_input, DEVIATION);
                     return;
             }
         } 
@@ -76,72 +76,29 @@ int settings_get_command(char* user_input) {
     }
 }
 
-int settings_std_edit(char* user_input) {
-    //* print_setting();
-
-    //* read_new_setting();
-
-    return settings_get_command(user_input);
-}
-
-void menu_edit_path(char* user_input) {
+void settings_edit(char* user_input, int setting) {
     while (1) {
-        if (settings_std_edit(user_input) == 1) {
-            return;
+        //* print_setting();
+
+        //* read_new_setting();
+
+        if (setting == ADDRESS) {
+            settings_get_coord();
         }
 
-        if (settings_validate_path()) {
+        if (settings_get_command(user_input) == 1) {
+            return;
+        }
+        else if (settings_validate(user_input, setting)) {
             //* write_to_file();
 
             return;
         }
         else {
-            fprintf(stderr, "Error: Invalid command\n");
+            fprintf(stderr, "Error: Invalid input\n");
         }
     }
 }
-
-void menu_edit_address(char* user_input) {
-    while (1) {
-        if (settings_std_edit(user_input) == 1) {
-            return;
-        }
-
-        settings_get_coord();
-
-        if (settings_validate_address) {
-            //* write_to_file();
-
-            return;
-        }
-        else {
-            fprintf(stderr, "Error: Invalid command\n");
-        }
-    }
-}
-
-void settings_get_coord() {
-    // TODO
-}
-
-void menu_edit_distance(char* user_input) {
-    while (1) {
-        if (settings_std_edit(user_input) == 1) {
-            return;
-        }
-
-        if (settings_validate_distance) {
-            //* write_to_file();
-
-            return;
-        }
-        else {
-            fprintf(stderr, "Error: Invalid command\n");
-        }
-    }
-}
-
-
 
 void menu_edit_deviation(char* user_input) {
     while (1) {
@@ -190,28 +147,4 @@ int settings_validate_distance(void *value) {
 
 int settings_validate_coord(void *value) {
     // TODO
-}
-
-void settings_edit(char* user_input, int setting) {
-    while (1) {
-        //* print_setting();
-
-        //* read_new_setting();
-
-
-
-        if (setting ==)
-
-        if (settings_get_command(user_input) == 1) {
-            return;
-        }
-        else if (settings_validate(user_input, setting)) {
-            //* write_to_file();
-
-            return;
-        }
-        else {
-            fprintf(stderr, "Error: Invalid input\n");
-        }
-    }
 }

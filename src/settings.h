@@ -8,86 +8,59 @@
 #define HELP_CMD "!h"
 
 /// TYPEDEFS
-typedef enum {SAVEPATH, ADRESS, DISTANCE, DEVIATION} settings_e;
+typedef enum {PATH, ADDRESS, DISTANCE, DEVIATION} settings_e;
 
 /// FUNCTION PROTOTYPES
 /**
- * Returns if user inputs !q, otherwise redirects to other settings
+ * @brief Returns if user inputs !q, otherwise redirects to other settings
  */
 void menu_settings();
 
 /**
- * Handles user command and calls functions depending on the input
+ * @brief Handles user command and calls functions depending on the input
  * @param user_input the user input
  * @return -1, 0 or 1 depending on path
 */
 int settings_get_command(char* user_input);
 
 /**
- * Standard edit format
- * @return result of get_command
- */
-int settings_std_edit(char* user_input);
-
-/**
- * Prints the current export path, then changes it based on user input, and updates the path in settings.conf
- * @param user_input the user input
- */
-void menu_edit_path(char* user_input);
-
-/**
- * Prints the current value of address, then changes it based on user input, and updates the coordinates in settings.conf
- * @param user_input the user input
- */
-void menu_edit_address(char* user_input);
-
-/**
- * Get coordinates of the address
+ * @brief Get coordinates of the address
 */
 void settings_get_coord();
 
 /**
- * Prints the current value of distance, then changes it based on user input, and updates the distance in settings.conf
- * @param user_input the user input
+ * @brief Edit the given setting
+ * @param user_input users input
+ * @param setting the setting to change
  */
-void menu_edit_distance(char* user_input);
+void settings_edit(char* user_input, int setting);
 
 /**
- * Prints the current value of deviation, then changes it based on user input, and updates the deviation in settings.conf
- * @param user_input the user input
- */
-void menu_edit_deviation(char* user_input);
-
-
-
-//! TEMP FUNCTIONS
-/**
- * Prints current settings in the terminal for the user
-*/
-void settings_print_menu();
-
-/**
- * Validates address
+ * @brief Validates address
  * @return true or false
  */
 int settings_validate_address(void *value);
 
 /**
- * Validates distance
+ * @brief Validates distance
  * @return true or false
  */
 int settings_validate_distance(void *value);
 
 /**
- * Validates the deviation
+ * @brief Validates the deviation
  * @return true or false
 */
 int settings_validate_deviation(void *value);
 
 /**
- * Validates the path
+ * @brief Validates the path
  * @return true or false
 */
 int settings_validate_path();
 
-void settings_edit(char* user_input, int setting);
+//! TEMP FUNCTIONS
+/**
+ * @brief Prints current settings in the terminal for the user
+*/
+void settings_print_menu();
