@@ -11,6 +11,8 @@
 #define RED "\033[31m" // Color for error messages 
 #define RESET "\033[0m" // Reset to default
 
+#define FILE_TYPE ".txt"
+
 /// TYPEDEFS
 typedef enum {
     PATH, // 0
