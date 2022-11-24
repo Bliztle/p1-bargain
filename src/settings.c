@@ -1,7 +1,5 @@
 #include "settings.h"
 
-
-
 int main(void) {
     printf("build success\n\n");
 
@@ -81,16 +79,19 @@ void settings_edit(int setting) {
     while (1) {
         //* print_setting();
 
-        //* read_new_setting();
+        char new_input[100];
+
+        printf("Enter new setting>");
+        scanf("%s", new_input);
 
         if (setting == ADDRESS) {
             settings_get_coord();
         }
 
-        if (settings_get_command(user_input) == 1) {
+        if (settings_get_command(new_input) == 1) {
             return;
         }
-        else if (settings_validate(user_input, setting)) {
+        else if (settings_validate(new_input, setting)) {
             //* write_to_file();
 
             return;
@@ -101,7 +102,7 @@ void settings_edit(int setting) {
     }
 }
 
-int settings_validate(char *new_input,int setting) {
+int settings_validate(char *new_input, int setting) {
     switch (setting) {
         case PATH:
             return settings_validate_path(new_input);
