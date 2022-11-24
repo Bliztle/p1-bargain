@@ -10,9 +10,9 @@
  * @param requested_item item to search for
  * @param all_items_in_store list of all items to search through
 */
-basket_item_s find_best_match(basket_item_s requested_item, item_s *all_items_in_store) {
+store_item_s find_best_match(store_item_s requested_item, store_item_s *all_items_in_store) {
     double variance = 0.10; // TODO read from conf file
-    basket_item_s best_item ={
+    store_item_s best_item ={
         .price_per_unit = 500000, //Has to be initialized for first comparison
         .count = 0,
         .name = requested_item.name,
@@ -32,9 +32,9 @@ basket_item_s find_best_match(basket_item_s requested_item, item_s *all_items_in
                 
                 if (count > 0) {
 
-                    basket_item_s t = {
+                    store_item_s t = {
                         .name = all_items_in_store[n].name,
-                        .price = all_items_in_store[n].price,
+                        .product_price = all_items_in_store[n].product_price,
                         .price_per_unit = all_items_in_store[n].price_per_unit,
                         .size = all_items_in_store[n].size,
                         .unit = all_items_in_store[n].unit,
@@ -80,7 +80,7 @@ int is_in_variation(double store_item_size, double variance, double requested_si
  * @param store the store to look for items in
  * 
 */
-void filter_items(basket_item_s* basket, int basket_size, store_s store) {
+void filter_items(store_item_s* basket, int basket_size, store_s store) {
 
     for (int n = 0; n < basket_size; n++) {
 
