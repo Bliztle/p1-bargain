@@ -79,7 +79,10 @@ void settings_edit(int setting) {
     while (1) {
         //* print_setting();
 
-        //* read_new_setting();
+        char new_input[100];
+
+        printf("Enter new setting>");
+        scanf("%s", new_input);
 
         if (setting == ADDRESS) {
             settings_get_coord();
@@ -99,19 +102,19 @@ void settings_edit(int setting) {
     }
 }
 
-int settings_validate(char *value, int setting) {
+int settings_validate(char *new_input, int setting) {
     switch (setting) {
         case PATH:
-            return settings_validate_path(value);
+            return settings_validate_path(new_input);
 
         case ADDRESS:
-            return settings_validate_address(value);
+            return settings_validate_address(new_input);
 
         case DISTANCE:
-            return settings_validate_distance(value);
+            return settings_validate_distance(new_input);
 
         case DEVIATION:
-            return settings_validate_deviation(value);
+            return settings_validate_deviation(new_input);
 
         default:
             return 0;
