@@ -106,7 +106,7 @@ void settings_edit(int setting) {
         if (settings_get_command(new_input) == 1) { // Check for command
             return;
         }
-        else if (settings_validate(new_input, setting)) { // Validation of user's input
+        else if (settings_validate(new_input, setting)) { // Validate user's input and write to file
             //* write_to_file();
 
             return;
