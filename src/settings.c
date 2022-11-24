@@ -1,9 +1,8 @@
 #include "settings.h"
 
-
-
 int main(void) {
     printf("build success\n\n");
+    
     menu_settings();
 
     return 0;
