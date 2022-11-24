@@ -9,47 +9,37 @@
 #define HELP_CMD "!h"
 
 /// TYPEDEFS
-
-typedef enum {SAVEPATH, ADDRESS, DISTANCE, DEVIATION} settings_e;
+typedef enum {PATH, ADDRESS, DISTANCE, DEVIATION} settings_e;
 
 /// FUNCTION PROTOTYPES
 /**
- * Returns if user inputs !q, otherwise redirects to other settings
+ * @brief Returns if user inputs !q, otherwise redirects to other settings
  */
 void menu_settings();
 
 /**
- * Handles user command and calls functions depending on the input
+ * @brief Handles user command and calls functions depending on the input
  * @param user_input the user input
  * @return -1, 0 or 1 depending on path
 */
 int settings_get_command(char* user_input);
 
 /**
- * Standard edit format
- * @return result of get_command
- */
-int settings_std_edit(char* user_input);
-
-/**
- * Prints the current export path, then changes it based on user input, and updates the path in settings.conf
- * @param user_input the user input
- */
-void menu_edit_path(char* user_input);
-
-/**
- * Prints the current value of address, then changes it based on user input, and updates the coordinates in settings.conf
- * @param user_input the user input
- */
-void menu_edit_address(char* user_input);
-
-/**
- * Get coordinates of the address
+ * @brief Get coordinates of the address
 */
 void settings_get_coord();
 
 /**
- * Validates address
+ * @brief Edit the given setting
+ * @param user_input users input
+ * @param setting the setting to change
+ */
+void settings_edit(char* user_input, int setting);
+
+/**
+ * @brief Validates settings
+ * @param user_input user input
+ * @param setting the setting to validate
  * @return true or false
  */
 int settings_validate(char *value, int setting);
@@ -61,19 +51,19 @@ int settings_validate(char *value, int setting);
 int settings_validate_address(char *value);
 
 /**
- * Validates distance
+ * @brief Validates distance
  * @return true or false
  */
 int settings_validate_distance(char *value);
 
 /**
- * Validates the deviation
+ * @brief Validates the deviation
  * @return true or false
 */
 int settings_validate_deviation(char *value);
 
 /**
- * Validates the path
+ * @brief Validates the path
  * @return true or false
 */
 int settings_validate_path(char *value);

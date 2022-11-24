@@ -4,6 +4,7 @@
 
 int main(void) {
     printf("build success\n\n");
+
     menu_settings();
 
     return 0;
@@ -22,15 +23,19 @@ void menu_settings() {
 
             switch (first_char) {
                 case '1':
+                    settings_edit(user_input, PATH);
                     return;
 
                 case '2':
+                    settings_edit(user_input, ADDRESS);
                     return;
 
                 case '3':
+                    settings_edit(user_input, DISTANCE);
                     return;
 
                 case '4':
+                    settings_edit(user_input, DEVIATION);
                     return;
             }
         } 
@@ -72,26 +77,20 @@ int settings_get_command(char* user_input) {
     }
 }
 
-int settings_std_edit(char* user_input) {
-    //* print_setting();
-
-    //* read_new_setting();
-
-    return settings_get_command(user_input);
-}
-
-
 void settings_edit(char* user_input, int setting) {
     while (1) {
         //* print_setting();
 
         //* read_new_setting();
 
+        if (setting == ADDRESS) {
+            settings_get_coord();
+        }
+
         if (settings_get_command(user_input) == 1) {
             return;
         }
-
-        if (settings_validate(user_input, setting)) {
+        else if (settings_validate(user_input, setting)) {
             //* write_to_file();
 
             return;
@@ -104,7 +103,7 @@ void settings_edit(char* user_input, int setting) {
 
 int settings_validate(char *value,int setting) {
     switch (setting) {
-        case SAVEPATH:
+        case PATH:
             return settings_validate_path(value);
 
         case ADDRESS:
@@ -120,6 +119,7 @@ int settings_validate(char *value,int setting) {
             return 0;
     }
 }
+
 int settings_validate_path(char *value) {
     FILE* file = fopen(value, "r");
 
