@@ -1,5 +1,4 @@
-#ifndef PARSE_H
-#define PARSE_H
+#pragma once
 
 typedef struct
 {
@@ -69,5 +68,3 @@ typedef struct
 salling_relevant_products *parse_salling_relevant_products(char *json_string);
 void free_salling_relevant_products(salling_relevant_products *products);
 void print_salling_relevant_products(salling_relevant_products *products);
-
-#endif

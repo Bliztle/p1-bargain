@@ -1,5 +1,4 @@
-#ifndef FETCH_H
-#define FETCH_H
+#pragma once
 
 #include <stddef.h>
 #include "parse.h"
@@ -27,5 +26,3 @@ int fetch_get_coop_stores(store_s *stores, int count);
 int fetch_get_salling_stores(store_s *stores, int count);
 
 int fetch_renew_stores();
-
-#endif
