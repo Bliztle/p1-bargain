@@ -1,8 +1,9 @@
 #include "settings.h"
 
+
+
 int main(void) {
     printf("build success\n\n");
-
     menu_settings();
 
     return 0;
@@ -12,7 +13,7 @@ void menu_settings() {
     char user_input[100];
 
     while (1) {
-        print_menu();
+        //print_menu();
 
         scanf("%s", user_input);
 
@@ -38,7 +39,7 @@ void menu_settings() {
             }
         } 
 
-        if (settings_get_command(user_input) == 1) {
+        else if (settings_get_command(user_input) == 1) {
             break;
         }
 
@@ -89,7 +90,7 @@ void menu_edit_path(char* user_input) {
             return;
         }
 
-        if (settings_validate_path) {
+        if (settings_validate_path()) {
             //* write_to_file();
 
             return;
@@ -103,10 +104,6 @@ void menu_edit_path(char* user_input) {
     settings_get_command(user_input);
 }
 
-int settings_validate_path() {
-    // TODO
-}
-
 void menu_edit_address(char* user_input) {
     while (1) {
         if (settings_std_edit(user_input) == 1) {
@@ -115,7 +112,7 @@ void menu_edit_address(char* user_input) {
 
         settings_get_coord();
 
-        if (settings_validate_coord) {
+        if (settings_validate_coord()) {
             //* write_to_file();
 
             return;
@@ -129,11 +126,6 @@ void menu_edit_address(char* user_input) {
 void settings_get_coord() {
     // TODO
 }
-
-int settings_validate_coord() {
-    // TODO
-}
-
 
 void menu_edit_distance(char* user_input) {
     while (1) {
@@ -152,9 +144,7 @@ void menu_edit_distance(char* user_input) {
     }
 }
 
-int settings_validate_distance() {
-    // TODO
-}
+
 
 void menu_edit_deviation(char* user_input) {
     while (1) {
@@ -173,10 +163,33 @@ void menu_edit_deviation(char* user_input) {
     }
 }
 
-int settings_validate_deviation() {
+int settings_validate(void *value,int setting) {
+    switch (setting) {
+        case savepath_e:
+            return settings_validate_path(value);
+
+        case address_e:
+            return settings_validate_address(value);
+
+        case distance_e:
+            return settings_validate_distance(value);
+
+        case deviation_e:
+            return settings_validate_deviation(value);
+    }
+}
+int settings_validate_path(void *value) {
+
+}
+
+int settings_validate_deviation(void *value) {
     // TODO
 }
 
-int settings_validate_setting() {
+int settings_validate_distance(void *value) {
+    printf("adada");
+}
 
+int settings_validate_coord(void *value) {
+    // TODO
 }
