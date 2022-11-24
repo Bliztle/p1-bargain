@@ -48,8 +48,7 @@ void menu_settings() {
                     break;
             }
         } 
-
-        // Check if input is a command
+        // If !q quit the loop
         else if (settings_get_command(user_input) == 1) {
             break;
         }
@@ -90,7 +89,7 @@ int settings_get_command(char* input) { // Look for command through the input
 
 void settings_edit(int setting) {
     while (1) {
-        //* print_setting();
+        // TODO: print_setting();
 
         // Store the user's input-string in a "large enough" array
         char new_input[100];
@@ -106,8 +105,8 @@ void settings_edit(int setting) {
         if (settings_get_command(new_input) == 1) { // Check for command
             return;
         }
-        else if (settings_validate(new_input, setting)) { // Validate user's input and write to file
-            //* write_to_file();
+        else if (settings_validate(new_input, setting)) { // Validation of user's input
+            // TODO: write_to_file();
 
             return;
         }
@@ -174,9 +173,9 @@ int settings_validate_distance(char *new_input) {
 }
 
 int settings_validate_address(char *new_input) {
-    // TODO
+    // TODO: add validation for address
 }
 
 void settings_get_coord() {
-    // TODO
+    // TODO: get user coordinates from address
 }
