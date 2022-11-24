@@ -1,7 +1,15 @@
+/*
+*   Calls the settings menu and prompts the user for a choice. 
+*   It then selects the right setting depending on the user input, 
+*   and prints the current setting. The user is then prompted for a new setting, 
+*   and the new input is validated. If it is valid it writes the value to 
+*   settings.conf otherwise it gives an error.
+*/
+
 #include "settings.h"
 
 int main(void) {
-    printf("build success\n\n");
+    printf("\nbuild success\n\n");
 
     menu_settings();
 
