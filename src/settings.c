@@ -62,11 +62,11 @@ void settings_print_menu() {
     printf("Please enter the setting you wish to edit> ");
 }
 
-int settings_get_command(char* user_input) {
-    if (!strcmp(user_input, QUIT_CMD)) {
+int settings_get_command(char* input) {
+    if (!strcmp(input, QUIT_CMD)) {
         return 1;
     }
-    else if (!strcmp(user_input, HELP_CMD)) {
+    else if (!strcmp(input, HELP_CMD)) {
         printf("Help menu\n");
         return 0;
     }
