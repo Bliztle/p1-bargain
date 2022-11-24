@@ -9,7 +9,12 @@
 #define HELP_CMD "!h"
 
 /// TYPEDEFS
-typedef enum {PATH, ADDRESS, DISTANCE, DEVIATION} settings_e;
+typedef enum {
+    PATH, 
+    ADDRESS, 
+    DISTANCE, 
+    DEVIATION
+} settings_e;
 
 /// FUNCTION PROTOTYPES
 /**
