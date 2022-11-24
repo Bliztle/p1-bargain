@@ -37,10 +37,8 @@ void menu_settings() {
                     return;
             }
         } 
-
-        int res = get_command(user_input, __func__);
-
-        if (res == 1) {
+        
+        if (get_command(user_input) == 1) {
             break;
         }
 
@@ -64,7 +62,7 @@ void print_menu() {
     printf("Please enter the setting you wish to edit> ");
 }
 
-int get_command(char* user_input, const char* func_name) {
+int get_command(char* user_input) {
     if (!strcmp(user_input, QUIT_CMD)) {
         return 1;
     }
@@ -77,17 +75,17 @@ int get_command(char* user_input, const char* func_name) {
     }
 }
 
-int std_edit(char* user_input, const char* func_name) {
+int std_edit(char* user_input) {
     //* print_setting();
 
     //* read_new_setting();
 
-    return get_command(user_input, __func__);
+    return get_command(user_input);
 }
 
 void menu_edit_path(char* user_input) {
     while (1) {
-        if (std_edit(user_input, __func__) == 1) {
+        if (std_edit(user_input) == 1) {
             return;
         }
 
@@ -102,7 +100,7 @@ void menu_edit_path(char* user_input) {
     }
     
 
-    get_command(user_input, __func__);
+    get_command(user_input);
 }
 
 int validate_path() {
@@ -111,7 +109,7 @@ int validate_path() {
 
 void menu_edit_address(char* user_input) {
     while (1) {
-        if (std_edit(user_input, __func__) == 1) {
+        if (std_edit(user_input) == 1) {
             return;
         }
 
@@ -139,7 +137,7 @@ int validate_coord() {
 
 void menu_edit_distance(char* user_input) {
     while (1) {
-        if (std_edit(user_input, __func__) == 1) {
+        if (std_edit(user_input) == 1) {
             return;
         }
 
@@ -160,7 +158,7 @@ int validate_distance() {
 
 void menu_edit_deviation(char* user_input) {
     while (1) {
-        if (std_edit(user_input, __func__) == 1) {
+        if (std_edit(user_input) == 1) {
             return;
         }
 
@@ -190,9 +188,7 @@ void menu_basket_add(char* user_input, basket_item_s items) {
         while (1) {
             //* get_data();
 
-            int res = get_command(user_input, __func__);
-
-            if (res == 1) {
+            if (get_command(user_input)) {
                 return;
             }
 

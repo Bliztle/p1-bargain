@@ -16,17 +16,15 @@ void menu_settings();
 /**
  * Handles user command and calls functions depending on the input
  * @param user_input the user input
- * @param func_name the name of the function calling this function
  * @return -1, 0 or 1 depending on path
 */
-int get_command(char* user_input, const char* func_name);
+int get_command(char* user_input);
 
 /**
  * Standard edit format
- * @param func_name name of the function calling this function
  * @return result of get_command
  */
-int std_edit(char* user_input, const char* func_name);
+int std_edit(char* user_input);
 
 /**
  * Prints the current export path, then changes it based on user input, and updates the path in settings.conf
@@ -84,12 +82,14 @@ int validate_deviation();
 /**
  * Menu to remove an item from the basket
  * @param items
+ * @param basket_item_s basket
  */
 void menu_basket_remove(char* user_input, basket_item_s items);
 
 /**
  * Menu to add an item to the basket
  * @param items
+ * @param basket_item_s basket
 */
 void menu_basket_add(char* user_input, basket_item_s items);
 
