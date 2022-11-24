@@ -1,5 +1,6 @@
 #include "settings.h"
 
+// Just for testing purposes
 int main(void) {
     printf("build success\n\n");
 
@@ -9,6 +10,7 @@ int main(void) {
 }
 
 void menu_settings() {
+    // Store the user's input-string in a "large enough" array
     char user_input[100];
 
     while (1) {
@@ -16,6 +18,7 @@ void menu_settings() {
 
         scanf("%s", user_input);
 
+        //Edit the chosen setting from numeration
         if (strlen(user_input) == 1) {
             char first_char = user_input[0];
 
@@ -38,15 +41,17 @@ void menu_settings() {
             }
         } 
 
+        // Check if input is a command
         else if (settings_get_command(user_input) == 1) {
             break;
         }
 
+        // Input didn't relate to any command or setting, so try again
         fprintf(stderr, "Error: Invalid command\n");
     }
 }
 
-void settings_print_menu() {
+void settings_print_menu() { // Temporary printing of the settings
     char savepath[] = "IDK lol";
     printf("1. Change savepath\nCurrent savepath is: %s\n\n", savepath);
 
@@ -62,15 +67,15 @@ void settings_print_menu() {
     printf("Please enter the setting you wish to edit> ");
 }
 
-int settings_get_command(char* input) {
-    if (!strcmp(input, QUIT_CMD)) {
+int settings_get_command(char* input) { // Look for command through the input
+    if (!strcmp(input, QUIT_CMD)) { // Command is quit (!q)
         return 1;
     }
-    else if (!strcmp(input, HELP_CMD)) {
+    else if (!strcmp(input, HELP_CMD)) { // Command is help (!h)
         printf("Help menu\n");
         return 0;
     }
-    else {
+    else { // No command was found
         return -1;
     }
 }
@@ -79,20 +84,21 @@ void settings_edit(int setting) {
     while (1) {
         //* print_setting();
 
+        // Store the user's input-string in a "large enough" array
         char new_input[100];
 
         printf("Current setting is [setting]\n");
         printf("Enter new setting>");
         scanf("%s", new_input);
 
-        if (setting == ADDRESS) {
+        if (setting == ADDRESS) { // Get the coordinates if address is chosen
             settings_get_coord();
         }
 
-        if (settings_get_command(new_input) == 1) {
+        if (settings_get_command(new_input) == 1) { // Check for command
             return;
         }
-        else if (settings_validate(new_input, setting)) {
+        else if (settings_validate(new_input, setting)) { // Validation of user's input
             //* write_to_file();
 
             return;
@@ -104,7 +110,7 @@ void settings_edit(int setting) {
 }
 
 int settings_validate(char *new_input, int setting) {
-    switch (setting) {
+    switch (setting) { // Maps setting to the right validation
         case PATH:
             return settings_validate_path(new_input);
 
@@ -123,9 +129,14 @@ int settings_validate(char *new_input, int setting) {
 }
 
 int settings_validate_path(char *new_input) {
-    FILE* file = fopen(new_input, "r");
 
-    if (file == NULL) {
+    // Make sure the file type is right
+    char file_type[] = ".txt";
+    if ( !(strstr(new_input, file_type) == file_type) ) return 0;
+
+    // Since it technically still could be a folder, we open the file
+    FILE* file = fopen(new_input, "r");
+    if (file == NULL) { // A folder cannot be opened by fopen()
         perror("error");
         return 0;
     }
