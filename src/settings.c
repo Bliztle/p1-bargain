@@ -21,9 +21,9 @@ void menu_settings() {
     // Store the user's input-string in a "large enough" array
     char user_input[100];
 
-    while (1) {
-        settings_print_menu();
+    settings_print_menu();
 
+    while (1) {
         scanf("%s", user_input);
 
         // Edit the chosen setting from numeration
@@ -54,7 +54,9 @@ void menu_settings() {
         }
 
         // Input didn't relate to any command or setting, so try again
-        fprintf(stderr, RED "Error: Invalid command\n" RESET);
+        fprintf(stderr, RED "\nError: Invalid option\n\n" RESET);
+
+        printf("Please try again>");
     }
 }
 
@@ -94,7 +96,7 @@ void settings_edit(int setting) {
         // Store the user's input-string in a "large enough" array
         char new_input[100];
 
-        printf("Current setting is [setting]\n");
+        printf("\nCurrent setting is [setting]\n");
         printf("Enter new setting>");
         scanf("%s", new_input);
 
@@ -150,7 +152,7 @@ int settings_validate_path(char *new_input) {
     }
 
     fclose(file);
-    
+
     return 1;
 }
 
