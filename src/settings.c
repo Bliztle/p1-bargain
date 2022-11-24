@@ -179,17 +179,33 @@ int settings_validate(void *value,int setting) {
     }
 }
 int settings_validate_path(void *value) {
+    FILE* file = fopen((char*)value, "r");
 
+    if (file == NULL) {
+        perror("error");
+        return 0;
+    }
+
+    fclose(file);
+    return 1;
 }
 
 int settings_validate_deviation(void *value) {
-    // TODO
+    double *deviation = (double*)value;
+
+    if (*deviation >= 0) return 1;
+
+    return 0;
 }
 
 int settings_validate_distance(void *value) {
-    printf("adada");
+    double *distance = (double*)value;
+
+    if (*distance >= 0) return 1;
+
+    return 0;
 }
 
-int settings_validate_coord(void *value) {
+int settings_validate_address(void *value) {
     // TODO
 }
