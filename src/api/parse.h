@@ -1,14 +1,18 @@
-// #include "../basket.h"
+typedef enum
+{
+    KILOGRAMS,
+    LITERS,
+    UNITS
+} item_unit_e;
+
 typedef struct
 {
     char name[100];
-    double total_price;
+    double price;
     double size;
-    int count;
-    // Replace with Isak and Mette's basket item
-    // basket_item_unit_e unit;
+    item_unit_e unit;
     double price_per_unit;
-} store_item_s;
+} item_s;
 
 
 
@@ -18,20 +22,8 @@ typedef enum
     FAKTA
 } store_chain_e;
 
-typedef enum
-{
-    SALLING,
-    COOP
-} store_group_e;
-
-typedef char store_uid_t[37];
-typedef char store_name_t[50];
-typedef char store_address_t[50];
-typedef double coord_lat_t;
-typedef double coord_lon_t;
 typedef struct
 {
-<<<<<<< HEAD
     char name[100];
     double product_price;
     double total_price;
