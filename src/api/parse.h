@@ -1,18 +1,14 @@
-typedef enum
-{
-    KILOGRAMS,
-    LITERS,
-    UNITS
-} item_unit_e;
-
+// #include "../basket.h"
 typedef struct
 {
     char name[100];
-    double price;
+    double total_price;
     double size;
-    item_unit_e unit;
+    int count;
+    // Replace with Isak and Mette's basket item
+    // basket_item_unit_e unit;
     double price_per_unit;
-} item_s;
+} store_item_s;
 
 
 
@@ -22,8 +18,20 @@ typedef enum
     FAKTA
 } store_chain_e;
 
+typedef enum
+{
+    SALLING,
+    COOP
+} store_group_e;
+
+typedef char store_uid_t[37];
+typedef char store_name_t[50];
+typedef char store_address_t[50];
+typedef double coord_lat_t;
+typedef double coord_lon_t;
 typedef struct
 {
+<<<<<<< HEAD
     char name[100];
     double price;
     double size;
@@ -38,9 +46,25 @@ typedef struct
     char address[50]; // Denmarks longest street name is 27 characters, so this is plenty https://stiften.dk/artikel/aarhus-har-landets-l%C3%A6ngste-vejnavne
     double lat;
     double lon;
+=======
+    store_uid_t uid; // Exact size of a UUID, as used by salling. Coop just uses 3-digit ints which we cast to strings
+    store_name_t name;
+    store_address_t address[50]; // Denmarks longest street name is 27 characters, so this is plenty https://stiften.dk/artikel/aarhus-har-landets-l%C3%A6ngste-vejnavne
+    coord_lat_t lat;
+    coord_lon_t lon;
+    store_group_e group;
+>>>>>>> origin/main
     store_chain_e chain;
     store_item_s *store_items;
     int distance; // in meters
+
+    store_item_s *items;
+    int item_count;
+    // Replace with Isak and Mette's basket item
+    // basket_item_s *missing_items;
+    int missing_items_count;
+    double total_price;
+
 } store_s;
 
 
