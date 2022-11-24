@@ -101,19 +101,19 @@ void settings_edit(int setting) {
     }
 }
 
-int settings_validate(char *value,int setting) {
+int settings_validate(char *new_input,int setting) {
     switch (setting) {
         case PATH:
-            return settings_validate_path(value);
+            return settings_validate_path(new_input);
 
         case ADDRESS:
-            return settings_validate_address(value);
+            return settings_validate_address(new_input);
 
         case DISTANCE:
-            return settings_validate_distance(value);
+            return settings_validate_distance(new_input);
 
         case DEVIATION:
-            return settings_validate_deviation(value);
+            return settings_validate_deviation(new_input);
 
         default:
             return 0;
