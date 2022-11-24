@@ -20,7 +20,7 @@ double calc_coordinate_distance(coord_lat_t lat1, coord_lon_t lon1, coord_lat_t 
     double delta_lon = calc_degrees_to_radians(lon2 - lon1);
     double a = pow(sin(delta_lat / 2), 2) +
                cos(calc_degrees_to_radians(lat1)) * cos(calc_degrees_to_radians(lat2)) *
-                   pow(sin(delta_lon), 2);
+                   pow(sin(delta_lon / 2), 2);
     double c = 2 * atan2(sqrt(a), sqrt(1 - a));
     return EARTH_RADIUS_KILOMETERS * c;
 }
