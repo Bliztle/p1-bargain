@@ -81,6 +81,7 @@ void settings_edit(int setting) {
 
         char new_input[100];
 
+        printf("Current setting is [setting]\n");
         printf("Enter new setting>");
         scanf("%s", new_input);
 
