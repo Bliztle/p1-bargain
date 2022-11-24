@@ -36,6 +36,14 @@ void settings_get_coord();
 void settings_edit(char* user_input, int setting);
 
 /**
+ * @brief Validates settings
+ * @param user_input user input
+ * @param setting the setting to validate
+ * @return true or false
+ */
+int settings_validate(void *user_input, int setting);
+
+/**
  * @brief Validates address
  * @return true or false
  */

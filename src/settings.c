@@ -2,7 +2,7 @@
 
 int main(void) {
     printf("build success\n\n");
-    
+
     menu_settings();
 
     return 0;
@@ -99,35 +99,18 @@ void settings_edit(char* user_input, int setting) {
     }
 }
 
-void menu_edit_deviation(char* user_input) {
-    while (1) {
-        if (settings_std_edit(user_input) == 1) {
-            return;
-        }
-
-        if (settings_validate_deviation) {
-            //* write_to_file();
-
-            return;
-        }
-        else {
-            fprintf(stderr, "Error: Invalid command\n");
-        }
-    }
-}
-
 int settings_validate(void *value, int setting) {
     switch (setting) {
-        case savepath_e:
+        case PATH:
             return settings_validate_path(value);
 
-        case address_e:
+        case ADDRESS:
             return settings_validate_address(value);
 
-        case distance_e:
+        case DISTANCE:
             return settings_validate_distance(value);
 
-        case deviation_e:
+        case DEVIATION:
             return settings_validate_deviation(value);
     }
 }
