@@ -19,10 +19,10 @@ void menu_settings();
 
 /**
  * @brief Handles user command and calls functions depending on the input
- * @param user_input the user input
+ * @param input the user input
  * @return -1, 0 or 1 depending on path
 */
-int settings_get_command(char* user_input);
+int settings_get_command(char* input);
 
 /**
  * @brief Get coordinates of the address
@@ -31,14 +31,13 @@ void settings_get_coord();
 
 /**
  * @brief Edit the given setting
- * @param user_input users input
  * @param setting the setting to change
  */
 void settings_edit(int setting);
 
 /**
  * @brief Validates settings
- * @param user_input user input
+ * @param new_input new user input
  * @param setting the setting to validate
  * @return true or false
  */
