@@ -47,7 +47,6 @@ void menu_settings() {
 }
 
 void get_settings_input(char* user_input, const char* func_name) {
-    scanf("%s", user_input);
 
     if (!strcmp(user_input, QUIT_CMD)) {
         return;
