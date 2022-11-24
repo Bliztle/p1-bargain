@@ -90,7 +90,7 @@ int settings_get_command(char* input) { // Look for command through the input
 
 void settings_edit(int setting) {
     while (1) {
-        //* print_setting();
+        // TODO: print_setting();
 
         // Store the user's input-string in a "large enough" array
         char new_input[100];
@@ -107,7 +107,7 @@ void settings_edit(int setting) {
             return;
         }
         else if (settings_validate(new_input, setting)) { // Validation of user's input
-            //* write_to_file();
+            // TODO: write_to_file();
 
             return;
         }
@@ -174,9 +174,9 @@ int settings_validate_distance(char *new_input) {
 }
 
 int settings_validate_address(char *new_input) {
-    // TODO
+    // TODO: add validation for address
 }
 
 void settings_get_coord() {
-    // TODO
+    // TODO: get user coordinates from address
 }
