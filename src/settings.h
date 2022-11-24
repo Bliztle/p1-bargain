@@ -1,5 +1,6 @@
 /// INCLUDES
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "api/parse.h" // Include for basket struct
 
@@ -9,7 +10,7 @@
 
 /// TYPEDEFS
 
-enum settings {savepath_e, address_e, distance_e, deviation_e};
+typedef enum {SAVEPATH, ADDRESS, DISTANCE, DEVIATION} settings_e;
 
 /// FUNCTION PROTOTYPES
 /**
@@ -48,45 +49,37 @@ void menu_edit_address(char* user_input);
 void settings_get_coord();
 
 /**
- * Prints the current value of distance, then changes it based on user input, and updates the distance in settings.conf
- * @param user_input the user input
+ * Validates address
+ * @return true or false
  */
-void menu_edit_distance(char* user_input);
+int settings_validate(char *value, int setting);
 
 /**
- * Prints the current value of deviation, then changes it based on user input, and updates the deviation in settings.conf
- * @param user_input the user input
+ * Validates address
+ * @return true or false
  */
-void menu_edit_deviation(char* user_input);
+int settings_validate_address(char *value);
 
+/**
+ * Validates distance
+ * @return true or false
+ */
+int settings_validate_distance(char *value);
 
+/**
+ * Validates the deviation
+ * @return true or false
+*/
+int settings_validate_deviation(char *value);
+
+/**
+ * Validates the path
+ * @return true or false
+*/
+int settings_validate_path(char *value);
 
 //! TEMP FUNCTIONS
 /**
  * Prints current settings in the terminal for the user
 */
 void settings_print_menu();
-
-/**
- * Validates address
- * @return true or false
- */
-int settings_validate_address(void *value);
-
-/**
- * Validates distance
- * @return true or false
- */
-int settings_validate_distance(void *value);
-
-/**
- * Validates the deviation
- * @return true or false
-*/
-int settings_validate_deviation(void *value);
-
-/**
- * Validates the path
- * @return true or false
-*/
-int settings_validate_path();

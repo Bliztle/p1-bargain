@@ -22,19 +22,15 @@ void menu_settings() {
 
             switch (first_char) {
                 case '1':
-                    menu_edit_path(user_input);
                     return;
 
                 case '2':
-                    menu_edit_address(user_input);
                     return;
 
                 case '3':
-                    menu_edit_distance(user_input);
                     return;
 
                 case '4':
-                    menu_edit_deviation(user_input);
                     return;
             }
         } 
@@ -84,102 +80,48 @@ int settings_std_edit(char* user_input) {
     return settings_get_command(user_input);
 }
 
-void menu_edit_path(char* user_input) {
+
+void settings_edit(char* user_input, int setting) {
     while (1) {
-        if (settings_std_edit(user_input) == 1) {
+        //* print_setting();
+
+        //* read_new_setting();
+
+        if (settings_get_command(user_input) == 1) {
             return;
         }
 
-        if (settings_validate_path()) {
+        if (settings_validate(user_input, setting)) {
             //* write_to_file();
 
             return;
         }
         else {
-            fprintf(stderr, "Error: Invalid command\n");
-        }
-    }
-    
-
-    settings_get_command(user_input);
-}
-
-void menu_edit_address(char* user_input) {
-    while (1) {
-        if (settings_std_edit(user_input) == 1) {
-            return;
-        }
-
-        settings_get_coord();
-
-        if (settings_validate_coord()) {
-            //* write_to_file();
-
-            return;
-        }
-        else {
-            fprintf(stderr, "Error: Invalid command\n");
+            fprintf(stderr, "Error: Invalid input\n");
         }
     }
 }
 
-void settings_get_coord() {
-    // TODO
-}
-
-void menu_edit_distance(char* user_input) {
-    while (1) {
-        if (settings_std_edit(user_input) == 1) {
-            return;
-        }
-
-        if (settings_validate_distance) {
-            //* write_to_file();
-
-            return;
-        }
-        else {
-            fprintf(stderr, "Error: Invalid command\n");
-        }
-    }
-}
-
-
-
-void menu_edit_deviation(char* user_input) {
-    while (1) {
-        if (settings_std_edit(user_input) == 1) {
-            return;
-        }
-
-        if (settings_validate_deviation) {
-            //* write_to_file();
-
-            return;
-        }
-        else {
-            fprintf(stderr, "Error: Invalid command\n");
-        }
-    }
-}
-
-int settings_validate(void *value,int setting) {
+int settings_validate(char *value,int setting) {
     switch (setting) {
-        case savepath_e:
+        case SAVEPATH:
             return settings_validate_path(value);
 
-        case address_e:
+        case ADDRESS:
             return settings_validate_address(value);
 
-        case distance_e:
+        case DISTANCE:
             return settings_validate_distance(value);
 
-        case deviation_e:
+        case DEVIATION:
             return settings_validate_deviation(value);
+
+        default:
+            return 0;
     }
 }
-int settings_validate_path(void *value) {
-    FILE* file = fopen((char*)value, "r");
+int settings_validate_path(char *value) {
+    FILE* file = fopen(value, "r");
 
     if (file == NULL) {
         perror("error");
@@ -190,22 +132,28 @@ int settings_validate_path(void *value) {
     return 1;
 }
 
-int settings_validate_deviation(void *value) {
-    double *deviation = (double*)value;
+int settings_validate_deviation(char *value) {
+    char *endptr;
+    double deviation = strtod(value, &endptr);
 
-    if (*deviation >= 0) return 1;
-
-    return 0;
-}
-
-int settings_validate_distance(void *value) {
-    double *distance = (double*)value;
-
-    if (*distance >= 0) return 1;
+    if (deviation >= 0) return 1;
 
     return 0;
 }
 
-int settings_validate_address(void *value) {
+int settings_validate_distance(char *value) {
+    char *endptr;
+    double distance = strtod(value, &endptr);
+
+    if (distance >= 0) return 1;
+
+    return 0;
+}
+
+int settings_validate_address(char *value) {
+    // TODO
+}
+
+void settings_get_coord() {
     // TODO
 }
