@@ -11,12 +11,12 @@
  * @param menu_text The text presented at the top of the menu
  * @param help_text The text printed when the user asks for help
  */
-#define display_menu(options, menu_text, help_text) _print_menu(options, sizeof(options)/sizeof(char*), menu_text, help_text)
+#define display_menu(options, menu_text, help_text) _display_menu(options, sizeof(options)/sizeof(char*), menu_text, help_text)
 
 int _display_menu(char **options, int options_len, char *menu_text, char *help_text) {
     while (1) {
         printf("%s\n", menu_text);
-        printf("Enter !q to quit, or !h to get help");
+        printf("Enter !q to quit, or !h to get help\n");
         // Print the menu options
         for (int i = 0; i < options_len; i++) {
             printf("[%d] %s\n", i+1, options[i]);
@@ -37,10 +37,10 @@ int _display_menu(char **options, int options_len, char *menu_text, char *help_t
                 return -1;
             }
             if (strstr(input, "!h") != NULL) {
-                printf("%s\n", help_text);
+                printf("%s\n\n", help_text);
             } else {
                 // If the user entered something invalid, we just ignore it and try again
-                printf("Please select a valid option\n");
+                printf("Please select a valid option\n\n");
             }
             continue;
         }
