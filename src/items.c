@@ -1,65 +1,57 @@
 #include "items.h"
 #include <stddef.h>
 #include <math.h>
+#include <string.h>
+#include "test_items.h"
 
-/**
- * Checks all items in list for best match, then returns the found item that best matches.
- * 
- * @returns an item with a count of 0 if no match was found, otherwise returns an item with a count needed to match requested size
- * 
- * @param requested_item item to search for
- * @param all_items_in_store list of all items to search through
-*/
-basket_item_s find_best_match(basket_item_s requested_item, item_s *all_items_in_store) {
+
+int items_find_best_match(basket_item_s requested_item, store_s *store, found_item_s *found_destination, basket_item_s *missing_destination) {
+
     double variance = 0.10; // TODO read from conf file
-    basket_item_s best_item ={
-        .price_per_unit = 500000, //Has to be initialized for first comparison
+
+
+    // Initialising the fields that will be compared against in the  search loop, in order to prevent garbage memory
+    // creating unexpected results.
+    found_item_s best_item = {
+        .price_per_unit = -1, // Set to -1 to differentiate first run.
         .count = 0,
-        .name = requested_item.name,
-        .size = requested_item.size,
-        .unit = requested_item.unit
     };
 
     int item_found = 0;
 
-    for (int n = 0; n < 2000; n++) { //TODO get length of list
+    for (int n = 0; n < store->items_count; n++) {
 
-        if (strstr(all_items_in_store[n].name, requested_item.name) != NULL &&
-            all_items_in_store[n].unit == requested_item.unit &&
-            all_items_in_store[n].price_per_unit < best_item.price_per_unit) {
+        if (items_compare_item_names(requested_item.name, store->items[n].name)
+        && (store->items[n].unit == requested_item.unit)
+        && (store->items[n].price_per_unit < best_item.price_per_unit || best_item.price_per_unit == - 1)) {
 
-                int count = is_in_variation(all_items_in_store[n].size, variance, requested_item.size);
+            int count = items_is_in_variation(store->items[n].size, variance, requested_item.size);
                 
-                if (count > 0) {
+            if (count > 0) {
 
-                    basket_item_s t = {
-                        .name = all_items_in_store[n].name,
-                        .price = all_items_in_store[n].price,
-                        .price_per_unit = all_items_in_store[n].price_per_unit,
-                        .size = all_items_in_store[n].size,
-                        .unit = all_items_in_store[n].unit,
-                        .count = count
-                    };
+                best_item = items_convert_to_found_item(store->items[n], count);
+                item_found = 1;
 
-                    best_item = t;
-                    item_found = 1;
-                }
+            }
         }
     }
 
-   return best_item;
+    if (item_found) {
+
+        *found_destination = best_item;
+
+        return item_found;
+
+    } else {
+
+        *missing_destination = requested_item;
+
+        return item_found;
+
+    }
 }
 
-/**
- * calculates the amount of items necesary to make up the requested total size within a given variance
- * 
- * @retruns the amount of items, 0 if not possible
- * 
- * @param store_item_size the size of a given item
- * @param variance acceptable percentage variance given as a number between 0 and 1
- * @param requested_size the amount to match, within the variance
-*/
-int is_in_variation(double store_item_size, double variance, double requested_size) {
+int items_is_in_variation(double store_item_size, double variance, double requested_size) {
 
     double min_size = requested_size * (1 - variance);
     double max_size = requested_size * (1 + variance);
@@ -70,20 +62,62 @@ int is_in_variation(double store_item_size, double variance, double requested_si
     else return 0;
 }
 
-/**
- *  Modifies `store.items` and `store.missing` items to contain the cheapest items that match each item in `basket`
- * 
- * @returns nothing
- * 
- * @param basket list of items to look for
- * @param basket_size amount of items to look for
- * @param store the store to look for items in
- * 
-*/
-void filter_items(basket_item_s* basket, int basket_size, store_s store) {
+void items_filter_items(basket_item_s *basket, int basket_size, store_s *store) {
 
     for (int n = 0; n < basket_size; n++) {
 
-        basket[n] = find_best_match(basket[n], store.store_items);
+        found_item_s found_item;
+        basket_item_s missing_item;
+
+        if (items_find_best_match(basket[n], store, &found_item, &missing_item)) {
+
+            items_add_item_to_found(found_item, store);
+
+        } else {
+
+            items_add_item_to_missing(missing_item, store);
+
+        }
     }
+}
+
+void items_add_item_to_found(found_item_s item, store_s *store) {
+
+    store->found_items[store->found_items_count] = item;
+    store->found_items_count++;
+
+}
+
+void items_add_item_to_missing(basket_item_s item, store_s *store) {
+
+    store->missing_items[store->missing_items_count] = item;
+    store->missing_items_count++;
+
+}
+
+found_item_s items_convert_to_found_item(store_item_s input_item, int item_count) {
+
+    found_item_s t = {
+            .product_price = input_item.price,
+            .count = item_count,
+            .size = input_item.size,
+            .unit = input_item.unit,
+            .price_per_unit = input_item.price_per_unit
+    };
+
+    t.total_price =  t.count * t.product_price;
+    strcpy(t.name, input_item.name);
+
+    return t;
+
+}
+
+int items_compare_item_names(char* name_to_find, char* name_to_search) {
+
+    if (strstr(name_to_search, name_to_find) != NULL) {
+        return 1;
+    } else {
+        return 0;
+    }
+
 }

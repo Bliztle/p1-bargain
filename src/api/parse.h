@@ -1,60 +1,5 @@
-typedef enum
-{
-    KILOGRAMS,
-    LITERS,
-    UNITS
-} item_unit_e;
-
-typedef struct
-{
-    char name[100];
-    double price;
-    double size;
-    item_unit_e unit;
-    double price_per_unit;
-} item_s;
-
-
-
-typedef enum
-{
-    KVICKLY,
-    FAKTA
-} store_chain_e;
-
-typedef struct
-{
-    char name[100];
-    double price;
-    double size;
-    item_unit_e unit;
-    double price_per_unit;
-} store_item_s;
-
-typedef struct
-{
-    char uid[37]; // Exact size of a UUID, as used by salling. Coop just uses 3-digit ints which we cast to strings
-    char name[50];
-    char address[50]; // Denmarks longest street name is 27 characters, so this is plenty https://stiften.dk/artikel/aarhus-har-landets-l%C3%A6ngste-vejnavne
-    double lat;
-    double lon;
-    store_chain_e chain;
-    store_item_s *store_items;
-    int distance; // in meters
-} store_s;
-
-
-
-typedef struct
-{
-    char name[100];
-    double price;
-    double size;
-    item_unit_e unit;
-    double price_per_unit;
-    int count;
-} basket_item_s;
-
+#ifndef PARSE_H
+#define PARSE_H
 
 typedef struct
 {
@@ -76,3 +21,5 @@ typedef struct
 salling_relevant_products *parse_salling_relevant_products(char *json_string);
 void free_salling_relevant_products(salling_relevant_products *products);
 void print_salling_relevant_products(salling_relevant_products *products);
+
+#endif

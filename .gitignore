@@ -1,3 +1,7 @@
+# Ignore Test Files
+src/test_items.c
+src/test_items.h
+
 # Hide IDE files
 build
 **/CMakeFiles
