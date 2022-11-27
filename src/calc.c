@@ -3,7 +3,7 @@
 #include <math.h>
 
 /**
- * Calculates the distance in meters between two coordinates
+ * Calculates the distance in kilometers between two coordinates
  *
  * @author Bliztle <asbjoern.r.e@gmail.com>
  *
@@ -12,7 +12,7 @@
  * @param lat2 latitude of the second coordinate
  * @param lon2 longitude of the second coordinate
  *
- * @returns the distance in meters
+ * @returns the distance in kilometers
  */
 double calc_coordinate_distance(coord_lat_t lat1, coord_lon_t lon1, coord_lat_t lat2, coord_lon_t lon2)
 {
