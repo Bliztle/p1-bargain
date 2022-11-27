@@ -2,79 +2,97 @@
 Look into NXJSON or cJSON for parsing api responses
 https://stackoverflow.com/a/16490394
 */
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "parse.h"
 #include <string.h>
 #include "nxjson/nxjson.h"
 
-// TODO: Remove this when proper functions have been implemented
-salling_relevant_products *parse_salling_relevant_products(char *json_string)
+static const char *store_chain_map[] = {
+    [STORE_GROUP_BILKA] = "bilka",
+
+    [STORE_GROUP_SUPER_BRUGSEN] = "SuperBrugsen",
+    [STORE_GROUP_KVICKLY] = "Kvickly",
+    [STORE_GROUP_DAGLI_BRUGSEN] = "Dagli'Brugsen",
+    [STORE_GROUP_FAKTA] = "Fakta",
+    [STORE_GROUP_FAKTA_GERMANY] = "FaktaGermany",
+    [STORE_GROUP_IRMA] = "Irma",
+    [STORE_GROUP_GROENLAND] = "Grønland",
+    [STORE_GROUP_COOP_DK] = "Coop.dk",
+    [STORE_GROUP_FK] = "FK",
+    [STORE_GROUP_COOP_MAD] = "COOP MAD",
+    NULL,
+};
+
+int parse_salling_stores(char *raw_stores, store_s **stores)
 {
-    const nx_json *json = nx_json_parse_utf8(json_string);
-    const nx_json *json_suggestions = nx_json_get(json, "suggestions");
-    printf("Suggestion length: %i\n", json_suggestions->children.length);
+    const nx_json *json = nx_json_parse_utf8(raw_stores);
+    int count = 0;
 
-    salling_relevant_products *products = malloc(sizeof(salling_relevant_products));
-    if (products == NULL)
+    nx_json *json_store = json->children.first;
+    while (json_store != NULL)
     {
-        printf("Out of memory at %s:%i", __FILE__, __LINE__);
-        exit(EXIT_FAILURE);
-    }
-    products->length = json_suggestions->children.length;
-    products->suggestions = malloc(sizeof(salling_relevant_products_suggestion) * json_suggestions->children.length);
-    if (products->length > 0 && products == NULL)
-    {
-        printf("Out of memory at %s:%i", __FILE__, __LINE__);
-        exit(EXIT_FAILURE);
-    }
+        *stores = realloc(*stores, ++count * sizeof(store_s));
+        store_s *store = &(*stores)[count - 1];
 
-    // nxjson does have a function to get an element at an index, but it simply traverses a list, making this more effective
-    nx_json *json_product = json_suggestions->children.first;
-    for (int i = 0; i < products->length; i++)
-    {
-        strcpy(products->suggestions[i].id, nx_json_get(json_product, "id")->text_value);
-        strcpy(products->suggestions[i].prod_id, nx_json_get(json_product, "prod_id")->text_value);
-        strcpy(products->suggestions[i].title, nx_json_get(json_product, "title")->text_value);
-        strcpy(products->suggestions[i].description, nx_json_get(json_product, "description")->text_value);
-        strcpy(products->suggestions[i].img, nx_json_get(json_product, "img")->text_value);
-        strcpy(products->suggestions[i].link, nx_json_get(json_product, "link")->text_value);
-        products->suggestions[i].price = nx_json_get(json_product, "price")->num.dbl_value;
-        json_product = json_product->next;
+        store->chain = STORE_GROUP_BILKA;
+        store->group = SALLING;
+        store->distance = nx_json_get(json_store, "distance_km")->num.dbl_value;
+        strncpy(store->uid, nx_json_get(json_store, "id")->text_value, STORE_UID_LENGTH);
+        strncpy(store->name, nx_json_get(json_store, "name")->text_value, STORE_NAME_LENGTH);
+
+        const nx_json *coordinates = nx_json_get(json_store, "coordinates");
+        store->lat = coordinates->children.last->num.dbl_value;
+        store->lon = coordinates->children.first->num.dbl_value;
+
+        const nx_json *address = nx_json_get(json_store, "address");
+        snprintf((char *)store->address, STORE_ADDRESS_LENGTH, "%s, %s %s",
+                 nx_json_get(address, "street")->text_value,
+                 nx_json_get(address, "zip")->text_value,
+                 nx_json_get(address, "city")->text_value);
+
+        json_store = json_store->next;
     }
 
-    return products;
+    return count;
 }
 
-// TODO: Remove this when proper functions have been implemented
-void free_salling_relevant_products(salling_relevant_products *products)
+int parse_coop_stores(char *raw_stores, store_s **stores)
 {
-    free(products->suggestions);
-    free(products);
-}
+    const nx_json *json = nx_json_parse_utf8(raw_stores);
+    int count = 0;
 
-// TODO: Remove this when proper functions have been implemented
-void print_salling_relevant_products(salling_relevant_products *products)
-{
-    printf("\nPrinting relevant products from salling\n");
-    for (int i = 0; i < products->length; i++)
+    for (nx_json *json_store = nx_json_get(json, "Data")->children.first;
+         json_store != NULL;
+         json_store = json_store->next)
     {
-        printf(
-            "[%i]\n"
-            "[id]: %s\n"
-            "[prod_id]: %s\n"
-            "[title]: %s\n"
-            "[description]: %s\n"
-            "[img]: %s\n"
-            "[link]: %s\n"
-            "[price]: %.2f\n\n",
-            i,
-            products->suggestions[i].id,
-            products->suggestions[i].prod_id,
-            products->suggestions[i].title,
-            products->suggestions[i].description,
-            products->suggestions[i].img,
-            products->suggestions[i].link,
-            products->suggestions[i].price);
+        *stores = realloc(*stores, ++count * sizeof(store_s));
+        store_s *store = &(*stores)[count - 1];
+
+        store->group = SALLING;
+        store->distance = 0; // TODO: Add distance, possibly doing something while filtering on it
+        snprintf(store->uid, STORE_UID_LENGTH, "%d", (int)nx_json_get(json_store, "StoreId")->num.u_value);
+        strncpy(store->name, nx_json_get(json_store, "Name")->text_value, STORE_NAME_LENGTH);
+
+        const nx_json *coordinates = nx_json_get(nx_json_get(json_store, "Location"), "coordinates");
+        store->lat = coordinates->children.last->num.dbl_value;
+        store->lon = coordinates->children.first->num.dbl_value;
+
+        const char *retail_group = nx_json_get(json_store, "RetailGroupName")->text_value;
+        for (int i = 0; store_chain_map[i] != NULL; i++)
+        {
+            if (strcmp(retail_group, store_chain_map[i]) == 0)
+            {
+                store->chain = i;
+                break;
+            }
+        }
+
+        snprintf((char *)store->address, STORE_ADDRESS_LENGTH, "%s, %d %s",
+                 nx_json_get(json_store, "Address")->text_value,
+                 (int)nx_json_get(json_store, "Zipcode")->num.u_value,
+                 nx_json_get(json_store, "City")->text_value);
     }
+
+    return count;
 }

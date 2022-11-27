@@ -1,33 +1,27 @@
 #include "fetch.h"
 #include "parse.h"
+#include "../calc.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <curl/curl.h>
 
-/**
- * Sends a get-request to the selected endpoint, modifying *result to contain the response-data.
- *
- * @details Doesn't follow the originally agreed upon specs, as those didn't include returning error codes to the caller.
- *
- * @author bliztle <asbjoern.r.e@gmail.com>
- * @param url Url to the endpoint. This is assumed to be a full URL.
- * @param token Optional bearer token used for authorization
- * @param result Pointer to the resulting string when fetch_get is done
- *
- * @returns a status code indicating the success state
- */
-fetch_status_e fetch_get(char *url, char *token, char *result)
+static const char *token_type_map[] = {
+    [FETCH_AUTH_BEARER] = "Authorization: Bearer",
+    [FETCH_AUTH_OCP_APIM] = "Ocp-Apim-Subscription-Key:",
+};
+
+fetch_status_e fetch_get(char *url, fetch_auth_e token_type, char *token, char **result)
 {
     char auth_header[60];
-    snprintf(auth_header, 60, "Authorization: Bearer %s", token);
+    snprintf(auth_header, 60, "%s %s", token_type_map[token_type], token);
 
     CURL *curl = curl_easy_init();
     if (!curl)
         return FETCH_STATUS_CURL_ERROR;
 
     CURLcode res_code;
-    fetch_response_s res = {result, strlen(result)};
+    fetch_response_s res = {NULL, 0};
 
     struct curl_slist *headers = NULL;
     headers = curl_slist_append(headers, "Accept: application/json");
@@ -57,60 +51,15 @@ fetch_status_e fetch_get(char *url, char *token, char *result)
     curl_easy_cleanup(curl);
     curl_slist_free_all(headers);
 
+    *result = res.response;
+
     return FETCH_STATUS_SUCCESS;
 }
 
-// TODO: Remove this when proper functions have been implemented
-/* Make a sample call to salling's "relevant products" api for "hakkekod"*/
-int fetch_salling_test()
-{
-    char *token = "8fc39b17-cd57-40db-b9d8-85c7c3756589", *vendor = "salling";
-    char auth_header[60];
-    snprintf(auth_header, 60, "Authorization: Bearer %s", token);
-
-    CURL *curl = curl_easy_init();
-    if (!curl)
-        return 1;
-
-    CURLcode res_code;
-    fetch_response_s res = {NULL, 0};
-
-    struct curl_slist *headers = NULL;
-    headers = curl_slist_append(headers, "Accept: application/json");
-    headers = curl_slist_append(headers, "Content-type: application/json");
-    headers = curl_slist_append(headers, "charset: utf-8");
-    headers = curl_slist_append(headers, auth_header);
-
-    curl_easy_setopt(curl, CURLOPT_URL, "https://api.sallinggroup.com/v1-beta/product-suggestions/relevant-products?query=hakkekod");
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, fetch_write_callback);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&res);
-
-    res_code = curl_easy_perform(curl);
-
-    // Check for errors
-    if (res_code != CURLE_OK)
-        fprintf(stderr, "curl_easy_perform() failed: %s\n",
-                curl_easy_strerror(res_code));
-
-    // Cleanup and print
-    curl_easy_cleanup(curl);
-    curl_slist_free_all(headers);
-    printf("\n\nResponse:\n%s\n", res.response);
-
-    salling_relevant_products *products = parse_salling_relevant_products(res.response);
-    print_salling_relevant_products(products);
-}
-
-/**
- * Callback function for curl to write output to.
- * collects data in chunks from buffer and writes to the prelimenary response
- */
 size_t fetch_write_callback(char *buffer, size_t size, size_t buffer_length, void *prelim_response)
 {
     size_t realsize = size * buffer_length;
     fetch_response_s *mem = (fetch_response_s *)prelim_response;
-    printf("[response length]: %zu", realsize + mem->size);
 
     // Allocate memory for existing response plus buffer
     char *ptr = realloc(mem->response, mem->size + realsize + 1);
@@ -126,25 +75,181 @@ size_t fetch_write_callback(char *buffer, size_t size, size_t buffer_length, voi
     return realsize;
 }
 
-int fetch_get_stores(store_s *stores)
+fetch_status_e fetch_renew_stores()
 {
-
+    store_s *stores = NULL;
     int count = 0;
-    count = fetch_get_coop_stores(stores, count);
-    count = fetch_get_salling_stores(stores, count);
+    fetch_renew_coop_stores(&stores, &count);
+    fetch_renew_salling_stores(&stores, &count);
+    _fetch_write_stores(stores, count);
+
+    return FETCH_STATUS_SUCCESS;
 }
 
-int fetch_get_coop_stores(store_s *stores, int count)
+fetch_status_e fetch_renew_coop_stores(store_s **stores, int *count)
 {
     // TODO: Read from config
-    const double lat = 57.025760, lon = 9.958440;
-    const int distance = 5000;
-    const char *token = "ed1b7976-ca43-4bde-a930-ba3d92935464";
+    double lat = 57.025760, lon = 9.958440;
+    int distance = 6000;
+    char *token = "8042a78a1c91463e80140b0cb11b8b47";
 
-    return 0;
+    // char url[255];
+    // snprintf(url, 255,
+    //          "https://api.cl.coop.dk/storeapi/v1/stores?page=1&size=5000",
+    //          distance, lat, lon);
+
+    char *url = "https://api.cl.coop.dk/storeapi/v1/stores?page=1&size=5000";
+
+    // char url[255];
+    // snprintf(url, 255,
+    //          "https://api.cl.coop.dk/storeapi/v1/stores/find/radius/%d?latitude=%f&longitude=%f",
+    //          distance, lat, lon);
+
+    char *raw_stores = NULL;
+    fetch_status_e status = fetch_get(url, FETCH_AUTH_OCP_APIM, token, &raw_stores);
+
+    if (status != FETCH_STATUS_SUCCESS)
+        return status;
+
+    store_s *parsed_stores = NULL;
+    int new_count = parse_coop_stores(raw_stores, &parsed_stores);
+
+    for (int i = 0; i < new_count; i++)
+    {
+        if (calc_coordinate_distance(lat, lon, parsed_stores[i].lat, parsed_stores[i].lon) * 1000 < distance)
+        // if (1)
+        {
+            *stores = realloc(*stores, (++(*count)) * sizeof(store_s));
+            (*stores)[*count - 1] = parsed_stores[i];
+        }
+    }
+
+    // *stores = realloc(*stores, (*count + new_count) * sizeof(store_s));
+    // memcpy(&(*stores[(*count)]), parsed_stores, new_count * sizeof(store_s));
+
+    // *count += new_count;
+    free(raw_stores);
+
+    return FETCH_STATUS_SUCCESS;
 }
 
-int fetch_get_salling_stores(store_s *stores, int count)
+fetch_status_e fetch_renew_salling_stores(store_s **stores, int *count)
 {
-    return 0;
+    // TODO: Read from config
+    double lat = 57.025760, lon = 9.958440;
+    int distance = 6000; // Closest store is 6 km away
+    char *token = "ed1b7976-ca43-4bde-a930-ba3d92935464";
+
+    char url[255];
+    snprintf(url, 255,
+             "https://api.sallinggroup.com/v2/stores?brand=bilka&fields=address%%2Cbrand%%2Ccoordinates%%2Cdistance_km%%2Cname%%2Cid&geo=%.4f%%2C%.4f&page=1&per_page=100&radius=%.2f",
+             lat, lon, (double)distance / 1000);
+
+    char *raw_stores = NULL;
+    fetch_status_e status = fetch_get(url, FETCH_AUTH_BEARER, token, &raw_stores);
+
+    if (status != FETCH_STATUS_SUCCESS)
+        return status;
+
+    store_s *parsed_stores = NULL;
+    int new_count = parse_salling_stores(raw_stores, &parsed_stores);
+
+    *stores = realloc(*stores, (*count + new_count) * sizeof(store_s));
+    memcpy(&((*stores)[(*count)]), parsed_stores, new_count * sizeof(store_s));
+
+    *count += new_count;
+    free(raw_stores);
+
+    return FETCH_STATUS_SUCCESS;
+}
+
+int fetch_get_stores(store_s **stores)
+{
+    return _fetch_read_stores(stores);
+}
+
+int _fetch_read_stores(store_s **stores)
+{
+    char format_string[100];
+    char s_f[7];
+    snprintf(s_f, 7, "%%[^%c\n]", FILE_STORES_SEPERATOR);
+    snprintf(format_string, 100, "%s%c%s%c%s%c%%lf%c%%lf%c%%d%c%%d%c%%d\n",
+             s_f, FILE_STORES_SEPERATOR,
+             s_f, FILE_STORES_SEPERATOR,
+             s_f, FILE_STORES_SEPERATOR,
+             FILE_STORES_SEPERATOR,
+             FILE_STORES_SEPERATOR,
+             FILE_STORES_SEPERATOR,
+             FILE_STORES_SEPERATOR);
+
+    FILE *file = fopen(FILE_STORES, "r");
+    if (file == NULL)
+    {
+        printf("Error reading nearby stores. Try adjusting your address\n");
+        return 0;
+    }
+
+    store_s store;
+    store.total_price = 0;
+    store.item_count = 0;
+    store.missing_items_count = 0;
+    store.items = NULL;
+    store.missing_items = NULL;
+
+    int count = 0;
+    while (EOF != fscanf(file, format_string,
+                         &store.uid,
+                         &store.name,
+                         &store.address,
+                         &store.lat,
+                         &store.lon,
+                         &store.group,
+                         &store.chain,
+                         &store.distance))
+    {
+        *stores = realloc(*stores, (++count) * sizeof(store_s));
+        (*stores)[count - 1] = store;
+    }
+
+    fclose(file);
+    return count;
+}
+
+void _fetch_write_stores(store_s *stores, int count)
+{
+    FILE *file = fopen(FILE_STORES, "w");
+
+    for (int i = 0; i < count; i++)
+    {
+        fprintf(file, "%s%c%s%c%s%c%f%c%f%c%d%c%d%c%d\n",
+                stores[i].uid, FILE_STORES_SEPERATOR,
+                stores[i].name, FILE_STORES_SEPERATOR,
+                stores[i].address, FILE_STORES_SEPERATOR,
+                stores[i].lat, FILE_STORES_SEPERATOR,
+                stores[i].lon, FILE_STORES_SEPERATOR,
+                stores[i].group, FILE_STORES_SEPERATOR,
+                stores[i].chain, FILE_STORES_SEPERATOR,
+                stores[i].distance);
+    }
+
+    fclose(file);
+}
+
+void fetch_print_stores(store_s *stores, int count)
+{
+    for (int i = 0; i < count; i++)
+        fetch_print_store(&stores[i]);
+}
+
+void fetch_print_store(store_s *store)
+{
+    printf("\n%s\n%s\n%s\n%f\n%f\n%d\n%d\n%d\n",
+           store->uid,
+           store->name,
+           store->address,
+           store->lat,
+           store->lon,
+           store->group,
+           store->chain,
+           store->distance);
 }
