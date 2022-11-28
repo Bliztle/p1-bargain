@@ -15,6 +15,9 @@ jobs:
           style: file
           lines-changed-only: false
           files-changed-only: false
+          thread-comments: true
+          
+          ignore: "libraries"
 
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed > 0
