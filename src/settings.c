@@ -21,13 +21,18 @@ void menu_settings() {
     // Store the user's input-string in a "large enough" array
     char user_input[100];
 
-    /*settings_print_menu();*/
     //TODO display_menu(options, menu_text, help_text);
 
-    
+    char* options[100];
+    strcpy(options[0], "Change the export path");
+    strcpy(options[1], "Change the address");
+    strcpy(options[2], "Change the distance limit");
+    strcpy(options[3], "Change the size deviation");
+
+    char menu_text[100] = "Choose the setting you want to edit";
+    char help_text[100] = "!q to quit the program";
 
     display_menu(options, menu_text, help_text);
-
 
     while (1) {
         scanf("%s", user_input);
@@ -63,22 +68,6 @@ void menu_settings() {
             printf("Please try again>");
         }
     }
-}
-
-void settings_print_menu() { // Temporary printing of the settings
-    char savepath[] = "IDK lol";
-    printf("1. Change savepath\nCurrent savepath is: %s\n\n", savepath);
-
-    char address[] = "308 negra arroyo lane, albuquerque, New Mexico";
-    printf("2. Change address\nCurrent address is: %s\n\n", address);
-
-    double distance = 1.5;
-    printf("3. Change distance\nCurrent distance is: %.2lf km\n\n", distance);
-
-    double deviation = 0.1;
-    printf("4. Change deviation\nCurrent deviation is: %.2lf\n\n", deviation);
-
-    printf("Please enter the setting you wish to edit> ");
 }
 
 int settings_get_command(char* input) { // Look for command through the input

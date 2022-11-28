@@ -7,7 +7,8 @@ target_link_libraries(main libcurl m)
 add_subdirectory(api)
 configure_file(settings.conf settings.conf COPYONLY)
 
-add_executable(settings settings.c)
+add_executable(settings settings.c
+                menu.c)
 
 # Testing
 add_executable(calc_test calc_test.c calc.c)
