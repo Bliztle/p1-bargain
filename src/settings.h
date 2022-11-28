@@ -51,34 +51,30 @@ void settings_edit(int setting);
  * @param setting the setting to validate
  * @return true or false
  */
-int settings_validate(char *new_input, int setting);
+int settings_validate(char* new_input, int setting);
 
 /**
- * Validates address
+ * @brief Validates address
  * @return true or false
  */
-int settings_validate_address(char *new_input);
+int settings_validate_address(char* new_input);
 
 /**
  * @brief Validates distance
  * @return true or false
  */
-int settings_validate_distance(char *new_input);
+int settings_validate_distance(char* new_input);
 
 /**
  * @brief Validates the deviation
  * @return true or false
 */
-int settings_validate_deviation(char *new_input);
+int settings_validate_deviation(char* new_input);
 
 /**
  * @brief Validates the path
  * @return true or false
 */
-int settings_validate_path(char *new_input);
+int settings_validate_path(char* new_input);
 
-//! TEMP FUNCTIONS
-/**
- * Prints current settings in the terminal for the user
-*/
-void settings_print_menu();
+void settings_print_menu(char* input);
