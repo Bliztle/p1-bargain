@@ -24,10 +24,9 @@ void menu_settings() {
     /*settings_print_menu();*/
     //TODO display_menu(options, menu_text, help_text);
 
-    
 
-    display_menu(options, menu_text, help_text);
-
+    char * options_text[] = {"Change savepath", "Change address", "Change distance", "Change deviation"};
+    display_menu(options_text, "This is the settings menu, please choose one of the following:", "nah");
 
     while (1) {
         scanf("%s", user_input);
