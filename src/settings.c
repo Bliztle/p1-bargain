@@ -10,20 +10,14 @@
 
 // Just for testing purposes
 int main(void) {
-    printf("\nbuild success\n\n");
-
     menu_settings();
 
     return 0;
 }
 
 void menu_settings() {
-    // Store the user's input-string in a "large enough" array
-    //char user_input[100];
+    char* options[4];
 
-    //TODO display_menu(options, menu_text, help_text);
-
-    char* options[100];
     options[0] = "Change the export path";
     options[1] = "Change the address";
     options[2] = "Change the distance limit";
@@ -32,13 +26,8 @@ void menu_settings() {
     char menu_text[100] = "Choose the setting you want to edit";
     char help_text[100] = "!q to quit the program";
 
-    //scanf("%s", user_input);
-
     while (1) {
         int option = display_menu(options, menu_text, help_text);
-
-        // Edit the chosen setting from numeration
-        //char first_char = user_input[0];
 
         switch (option) {
             case PATH:
@@ -57,57 +46,22 @@ void menu_settings() {
                 settings_edit(DEVIATION);
                 break;
         }
-
-        // If !q quit the loop
-        /*if (settings_get_command(user_input) == 1) {
-            break;
-        }
-        else {// Input didn't relate to any command or setting, so try again
-            fprintf(stderr, RED "\nError: Invalid option\n\n" RESET);
-            printf("Please try again>");
-        }*/
-    }
-}
-
-int settings_get_command(char* input) { // Look for command through the input
-    if (!strcmp(input, QUIT_CMD)) { // Command is quit (!q)
-        return 1;
-    }
-    else if (!strcmp(input, HELP_CMD)) { // Command is help (!h)
-        printf("Help menu\n");
-        return 0;
-    }
-    else { // No command was found
-        return -1;
     }
 }
 
 void settings_edit(int setting) {
+    char menu_text[100] = "Type in the new value";
+    char help_text[100] = "!q to go back";
+
     while (1) {
-        //* char **options, char* menu_text, char* help_text, 
-        //TODO display_menu(options, menu_text, help_text);
+        int option = display_menu(0, menu_text, help_text);
 
-        // Store the user's input-string in a "large enough" array
-        char new_input[100];
-
-        printf("\nCurrent setting is [setting]\n");
-        printf("Enter new setting>");
-        scanf("%s", new_input);
+        if (option == -1) {
+            return;
+        }
 
         if (setting == ADDRESS) { // Get the coordinates if address is chosen
             settings_get_coord();
-        }
-
-        if (settings_get_command(new_input) == 1) { // Check for command
-            return;
-        }
-        else if (settings_validate(new_input, setting)) { // Validation of user's input
-            // TODO: write_to_file();
-
-            return;
-        }
-        else {
-            fprintf(stderr, RED "Error: Invalid input\n" RESET);
         }
     }
 }
@@ -144,7 +98,7 @@ int settings_validate_path(char *new_input) {
     FILE* file = fopen(new_input, "r");
 
     if (file == NULL) { // A folder cannot be opened by fopen()
-        perror(RED "Error" RESET);
+        perror("Error");
         return 0;
     }
 
@@ -158,9 +112,7 @@ int settings_validate_deviation(char *new_input) {
     char *endptr;
     double deviation = strtod(new_input, &endptr);
 
-    if (deviation >= 0) return 1;
-
-    return 0;
+    return deviation >= 0;
 }
 
 int settings_validate_distance(char *new_input) {
@@ -168,9 +120,7 @@ int settings_validate_distance(char *new_input) {
     char *endptr;
     double distance = strtod(new_input, &endptr);
 
-    if (distance >= 0) return 1;
-
-    return 0;
+    return distance >= 0;
 }
 
 int settings_validate_address(char *new_input) {
