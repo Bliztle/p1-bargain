@@ -37,7 +37,9 @@ typedef struct {
 typedef enum
 {
     KVICKLY,
-    FAKTA
+    FAKTA,
+    COOP,
+    SALLING
 } store_chain_e;
 
 typedef struct

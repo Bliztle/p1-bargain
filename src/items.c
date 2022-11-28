@@ -63,6 +63,7 @@ int items_is_in_variation(double store_item_size, double variance, double reques
 }
 
 void items_filter_items(basket_item_s *basket, int basket_size, store_s *store) {
+    //TODO Change to read basket from file
 
     for (int n = 0; n < basket_size; n++) {
 
