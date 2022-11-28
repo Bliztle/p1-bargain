@@ -12,8 +12,8 @@ int main() {
 
 int test_items_filter_items() {
 
-    time_t t;
-    srand((unsigned) time((&t)));
+    time_t tmp = 0;
+    srand((unsigned) time((&tmp)));
 
     char *names[16];
 
