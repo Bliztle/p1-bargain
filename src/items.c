@@ -13,8 +13,8 @@ int items_find_best_match(basket_item_s requested_item, store_s *store, found_it
     // Initialising the fields that will be compared against in the  search loop, in order to prevent garbage memory
     // creating unexpected results.
     found_item_s best_item = {
-        .price_per_unit = -1, // Set to -1 to differentiate first run.
         .count = 0,
+        .price_per_unit = -1, // Set to -1 to differentiate first run.
     };
 
     int item_found = 0;
