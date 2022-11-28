@@ -114,10 +114,6 @@ found_item_s items_convert_to_found_item(store_item_s input_item, int item_count
 
 int items_compare_item_names(char* name_to_find, char* name_to_search) {
 
-    if (strstr(name_to_search, name_to_find) != NULL) {
-        return 1;
-    } else {
-        return 0;
-    }
+    return strstr(name_to_search, name_to_find) != NULL;
 
 }
