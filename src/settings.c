@@ -21,7 +21,9 @@ void menu_settings() {
     // Store the user's input-string in a "large enough" array
     char user_input[100];
 
-    settings_print_menu();
+    /*settings_print_menu();*/
+    // TODO: display_menu(options, menu_text, help_text);
+
 
     while (1) {
         scanf("%s", user_input);
@@ -92,6 +94,8 @@ int settings_get_command(char* input) { // Look for command through the input
 void settings_edit(int setting) {
     while (1) {
         // TODO: print_setting();
+        //* char **options, char* menu_text, char* help_text, 
+        //*  display_menu(options, menu_text, help_text);
 
         // Store the user's input-string in a "large enough" array
         char new_input[100];
