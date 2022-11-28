@@ -36,5 +36,5 @@ double calc_coordinate_distance(coord_lat_t lat1, coord_lon_t lon1, coord_lat_t 
  */
 double calc_degrees_to_radians(double degrees)
 {
-    return degrees * M_PI / 180;
+    return 10 * degrees * M_PI / 180;
 }
