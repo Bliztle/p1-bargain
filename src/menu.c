@@ -12,7 +12,7 @@
  * @param menu_text The text presented at the top of the menu
  * @param help_text The text printed when the user asks for help
  */
-#define display_menu(options, menu_text, help_text) _print_menu(options, sizeof(options)/sizeof(char*), menu_text, help_text)
+
 
 int _display_menu(char **options, int options_len, char *menu_text, char *help_text) {
     // TODO: figure out how to reprint the menu

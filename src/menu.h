@@ -8,3 +8,5 @@
  * @param help_text The text printed when the user asks for help
  */
 int _display_menu(char** options, int options_len, char* menu_text, char* help_text);
+
+#define display_menu(options, menu_text, help_text) _display_menu(options, sizeof(options)/sizeof(char*), menu_text, help_text)
