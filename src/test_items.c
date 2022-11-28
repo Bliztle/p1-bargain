@@ -303,6 +303,8 @@ int test_items_filter_items() {
                get_unit(store.items[i].unit));
     }
 
+    free(store.items);
+
     printf("Found Items\n--------------------------------\n");
     for (int i = 0; i < store.found_items_count; i++)
     {
@@ -322,6 +324,8 @@ int test_items_filter_items() {
                store.found_items[i].product_price * store.found_items[i].count);
     }
 
+    free(store.found_items);
+
     printf("Missing Items\n--------------------------------\n");
     for (int i = 0; i < store.missing_items_count; i++)
     {
@@ -331,7 +335,6 @@ int test_items_filter_items() {
         printf("unit: %s\n\n", get_unit(store.missing_items[i].unit));
     }
 
-    free(store.found_items);
     free(store.missing_items);
 
     return 0;
