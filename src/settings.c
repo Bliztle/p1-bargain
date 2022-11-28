@@ -24,10 +24,10 @@ void menu_settings() {
     //TODO display_menu(options, menu_text, help_text);
 
     char* options[100];
-    strcpy(options[0], "Change the export path");
-    strcpy(options[1], "Change the address");
-    strcpy(options[2], "Change the distance limit");
-    strcpy(options[3], "Change the size deviation");
+    options[0] = "Change the export path";
+    options[1] = "Change the address";
+    options[2] = "Change the distance limit";
+    options[3] = "Change the size deviation";
 
     char menu_text[100] = "Choose the setting you want to edit";
     char help_text[100] = "!q to quit the program";

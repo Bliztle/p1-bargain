@@ -17,7 +17,7 @@
 int _display_menu(char **options, int options_len, char *menu_text, char *help_text) {
     // TODO: figure out how to reprint the menu
     printf("%s\n", menu_text);
-    printf("Enter !q to quit, or !h to get help");
+    printf("Enter !q to quit, or !h to get help\n");
     // Print the menu options
     for (int i = 0; i < options_len; i++) {
         printf("[%d] %s\n", i+1, options[i]);
