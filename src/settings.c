@@ -27,9 +27,9 @@ void menu_settings() {
     char help_text[100] = "!q to quit the program";
 
     while (1) {
-        int option = display_menu(options, menu_text, help_text);
+        int selected_option = display_menu(options, menu_text, help_text);
 
-        switch (option) {
+        switch (selected_option) {
             case PATH:
                 settings_edit(PATH);
                 break;
@@ -50,52 +50,54 @@ void menu_settings() {
 }
 
 void settings_edit(int setting) {
+    char input[100];
+
     char menu_text[100] = "Type in the new value";
     char help_text[100] = "!q to go back";
 
     while (1) {
-        int option = display_menu(0, menu_text, help_text);
+        int selected_option = display_menu(0, menu_text, help_text); // TODO: need another function for this
 
-        if (option == -1) {
+        if (selected_option == -1) {
             return;
         }
 
-        if (setting == ADDRESS) { // Get the coordinates if address is chosen
-            settings_get_coord();
-        }
+        int is_valid = settings_validate(input, setting);
+
+        // TODO: write to file if input is valid else give error
+
     }
 }
 
-int settings_validate(char *new_input, int setting) {
+int settings_validate(char *input, int setting) {
     switch (setting) { // Maps setting to the right validation
         case PATH:
-            return settings_validate_path(new_input);
+            return settings_validate_path(input);
 
         case ADDRESS:
-            return settings_validate_address(new_input);
+            return settings_validate_address(input);
 
         case DISTANCE:
-            return settings_validate_distance(new_input);
+            return settings_validate_distance(input);
 
         case DEVIATION:
-            return settings_validate_deviation(new_input);
+            return settings_validate_deviation(input);
 
         default:
             return 0;
     }
 }
 
-int settings_validate_path(char *new_input) {
-
+int settings_validate_path(char *input) {
     // Make sure the file type is right
     char file_type[] = FILE_TYPE;
 
-    if (strstr(new_input, file_type) != file_type) {
+    if (strstr(input, file_type) != file_type) {
         return 0;
     }
 
     // Since it technically still could be a folder, we open the file
-    FILE* file = fopen(new_input, "r");
+    FILE* file = fopen(input, "r");
 
     if (file == NULL) { // A folder cannot be opened by fopen()
         perror("Error");
@@ -107,23 +109,23 @@ int settings_validate_path(char *new_input) {
     return 1;
 }
 
-int settings_validate_deviation(char *new_input) {
+int settings_validate_deviation(char *input) {
     // Converts string to double and checks if it's valid as a deviation
     char *endptr;
-    double deviation = strtod(new_input, &endptr);
+    double deviation = strtod(input, &endptr);
 
     return deviation >= 0;
 }
 
-int settings_validate_distance(char *new_input) {
+int settings_validate_distance(char *input) {
     // Converts string to double and checks if it's valid as a distance
     char *endptr;
-    double distance = strtod(new_input, &endptr);
+    double distance = strtod(input, &endptr);
 
     return distance >= 0;
 }
 
-int settings_validate_address(char *new_input) {
+int settings_validate_address(char *input) {
     // TODO: add validation for address
 }
 
