@@ -54,11 +54,10 @@ void menu_settings() {
         else if (settings_get_command(user_input) == 1) {
             break;
         }
-
-        // Input didn't relate to any command or setting, so try again
-        fprintf(stderr, RED "\nError: Invalid option\n\n" RESET);
-
-        printf("Please try again>");
+        else {// Input didn't relate to any command or setting, so try again
+            fprintf(stderr, RED "\nError: Invalid option\n\n" RESET);
+            printf("Please try again>");
+        }
     }
 }
 
