@@ -19,7 +19,7 @@ int main(void) {
 
 void menu_settings() {
     // Store the user's input-string in a "large enough" array
-    char user_input[100];
+    //char user_input[100];
 
     //TODO display_menu(options, menu_text, help_text);
 
@@ -32,41 +32,40 @@ void menu_settings() {
     char menu_text[100] = "Choose the setting you want to edit";
     char help_text[100] = "!q to quit the program";
 
-    display_menu(options, menu_text, help_text);
+    //scanf("%s", user_input);
 
     while (1) {
-        scanf("%s", user_input);
+        int option = display_menu(options, menu_text, help_text);
 
         // Edit the chosen setting from numeration
-        if (strlen(user_input) == 1) {
-            char first_char = user_input[0];
+        //char first_char = user_input[0];
 
-            switch (first_char) {
-                case '1':
-                    settings_edit(PATH);
-                    break;
+        switch (option) {
+            case PATH:
+                settings_edit(PATH);
+                break;
 
-                case '2':
-                    settings_edit(ADDRESS);
-                    break;
+            case ADDRESS:
+                settings_edit(ADDRESS);
+                break;
 
-                case '3':
-                    settings_edit(DISTANCE);
-                    break;
+            case DISTANCE:
+                settings_edit(DISTANCE);
+                break;
 
-                case '4':
-                    settings_edit(DEVIATION);
-                    break;
-            }
-        } 
+            case DEVIATION:
+                settings_edit(DEVIATION);
+                break;
+        }
+
         // If !q quit the loop
-        else if (settings_get_command(user_input) == 1) {
+        /*if (settings_get_command(user_input) == 1) {
             break;
         }
         else {// Input didn't relate to any command or setting, so try again
             fprintf(stderr, RED "\nError: Invalid option\n\n" RESET);
             printf("Please try again>");
-        }
+        }*/
     }
 }
 

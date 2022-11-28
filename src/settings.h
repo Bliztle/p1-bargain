@@ -15,10 +15,10 @@
 
 /// TYPEDEFS
 typedef enum {
-    PATH, // 0
-    ADDRESS, // 1
-    DISTANCE, // 2
-    DEVIATION // 3
+    PATH = 1, // 1
+    ADDRESS, // 2
+    DISTANCE, // 3
+    DEVIATION // 4
 } settings_e;
 
 /// FUNCTION PROTOTYPES
