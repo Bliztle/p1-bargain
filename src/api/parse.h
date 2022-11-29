@@ -2,6 +2,7 @@
 #define P1_BARGAIN_PARSE_H
 
 #include "../items_types.h"
+#include "../config.h"
 
 /**
  * Parses a raw json string from Salling's store API to an array of store_s structs
@@ -26,5 +27,12 @@ int parse_salling_stores(char *raw_stores, store_s **stores);
  * @returns how many stores were parsed
  */
 int parse_coop_stores(char *raw_stores, store_s **stores);
+
+/**
+* Parses coordinates from Google API into latitude and longtitude
+*
+* @param raw_coords Raw json to parse into latitude and longtitude
+*/
+void parse_coordinates(char* raw_coords);
 
 #endif

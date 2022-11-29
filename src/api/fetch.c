@@ -272,8 +272,25 @@ fetch_status_e fetch_coordinates(char* address) {
     int token_len = strlen(token);
 
     for (int i = 0; i < address_len; ++i) {
-        if (address[i] == ' ') {
+        if (address[i] == ' ') {    
+
             address_len += 2;
+
+            char* tmp = realloc(address, address_len);
+
+            if (tmp == NULL) {
+                perror("Error");
+                exit(EXIT_FAILURE);
+            }
+            else {
+                address = tmp;
+            }
+
+            memmove(address + i + 3, address + i + 1, address_len - i - 1);
+
+            address[i] = '%';
+            address[i + 1] = '2';
+            address[i + 2] = '0';
         }
     }
 
@@ -281,17 +298,19 @@ fetch_status_e fetch_coordinates(char* address) {
 
     char url[len];
 
-    strcat(url, url_start);
-    strcat(url, address);
-    strcat(url, token);
+    strncpy(url, url_start, len);
+    strncat(url, address, len);
+    strncat(url, token, len);
+
+    free(address);
 
     char* result;
 
-    //fetch_status_e status = fetch_get_no_auth(url, &result);
+    fetch_status_e status = fetch_get_no_auth(url, &result);
 
-    /*if (status != FETCH_STATUS_SUCCESS) {
+    if (status != FETCH_STATUS_SUCCESS) {
         return status;
-    }*/
-    
-    printf("%s, %d", address, address_len);
+    }
+
+    printf("%s", result);
 }
