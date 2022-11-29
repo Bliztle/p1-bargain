@@ -16,7 +16,6 @@ jobs:
           lines-changed-only: false
           files-changed-only: false
           thread-comments: true
-          
           ignore: "libraries"
 
       - name: Fail fast?!
