@@ -52,20 +52,27 @@ void menu_settings() {
 void settings_edit(int setting) {
     char input[100];
 
-    char menu_text[100] = "Type in the new value";
+    char menu_text[100] = "Current setting is [setting]\nEnter new setting";
     char help_text[100] = "!q to go back";
+    printf("\n%s\n", menu_text);
 
     while (1) {
-        int selected_option = display_menu(0, menu_text, help_text); // TODO: need another function for this
 
-        if (selected_option == -1) {
+        printf(">");
+        scanf_s(" %s", input, sizeof(input) / sizeof(input[0]));
+
+
+        if (strstr(input, "!q")) {
             return;
         }
+        else if (strstr(input, "!h")) {
+            printf("%s\n", help_text);
+        }
 
-        int is_valid = settings_validate(input, setting);
-
-        // TODO: write to file if input is valid else give error
-
+        else if (settings_validate(input, setting)) {
+            // TODO: Write to config
+            return;
+        }
     }
 }
 
