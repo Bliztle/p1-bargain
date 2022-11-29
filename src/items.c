@@ -105,7 +105,7 @@ found_item_s items_convert_to_found_item(store_item_s input_item, int item_count
     };
 
     tmp.total_price =  tmp.count * tmp.product_price;
-    strlcpy(tmp.name, input_item.name, sizeof(tmp.name));
+    strcpy(tmp.name, input_item.name);
 
     return tmp;
 
