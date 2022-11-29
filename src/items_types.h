@@ -72,7 +72,7 @@ typedef enum
     FAKTA,
     COOP,
     SALLING
-} store_chain_e;
+} store_group_e;
 
 typedef struct
 {
