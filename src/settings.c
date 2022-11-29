@@ -10,142 +10,97 @@
 
 // Just for testing purposes
 int main(void) {
-    printf("\nbuild success\n\n");
-
     menu_settings();
 
     return 0;
 }
 
 void menu_settings() {
-    // Store the user's input-string in a "large enough" array
-    char user_input[100];
+    char* options[4];
 
-    //TODO display_menu(options, menu_text, help_text);
-
-    char* options[100];
-    strcpy(options[0], "Change the export path");
-    strcpy(options[1], "Change the address");
-    strcpy(options[2], "Change the distance limit");
-    strcpy(options[3], "Change the size deviation");
+    options[0] = "Change the export path";
+    options[1] = "Change the address";
+    options[2] = "Change the distance limit";
+    options[3] = "Change the size deviation";
 
     char menu_text[100] = "Choose the setting you want to edit";
     char help_text[100] = "!q to quit the program";
 
-    display_menu(options, menu_text, help_text);
-
     while (1) {
-        scanf("%s", user_input);
+        int selected_option = display_menu(options, menu_text, help_text);
 
-        // Edit the chosen setting from numeration
-        if (strlen(user_input) == 1) {
-            char first_char = user_input[0];
+        switch (selected_option) {
+            case PATH:
+                settings_edit(PATH);
+                break;
 
-            switch (first_char) {
-                case '1':
-                    settings_edit(PATH);
-                    break;
+            case ADDRESS:
+                settings_edit(ADDRESS);
+                break;
 
-                case '2':
-                    settings_edit(ADDRESS);
-                    break;
+            case DISTANCE:
+                settings_edit(DISTANCE);
+                break;
 
-                case '3':
-                    settings_edit(DISTANCE);
-                    break;
-
-                case '4':
-                    settings_edit(DEVIATION);
-                    break;
-            }
-        } 
-        // If !q quit the loop
-        else if (settings_get_command(user_input) == 1) {
-            break;
+            case DEVIATION:
+                settings_edit(DEVIATION);
+                break;
         }
-        else {// Input didn't relate to any command or setting, so try again
-            fprintf(stderr, RED "\nError: Invalid option\n\n" RESET);
-            printf("Please try again>");
-        }
-    }
-}
-
-int settings_get_command(char* input) { // Look for command through the input
-    if (!strcmp(input, QUIT_CMD)) { // Command is quit (!q)
-        return 1;
-    }
-    else if (!strcmp(input, HELP_CMD)) { // Command is help (!h)
-        printf("Help menu\n");
-        return 0;
-    }
-    else { // No command was found
-        return -1;
     }
 }
 
 void settings_edit(int setting) {
+    char input[100];
+
+    char menu_text[100] = "Type in the new value";
+    char help_text[100] = "!q to go back";
+
     while (1) {
-        //* char **options, char* menu_text, char* help_text, 
-        //TODO display_menu(options, menu_text, help_text);
+        int selected_option = display_menu(0, menu_text, help_text); // TODO: need another function for this
 
-        // Store the user's input-string in a "large enough" array
-        char new_input[100];
-
-        printf("\nCurrent setting is [setting]\n");
-        printf("Enter new setting>");
-        scanf("%s", new_input);
-
-        if (setting == ADDRESS) { // Get the coordinates if address is chosen
-            settings_get_coord();
-        }
-
-        if (settings_get_command(new_input) == 1) { // Check for command
+        if (selected_option == -1) {
             return;
         }
-        else if (settings_validate(new_input, setting)) { // Validation of user's input
-            // TODO: write_to_file();
 
-            return;
-        }
-        else {
-            fprintf(stderr, RED "Error: Invalid input\n" RESET);
-        }
+        int is_valid = settings_validate(input, setting);
+
+        // TODO: write to file if input is valid else give error
+
     }
 }
 
-int settings_validate(char *new_input, int setting) {
+int settings_validate(char *input, int setting) {
     switch (setting) { // Maps setting to the right validation
         case PATH:
-            return settings_validate_path(new_input);
+            return settings_validate_path(input);
 
         case ADDRESS:
-            return settings_validate_address(new_input);
+            return settings_validate_address(input);
 
         case DISTANCE:
-            return settings_validate_distance(new_input);
+            return settings_validate_distance(input);
 
         case DEVIATION:
-            return settings_validate_deviation(new_input);
+            return settings_validate_deviation(input);
 
         default:
             return 0;
     }
 }
 
-int settings_validate_path(char *new_input) {
-
+int settings_validate_path(char *input) {
     // Make sure the file type is right
     char file_type[] = FILE_TYPE;
 
-    if (strstr(new_input, file_type) != file_type) {
+    if (strstr(input, file_type) != file_type) {
         return 0;
     }
 
     // Since it technically still could be a folder, we open the file
-    FILE* file = fopen(new_input, "r");
+    FILE* file = fopen(input, "r");
 
     if (file == NULL) { // A folder cannot be opened by fopen()
-        perror(RED "Error" RESET);
+        perror("Error");
         return 0;
     }
 
@@ -154,27 +109,23 @@ int settings_validate_path(char *new_input) {
     return 1;
 }
 
-int settings_validate_deviation(char *new_input) {
+int settings_validate_deviation(char *input) {
     // Converts string to double and checks if it's valid as a deviation
     char *endptr;
-    double deviation = strtod(new_input, &endptr);
+    double deviation = strtod(input, &endptr);
 
-    if (deviation >= 0) return 1;
-
-    return 0;
+    return deviation >= 0;
 }
 
-int settings_validate_distance(char *new_input) {
+int settings_validate_distance(char *input) {
     // Converts string to double and checks if it's valid as a distance
     char *endptr;
-    double distance = strtod(new_input, &endptr);
+    double distance = strtod(input, &endptr);
 
-    if (distance >= 0) return 1;
-
-    return 0;
+    return distance >= 0;
 }
 
-int settings_validate_address(char *new_input) {
+int settings_validate_address(char *input) {
     // TODO: add validation for address
 }
 
