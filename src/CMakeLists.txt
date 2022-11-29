@@ -11,6 +11,10 @@ add_executable(settings settings.c
                 menu.c)
 
 # Testing
+add_executable(test_items test_items.c items.c)
+target_link_libraries(test_items m)
+add_test(NAME test_items COMMAND test_items)
 add_executable(calc_test calc_test.c calc.c)
 target_link_libraries(calc_test m)
 add_test(NAME calc_test COMMAND calc_test)
+
