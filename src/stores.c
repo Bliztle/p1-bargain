@@ -1,6 +1,10 @@
+#include <stdlib.h>
+#include <stdio.h>
+
 #include "stores.h"
 #include "items_types.h"
-#include <stdlib.h>
+#include "items.h"
+#include "api/fetch.h"
 
 void stores_populate_store_items(store_s* stores, int store_count) {
     for (int n = 0; n < store_count; n++) {
@@ -8,10 +12,10 @@ void stores_populate_store_items(store_s* stores, int store_count) {
         switch (stores[n].chain)
         {
         case COOP:
-            get_coop_items();
+            //get_coop_items(); TODO: Implement when function get_coop_items has been implemented.
             break;
         case SALLING:
-            get_salling_items();
+            //get_salling_items(); TODO: Implement when function get_salling_items has been implemented.
             break;
         default:
             //TODO make able to print any type after got enum.
@@ -19,17 +23,17 @@ void stores_populate_store_items(store_s* stores, int store_count) {
             break;
         }
         //TODO remove basket from call, filter will read basket from file
-        items_filter_items(stores[n]);
+        // items_filter_items(stores[n]);
     }
 }
 
-int stores_compare_stores(store_s a, store_s b) {
+int stores_compare_stores(store_s* a, store_s* b) {
 
-    if (a.found_items_count == b.found_items_count) {
+    if (a->found_items_count == b->found_items_count) {
         
-        return (a.found_items_total_price - b.found_items_total_price);
+        return (a->found_items_total_price - b->found_items_total_price);
 
     }
     
-    return (a.found_items_count - b.found_items_count);
+    return (a->found_items_count - b->found_items_count);
 }

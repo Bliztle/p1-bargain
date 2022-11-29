@@ -19,6 +19,6 @@ void stores_populate_store_items(store_s* stores, int store_count);
  * @param b secound store for comparison 
 */
 
-int stores_compare_stores(const void* a, const void* b);
+int stores_compare_stores(store_s* a, store_s* b);
 
 #endif /* STORES_H */

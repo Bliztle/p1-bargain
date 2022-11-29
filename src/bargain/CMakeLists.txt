@@ -1,0 +1,1 @@
+add_executable( test_bargain test_bargain.c)

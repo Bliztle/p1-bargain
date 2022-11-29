@@ -278,7 +278,7 @@ int test_items_filter_items() {
         printf("name: %s\n size: %lf\n unit: %s\n\n",
                basket[i].name,
                basket[i].size,
-               get_unit(basket[i].unit));
+               bargain_get_unit(basket[i].unit));
     }
     printf("Basket Items End\n--------------------------------\n");
 
@@ -300,7 +300,7 @@ int test_items_filter_items() {
                store.items[i].price,
                store.items[i].price_per_unit,
                store.items[i].size,
-               get_unit(store.items[i].unit));
+               bargain_get_unit(store.items[i].unit));
     }
 
 
@@ -318,7 +318,7 @@ int test_items_filter_items() {
                store.found_items[i].product_price,
                store.found_items[i].price_per_unit,
                store.found_items[i].size,
-               get_unit(store.found_items[i].unit),
+               bargain_get_unit(store.found_items[i].unit),
                store.found_items[i].count,
                store.found_items[i].product_price * store.found_items[i].count);
     }
@@ -330,7 +330,7 @@ int test_items_filter_items() {
         printf("Item %d:\n", i);
         printf("name: %s\n", store.missing_items[i].name);
         printf("size: %lf\n", store.missing_items[i].size);
-        printf("unit: %s\n\n", get_unit(store.missing_items[i].unit));
+        printf("unit: %s\n\n", bargain_get_unit(store.missing_items[i].unit));
     }
 
    free(store.items);
@@ -353,7 +353,7 @@ double rand_price() {
     return rand() % (500 + 1 - 1) + 1;
 }
 
-char* get_unit(int n) {
+char* bargain_get_unit(int n) {
 
     switch (n) {
         case 0: {
