@@ -45,6 +45,10 @@ int _display_menu(char **options, int options_len, char *menu_text, char *help_t
             }
             continue;
         }
+        if (option > options_len) {
+            printf("Please select a valid option\n\n");
+            continue;
+        }
         return option;
     }
 }
