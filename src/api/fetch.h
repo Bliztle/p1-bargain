@@ -2,7 +2,7 @@
 #define FETCH_H
 
 #include <stddef.h>
-#include "parse.h"
+#include "../items_types.h"
 
 typedef enum
 {
