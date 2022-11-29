@@ -16,16 +16,31 @@ int main()
     int count = 0;
     store_s *stores = NULL;
 
+    printf("General fetch tests\n");
+    char *result = NULL;
+    fetch_status_e fetch_get_status = fetch_get_no_auth("https://example.com", &result); // fetch_get_no_auth is basically aliassing fetch_get
+    assert(fetch_get_status == FETCH_STATUS_SUCCESS);
+
     printf("Fetch renew tests\n");
-    assert(fetch_renew_salling_stores(&stores, &count) == FETCH_STATUS_SUCCESS);
+    fetch_status_e fetch_renew_salling_stores_status = fetch_renew_salling_stores(&stores, &count) == FETCH_STATUS_SUCCESS;
+    assert(fetch_renew_salling_stores_status == FETCH_STATUS_SUCCESS);
+
     //! Not run, as we have limited api calls
     // assert(fetch_renew_coop_stores(&stores, &count) == FETCH_STATUS_SUCCESS);
     // assert(fetch_renew_stores() == FETCH_STATUS_SUCCESS);
 
     printf("\nfetch read test\n");
     stores = NULL;
-    int read_count = _fetch_read_stores(&stores);
-    assert(read_count > 0);
+    int lines = 0, read_count = _fetch_read_stores(&stores);
+
+    // Count lines in stores file
+    FILE *fp = fopen(FILE_STORES, "r");
+    if (fp != NULL) // Tests cannot fail if file is null, as they are null if fetch_renew_stores() test is never run
+        while (!feof(fp))
+            if (fgetc(fp) == '\n')
+                lines++;
+
+    assert(read_count == lines || read_count == lines - 1);
     fetch_print_stores(stores, read_count);
 
     return 0;
