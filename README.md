@@ -1,4 +1,4 @@
-![example event parameter]https://github.com/Bliztle/p1-bargain/blob/main/.github/workflows/cmake-tests.yml/badge.svg?event=push
+![example event parameter](https://github.com/Bliztle/p1-bargain/actions/workflows/cmake-tests.yml/badge.svg?event=push)
 
 # p1-bargain
 This is a description of our P1 project.
