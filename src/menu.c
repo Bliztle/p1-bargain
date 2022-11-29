@@ -3,6 +3,8 @@
 #include <string.h>
 #include "menu.h"
 
+static const char* INVALID_OPTION_TEXT = "Please select a valid option\n\n";
+
 /**
  * Prints a numbered list of `options`, and allows the user to pick one of them, or get help. This is not intended to be called directly, but through the `print_menu` macro.
  * This is just a wrapper for `_print_menu` that automatically passes the length of the array.
@@ -41,12 +43,12 @@ int _display_menu(char **options, int options_len, char *menu_text, char *help_t
                 printf("%s\n\n", help_text);
             } else {
                 // If the user entered something invalid, we just ignore it and try again
-                printf("Please select a valid option\n\n");
+                printf("%s", INVALID_OPTION_TEXT);
             }
             continue;
         }
         if (option > options_len) {
-            printf("Please select a valid option\n\n");
+            printf("%s", INVALID_OPTION_TEXT);
             continue;
         }
         return option;
