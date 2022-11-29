@@ -1,4 +1,8 @@
+#ifndef FETCH_H
+#define FETCH_H
+
 #include <stddef.h>
+#include "parse.h"
 
 typedef enum
 {
@@ -21,3 +25,7 @@ size_t fetch_write_callback(char *buffer, size_t size, size_t buffer_length, voi
 int fetch_get_stores(store_s *stores);
 int fetch_get_coop_stores(store_s *stores, int count);
 int fetch_get_salling_stores(store_s *stores, int count);
+
+int fetch_renew_stores();
+
+#endif
