@@ -19,17 +19,17 @@ int items_find_best_match(basket_item_s requested_item, store_s *store, found_it
 
     int item_found = 0;
 
-    for (int ite = 0; ite < store->items_count; ite++) {
+    for (int i = 0; i < store->items_count; i++) {
 
-        if (items_compare_item_names(requested_item.name, store->items[ite].name)
-        && (store->items[ite].unit == requested_item.unit)
-        && (store->items[ite].price_per_unit < best_item.price_per_unit || best_item.price_per_unit == - 1)) {
+        if (items_compare_item_names(requested_item.name, store->items[i].name)
+        && (store->items[i].unit == requested_item.unit)
+        && (store->items[i].price_per_unit < best_item.price_per_unit || best_item.price_per_unit == - 1)) {
 
-            int count = items_is_in_variation(store->items[ite].size, variance, requested_item.size);
+            int count = items_is_in_variation(store->items[i].size, variance, requested_item.size);
                 
             if (count > 0) {
 
-                best_item = items_convert_to_found_item(store->items[ite], count);
+                best_item = items_convert_to_found_item(store->items[i], count);
                 item_found = 1;
 
             }
@@ -63,12 +63,12 @@ int items_is_in_variation(double store_item_size, double variance, double reques
 
 void items_filter_items(basket_item_s *basket, int basket_size, store_s *store) {
 
-    for (int ite = 0; ite < basket_size; ite++) {
+    for (int i = 0; i < basket_size; i++) {
 
         found_item_s found_item;
         basket_item_s missing_item;
 
-        if (items_find_best_match(basket[ite], store, &found_item, &missing_item)) {
+        if (items_find_best_match(basket[i], store, &found_item, &missing_item)) {
 
             items_add_item_to_found(found_item, store);
 
