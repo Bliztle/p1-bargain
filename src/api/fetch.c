@@ -1,6 +1,7 @@
 #include "fetch.h"
 #include "parse.h"
 #include "../calc.h"
+#include "../items_types.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -197,10 +198,12 @@ int _fetch_read_stores(store_s **stores)
 
     store_s store;
     store.total_price = 0;
-    store.item_count = 0;
+    store.items_count = 0;
     store.missing_items_count = 0;
+    store.found_items_count = 0;
     store.items = NULL;
     store.missing_items = NULL;
+    store.found_items = NULL;
 
     int count = 0;
     while (EOF != fscanf(file, format_string,
