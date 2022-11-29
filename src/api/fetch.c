@@ -264,26 +264,34 @@ void fetch_print_store(store_s *store)
 }
 
 fetch_status_e fetch_coordinates(char* address) {
+    char* url_start = "https://maps.googleapis.com/maps/api/geocode/json?address=";
+    char* token = "&key=AIzaSyCwIirwXs-zd2_TZU6uLll6BOHdaIQVDeM";
 
-    for (int i = 0; address[i] != '\0'; ++i) {
+    int address_len = strlen(address);
+    int url_len = strlen(url_start);
+    int token_len = strlen(token);
+
+    for (int i = 0; i < address_len; ++i) {
         if (address[i] == ' ') {
-            address[i] == '%';
-
-            memcpy(address[i+3], address[i+1]);
+            address_len += 2;
         }
     }
 
-    char* url = "https://maps.googleapis.com/maps/api/geocode/json?address=Aalborg";
+    int len = address_len + url_len + token_len;
 
-    char* token = "&key=AIzaSyCwIirwXs-zd2_TZU6uLll6BOHdaIQVDeM";
+    char url[len];
+
+    strcat(url, url_start);
+    strcat(url, address);
+    strcat(url, token);
 
     char* result;
 
-    fetch_status_e status = fetch_get_no_auth(url, &result);
+    //fetch_status_e status = fetch_get_no_auth(url, &result);
 
-    if (status != FETCH_STATUS_SUCCESS) {
+    /*if (status != FETCH_STATUS_SUCCESS) {
         return status;
-    }
+    }*/
     
-    printf("%s", result);
+    printf("%s, %d", address, address_len);
 }

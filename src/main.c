@@ -9,7 +9,7 @@ int main(int argc, char **args)
 {
     printf("Hello, World!\n");
 
-    char* address = "Aalborg";
+    char* address = "Aalborg Øst";
 
     fetch_coordinates(address);
 
