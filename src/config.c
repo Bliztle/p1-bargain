@@ -8,3 +8,11 @@ int main(void) {
     
     return 0;
 }
+
+conf_settings_s conf_read_settings() {
+    int i;
+}
+
+void config_write_settings(conf_settings_s settings) {
+
+}

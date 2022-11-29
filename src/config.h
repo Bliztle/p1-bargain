@@ -20,8 +20,9 @@ typedef struct {
  * @returns the parsed config
  */
 conf_settings_s conf_read_settings();
+
 /**
  * Writes the given settings to the settings file on disk
- * @params settings The settings to write
+ * @param settings The settings to write
  */
 void conf_write_settings(conf_settings_s settings);
