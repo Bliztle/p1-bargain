@@ -1,10 +1,10 @@
 #pragma once
 #include "api/parse.h"
 
-typedef char conf_address_t[50];
+typedef char conf_address_t[100];
 // TODO: The typedefs for coordinates already exist in parse.h. Maybe they should be somewhere else?
 typedef double conf_deviance_t;
-typedef double conf_max_distance_t;
+typedef int conf_max_distance_t;
 typedef char conf_save_path_t[256];
 
 typedef struct {
@@ -41,3 +41,5 @@ void config_parse_path(FILE * config_file, conf_save_path_t save_path);
  * @param distance The value to save to
  */
 void config_parse_distance(FILE * config_file, conf_max_distance_t * distance);
+
+void config_parse_address(FILE * config_file, conf_address_t * address);
