@@ -48,3 +48,17 @@ void config_parse_distance(FILE * config_file, conf_max_distance_t * distance);
  * @param address The char[] to save to
  */
 void config_parse_address(FILE * config_file, conf_address_t * address);
+
+/**
+ * TODO write documentation this is not correct
+ * @param config_file The file to read from
+ * @param address The char[] to save to
+ */
+void config_parse_coords(FILE * config_file, coord_lat_t * address_lat, coord_lon_t * address_lon);
+
+/**
+ * TODO write documentation this is not correct
+ * @param config_file The file to read from
+ * @param address The char[] to save to
+ */
+void config_parse_deviance(FILE * config_file, conf_deviance_t * deviance);
