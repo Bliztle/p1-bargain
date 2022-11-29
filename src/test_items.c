@@ -7,13 +7,15 @@
 #include "time.h"
 
 int main() {
-    test_items_filter_items();
+    int test_items = (!test_items_filter_items());
+    assert(test_items);
+    return 0;
 }
 
 int test_items_filter_items() {
 
-    time_t t;
-    srand((unsigned) time((&t)));
+    time_t tmp = 0;
+    srand((unsigned) time((&tmp)));
 
     char *names[16];
 
@@ -43,9 +45,9 @@ int test_items_filter_items() {
     not_in_store_names[4] = "gamble";
 
     store_s store = {
-        .found_items = malloc(2048),
-        .items = malloc(2048),
-        .missing_items = malloc(2048)
+        .found_items = malloc(100 * sizeof(store_item_s)),
+        .items = malloc(100 * sizeof(store_item_s)),
+        .missing_items = malloc(100 * sizeof(store_item_s))
     };
 
     store_item_s item1 = {
@@ -280,9 +282,7 @@ int test_items_filter_items() {
     }
     printf("Basket Items End\n--------------------------------\n");
 
-    store.found_items = malloc(2048);
     store.found_items_count = 0;
-    store.missing_items = malloc(2048);
     store.missing_items_count = 0;
 
     items_filter_items(basket, 14, &store);
@@ -303,6 +303,7 @@ int test_items_filter_items() {
                get_unit(store.items[i].unit));
     }
 
+
     printf("Found Items\n--------------------------------\n");
     for (int i = 0; i < store.found_items_count; i++)
     {
@@ -322,6 +323,7 @@ int test_items_filter_items() {
                store.found_items[i].product_price * store.found_items[i].count);
     }
 
+
     printf("Missing Items\n--------------------------------\n");
     for (int i = 0; i < store.missing_items_count; i++)
     {
@@ -331,9 +333,10 @@ int test_items_filter_items() {
         printf("unit: %s\n\n", get_unit(store.missing_items[i].unit));
     }
 
-    free(store.found_items);
-    free(store.missing_items);
-
+   free(store.items);
+   free(store.found_items);
+   free(store.missing_items);
+   
     return 0;
 }
 
