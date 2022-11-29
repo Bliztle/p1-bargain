@@ -143,3 +143,10 @@ void fetch_print_store(store_s *store);
  * @param stores pointer to the store to print
  */
 void fetch_print_stores(store_s *stores, int count);
+
+/**
+ * Get address coordinates from Google Maps
+ * @param address the address that the user 
+ * @return success status
+*/
+fetch_status_e fetch_coordinates(char* address); 

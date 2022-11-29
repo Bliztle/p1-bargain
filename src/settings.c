@@ -8,14 +8,6 @@
 
 #include "settings.h"
 
-// Just for testing purposes
-int main(void) {
-    //menu_settings();
-    settings_get_coord();
-
-    return 0;
-}
-
 void menu_settings() {
     char* options[4];
 
@@ -64,7 +56,7 @@ void settings_edit(int setting) {
     while (1) {
 
         printf(">");
-        scanf_s(" %s", input, sizeof(input) / sizeof(input[0]));
+        scanf(" %s", input);
 
 
         if (strstr(input, "!q")) {
@@ -139,15 +131,4 @@ int settings_validate_distance(char *input) {
 
 int settings_validate_address(char *input) {
     // TODO: add validation for address
-}
-
-void settings_get_coord() {
-    
-    char url[2000] = "https://maps.googleapis.com/maps/api/geocode/json?address=Aalborg&key=AIzaSyCwIirwXs-zd2_TZU6uLll6BOHdaIQVDeM";
-
-    char result[2000];
-
-    fetch_get(url, 0, result);
-    
-    printf("%s", result);
 }

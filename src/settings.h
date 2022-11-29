@@ -43,11 +43,6 @@ int settings_validate(char* new_input, int setting);
 int settings_validate_address(char* new_input);
 
 /**
- * @brief Get coordinates of the address
-*/
-void settings_get_coord();
-
-/**
  * @brief Validates distance
  * @return true or false
  */

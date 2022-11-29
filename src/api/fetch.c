@@ -262,3 +262,28 @@ void fetch_print_store(store_s *store)
            store->chain,
            store->distance);
 }
+
+fetch_status_e fetch_coordinates(char* address) {
+
+    for (int i = 0; address[i] != '\0'; ++i) {
+        if (address[i] == ' ') {
+            address[i] == '%';
+
+            memcpy(address[i+3], address[i+1]);
+        }
+    }
+
+    char* url = "https://maps.googleapis.com/maps/api/geocode/json?address=Aalborg";
+
+    char* token = "&key=AIzaSyCwIirwXs-zd2_TZU6uLll6BOHdaIQVDeM";
+
+    char* result;
+
+    fetch_status_e status = fetch_get_no_auth(url, &result);
+
+    if (status != FETCH_STATUS_SUCCESS) {
+        return status;
+    }
+    
+    printf("%s", result);
+}

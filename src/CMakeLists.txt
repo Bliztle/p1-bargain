@@ -2,15 +2,13 @@ add_executable( main main.c
                 calc.c
                 api/fetch.c
                 api/parse.c
-                api/nxjson/nxjson.c )
+                api/nxjson/nxjson.c
+                settings.c
+                menu.c)
+
 target_link_libraries(main libcurl m)
 add_subdirectory(api)
 configure_file(settings.conf settings.conf COPYONLY)
-
-add_executable( settings settings.c
-                menu.c 
-                api/fetch.c
-                api/nxjson/nxjson.c)
 
 # Testing
 add_executable(test_items test_items.c items.c)
