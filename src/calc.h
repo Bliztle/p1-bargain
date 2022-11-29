@@ -1,3 +1,5 @@
+#pragma once
+
 #include "api/parse.h"
 
 #define EARTH_RADIUS_KILOMETERS 6371
