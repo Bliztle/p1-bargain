@@ -12,7 +12,6 @@
 
 typedef int (*compfn)(const void*, const void*);
 
-
 void bargain_menu_find_bargain() {
 
     store_s *stores = malloc(MAX_STORES_COUNT * sizeof(store_s));
