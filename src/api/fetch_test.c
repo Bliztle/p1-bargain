@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include "fetch.h"
+#include "../items_types.h"
 
 /**
  * Tests for fetch.c
@@ -22,7 +23,7 @@ int main()
     assert(fetch_get_status == FETCH_STATUS_SUCCESS);
 
     printf("Fetch renew tests\n");
-    fetch_status_e fetch_renew_salling_stores_status = fetch_renew_salling_stores(&stores, &count) == FETCH_STATUS_SUCCESS;
+    fetch_status_e fetch_renew_salling_stores_status = fetch_renew_salling_stores(&stores, &count);
     assert(fetch_renew_salling_stores_status == FETCH_STATUS_SUCCESS);
 
     //! Not run, as we have limited api calls
