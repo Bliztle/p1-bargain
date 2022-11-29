@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "menu.h"
+#include "api/fetch.h"
 
 /// DEFINES
 #define FILE_TYPE ".txt"

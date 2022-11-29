@@ -10,7 +10,8 @@
 
 // Just for testing purposes
 int main(void) {
-    menu_settings();
+    //menu_settings();
+    settings_get_coord();
 
     return 0;
 }
@@ -141,5 +142,12 @@ int settings_validate_address(char *input) {
 }
 
 void settings_get_coord() {
-    // TODO: get user coordinates from address
+    
+    char url[2000] = "https://maps.googleapis.com/maps/api/geocode/json?address=Aalborg&key=AIzaSyCwIirwXs-zd2_TZU6uLll6BOHdaIQVDeM";
+
+    char result[2000];
+
+    fetch_get(url, 0, result);
+    
+    printf("%s", result);
 }
