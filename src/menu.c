@@ -35,7 +35,10 @@ int _display_menu(char **options, int options_len, char *menu_text, char *help_t
         int option = strtol(input, NULL, 10);
 
         if (option == 0) {
-            // TODO: There is probably a nicer way to write this, but this *should* cover any C-weirdness that might happen to the string
+            if (strlen(input) != 2) {
+                printf("%s", INVALID_OPTION_TEXT);
+                continue;
+            }
             if (strstr(input, "!q") != NULL) {
                 return -1;
             }
