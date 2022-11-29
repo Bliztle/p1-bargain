@@ -11,7 +11,8 @@ static const char *token_type_map[] = {
     [FETCH_AUTH_OCP_APIM] = "Ocp-Apim-Subscription-Key:",
 };
 
-fetch_status_e fetch_get_no_auth(char *url, char **result) {
+fetch_status_e fetch_get_no_auth(char *url, char **result)
+{
     return fetch_get(url, 0, NULL, result);
 }
 
@@ -35,6 +36,7 @@ fetch_status_e fetch_get(char *url, fetch_auth_e token_type, char *token, char *
 
     curl_easy_setopt(curl, CURLOPT_URL, url);
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L); // Follow redirects
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, fetch_write_callback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&res);
 
@@ -189,7 +191,7 @@ int _fetch_read_stores(store_s **stores)
     FILE *file = fopen(FILE_STORES, "r");
     if (file == NULL)
     {
-        printf("Error reading nearby stores. Try adjusting your address\n");
+        printf("Someting went wrong while reading nearby stores. Try adjusting your address\n");
         return 0;
     }
 
