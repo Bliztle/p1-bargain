@@ -7,7 +7,7 @@
 #include <string.h>
 #include <curl/curl.h>
 
-static const char *token_type_map[] = {
+static const char const *token_type_map[] = {
     [FETCH_AUTH_BEARER] = "Authorization: Bearer",
     [FETCH_AUTH_OCP_APIM] = "Ocp-Apim-Subscription-Key:",
 };
