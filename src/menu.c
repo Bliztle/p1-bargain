@@ -22,11 +22,12 @@ int _display_menu(char **options, int options_len, char *menu_text, char *help_t
             printf("[%d] %s\n", i+1, options[i]);
         }
         printf("> ");
-        // Let's hope that no one decides to enter more than 16 characters in the menu :^)
         // We need to read the input into a string first, because we need to check whether it's a number, a command, or something invalid
         // The {'\0'} initializes the array to be filled with the '\0' character
         char input[16] = {'\0'};
-        scanf(" %s", input);
+        fgets(input, sizeof(input), stdin);
+        // Since `fgets` puts a newline at the end of the string, we simply find the first newline character in the buffer (which is what `strcspn` does) and replace it with a null-byte to mark the end of the string.
+        input[strcspn(input, "\r\n")] = '\0';
         
         // Try to convert the user input to a base 10 number. Returns 0 if the number is invalid
         int option = strtol(input, NULL, 10);
