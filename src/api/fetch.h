@@ -33,12 +33,26 @@ typedef struct
  *
  * @author bliztle <asbjoern.r.e@gmail.com>
  * @param url Url to the endpoint. This is assumed to be a full URL.
+ * @param token_type type of auth token
  * @param token Optional bearer token used for authorization
  * @param result Pointer to the resulting string when fetch_get is done
  *
  * @returns a status code indicating the success state
  */
 fetch_status_e fetch_get(char *url, fetch_auth_e token_type, char *token, char **result);
+
+/**
+ * Sends a get-request to the selected endpoint, modifying *result to contain the response-data.
+ *
+ * @details Doesn't follow the originally agreed upon specs, as those didn't include returning error codes to the caller.
+ *
+ * @author bliztle <asbjoern.r.e@gmail.com>
+ * @param url Url to the endpoint. This is assumed to be a full URL.
+ * @param result Pointer to the resulting string when fetch_get is done
+ *
+ * @returns a status code indicating the success state
+ */
+fetch_status_e fetch_get_no_auth(char *url, char **result);
 
 /**
  * Callback function for curl to write output to.

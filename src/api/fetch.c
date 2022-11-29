@@ -11,6 +11,10 @@ static const char *token_type_map[] = {
     [FETCH_AUTH_OCP_APIM] = "Ocp-Apim-Subscription-Key:",
 };
 
+fetch_status_e fetch_get_no_auth(char *url, char **result) {
+    return fetch_get(url, 0, NULL, result);
+}
+
 fetch_status_e fetch_get(char *url, fetch_auth_e token_type, char *token, char **result)
 {
     char auth_header[60];
