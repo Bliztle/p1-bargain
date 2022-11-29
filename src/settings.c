@@ -45,6 +45,10 @@ void menu_settings() {
             case DEVIATION:
                 settings_edit(DEVIATION);
                 break;
+
+            default:
+                printf("Invalid command, please enter again\n");
+                break;
         }
     }
 }
