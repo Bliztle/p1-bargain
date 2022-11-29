@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stddef.h>
-#include "parse.h"
+#include "../items_types.h"
 
 #define FILE_STORES "stores.txt"
 #define FILE_STORES_SEPERATOR '|'
