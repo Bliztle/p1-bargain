@@ -85,6 +85,7 @@ void items_add_item_to_found(found_item_s item, store_s *store) {
 
     store->found_items[store->found_items_count] = item;
     store->found_items_count++;
+    store->found_items_total_price += item.total_price;
 
 }
 

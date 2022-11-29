@@ -1,10 +1,10 @@
 #ifndef P1_BARGAIN_ITEMS_TYPES_H
 #define P1_BARGAIN_ITEMS_TYPES_H
 
-#define ITEM_NAME_SIZE 100 // Exact size of a UUID, as used by salling. Coop just uses 3-digit ints which we cast to strings
+#define ITEM_NAME_SIZE 100 
 #define STORE_NAME_SIZE 50
 #define ADDRESS_SIZE 50 // Denmarks longest street name is 27 characters, so this is plenty https://stiften.dk/artikel/aarhus-har-landets-l%C3%A6ngste-vejnavne
-#define SALLING_UUID_SIZE 37
+#define SALLING_UUID_SIZE 37 // Exact size of a UUID, as used by salling. Coop just uses 3-digit ints which we cast to strings
 
 typedef enum
 {
@@ -57,12 +57,14 @@ typedef struct
     store_chain_e chain;
     store_item_s *items;
     int items_count;
+
     int distance; // in meters
 
     basket_item_s *missing_items;
     found_item_s *found_items;
     int missing_items_count;
     int found_items_count;
+    double found_items_total_price;
 
 } store_s;
 
