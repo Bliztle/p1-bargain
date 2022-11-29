@@ -26,3 +26,9 @@ conf_settings_s conf_read_settings();
  * @param settings The settings to write
  */
 void conf_write_settings(conf_settings_s settings);
+
+/**
+ *
+ * @returns pointer to the first character of the string of the path
+ */
+char * config_parse_path();
