@@ -7,60 +7,40 @@
 
 #define SETTINGS_PATH "settings.conf"
 
-static const char* TOKENS_PATH = "tokens.conf";
+//static const char* TOKENS_PATH = "tokens.conf";
 
-int main(void) {
-    conf_settings_s current_settings = conf_read_settings(SETTINGS_PATH);
-    printf("%s\n", current_settings.shopping_list_save_path);
-    printf("%d\n", current_settings.max_distance);
-    printf("%s\n", current_settings.address);
-    printf("%lf %lf\n", current_settings.address_lat, current_settings.address_lon);
-    printf("%lf\n", current_settings.deviance);
-
-    strcpy(current_settings.shopping_list_save_path, "C:\\Users\\username\\desktop\\bargain\\shoppinglist.txt");
-    strcpy(current_settings.address , "korruptionsgade 5 100 christiansborg");
-    current_settings.max_distance = 1500;
-    current_settings.deviance = 0.050;
-    current_settings.address_lat = 57.025760;
-    current_settings.address_lon = 9.958440;
-
-    conf_write_settings(current_settings, SETTINGS_PATH);
-}
-
-conf_settings_s conf_read_settings(char * path) {
-    FILE * config_file;
-    config_file = fopen(path, "r");
+int conf_read_settings(conf_settings_s * conf_settings) {
+    FILE * config_file = fopen(SETTINGS_PATH, "r");
     if (config_file == NULL) {
         perror("File does not exist in this path");
-        exit(EXIT_FAILURE);
+        return 0;
     }
 
     conf_settings_s read_settings;
 
-    fscanf(config_file, "%*s %s", read_settings.shopping_list_save_path);
-    fscanf(config_file, "%*s %d", &read_settings.max_distance);
-    fscanf(config_file, "%*s %[^\n]s", read_settings.address);
+    fscanf(config_file, "%*s %s", conf_settings->shopping_list_save_path);
+    fscanf(config_file, "%*s %d", &conf_settings->max_distance);
+    fscanf(config_file, "%*s %[^\n]s", conf_settings->address);
 
     char lat_temp[20], lon_temp[20];
     fscanf(config_file, "%*s %s %s", lat_temp, lon_temp);
     char * endptr;
-    read_settings.address_lat = strtod(lat_temp, &endptr);
-    read_settings.address_lon = strtod(lon_temp, &endptr);
+    conf_settings->address_lat = strtod(lat_temp, &endptr);
+    conf_settings->address_lon = strtod(lon_temp, &endptr);
 
     char dev_temp[20];
     fscanf(config_file, "%*s %s", dev_temp);
-    read_settings.deviance = strtod(dev_temp, endptr);
+    conf_settings->deviance = strtod(dev_temp, &endptr);
 
     fclose(config_file);
-    return read_settings;
+    return 1;
 }
 
-void conf_write_settings(conf_settings_s settings, char * path) {
-    FILE * config_file;
-    config_file = fopen(path, "w");
+int conf_write_settings(conf_settings_s settings) {
+    FILE * config_file = fopen(SETTINGS_PATH, "w");
     if (config_file == NULL) {
         perror("File does not exist in this path");
-        exit(EXIT_FAILURE);
+        return 0;
     }
 
     fprintf(config_file, "path %s\n", settings.shopping_list_save_path);
@@ -70,4 +50,5 @@ void conf_write_settings(conf_settings_s settings, char * path) {
     fprintf(config_file, "deviance %lf", settings.deviance);
 
     fclose(config_file);
+    return 1;
 }
