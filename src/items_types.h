@@ -27,18 +27,17 @@ typedef enum
 typedef enum
 {
     STORE_GROUP_BILKA,
-
     STORE_GROUP_SUPER_BRUGSEN,
     STORE_GROUP_KVICKLY,
     STORE_GROUP_DAGLI_BRUGSEN,
-    STORE_GROUP_FAKTA, // COOP 365 falls in this category, due to the out-facing of Fakta
+    STORE_GROUP_FAKTA, // COOP 365 falls in this category, due to the out-phasing of Fakta
     STORE_GROUP_FAKTA_GERMANY,
     STORE_GROUP_IRMA,
     STORE_GROUP_GROENLAND,
     STORE_GROUP_COOP_DK, // coop.dk
     STORE_GROUP_FK,
     STORE_GROUP_COOP_MAD
-} store_chain_e;
+} store_group_e;
 
 typedef struct
 {
@@ -68,11 +67,9 @@ typedef struct {
 
 typedef enum
 {
-    KVICKLY,
-    FAKTA,
     COOP,
     SALLING
-} store_group_e;
+} store_chain_e;
 
 typedef struct
 {

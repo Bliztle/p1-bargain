@@ -3,9 +3,10 @@
 #include <stdio.h>
 
 #include "bargain.h"
-#include "../stores.h"
-#include "../items_types.h"
+#include "stores.h"
+#include "items_types.h"
 #include "menu.h"
+#include "test_bargain.h"
 // #include "api/fetch.h"
 
 #define MAX_STORES_COUNT 30
@@ -49,14 +50,13 @@ void bargain_menu_find_bargain() {
         bargain_menu_print_bargain(stores[selected_bargain]);
         bargain_menu_find_bargain();
     }
-
 }
 
-int bargain_find_bargain(store_s* stores) {
+int bargain_find_bargain(store_s *stores) {
 
-    int store_count = 10; //fetch_get_stores(stores); TODO: Make sure everything in store structs is initialised beyond this point.
+    int store_count = test_fetch_get_stores(&stores); //fetch_get_stores(&stores); TODO: Make sure everything in store structs is initialised beyond this point.
     
-    stores_populate_store_items(stores, store_count);
+    stores_populate_store_items(&stores, store_count);
 
     qsort(stores, store_count, sizeof(store_s), (compfn)stores_compare_stores);
 
@@ -72,7 +72,7 @@ char* bargain_get_print_bargain_string(store_s store) {
 
     get_size_of_list_entries(store, &found_entry_size, &missing_entry_size);
 
-    bargain_string = realloc(bargain_string, sizeof(bargain_string) + found_entry_size);
+    bargain_string = realloc(&bargain_string, sizeof(bargain_string) + found_entry_size);
 
     create_found_entries(store, &bargain_string);
     

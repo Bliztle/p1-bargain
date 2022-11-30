@@ -1,6 +1,6 @@
 #ifndef BARGAIN_H
 #define BARGAIN_H
-#include "../items_types.h"
+#include "items_types.h"
 
 /**
  * Starts the process of finding the cheapest store.
