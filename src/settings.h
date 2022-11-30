@@ -1,9 +1,13 @@
+#ifndef SETTINGS_H
+#define SETTINGS_H
+
 /// INCLUDES
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "menu.h"
 #include "api/fetch.h"
+#include "api/parse.h"
 
 /// DEFINES
 #define FILE_TYPE ".txt"
@@ -37,12 +41,6 @@ void settings_edit(int setting);
 int settings_validate(char* new_input, int setting);
 
 /**
- * @brief Validates address
- * @return true or false
- */
-int settings_validate_address(char* new_input);
-
-/**
  * @brief Validates distance
  * @return true or false
  */
@@ -59,3 +57,5 @@ int settings_validate_deviation(char* new_input);
  * @return true or false
 */
 int settings_validate_path(char* new_input);
+
+#endif

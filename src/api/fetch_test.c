@@ -44,5 +44,14 @@ int main()
     assert(read_count == lines || read_count == lines - 1);
     fetch_print_stores(stores, read_count);
 
+    printf("Fetch coordinates test\n");
+
+    char* input_address = "Aalborg";
+    char* raw_coordinates;
+
+    fetch_status_e fetch_coordinates_status = fetch_coordinates(input_address, &raw_coordinates);
+
+    assert(fetch_coordinates_status == FETCH_STATUS_SUCCESS);
+
     return 0;
 }

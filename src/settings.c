@@ -74,12 +74,16 @@ void settings_edit(int setting) {
 }
 
 int settings_validate(char *input, int setting) {
+    char* raw_coordinates;
+    conf_settings_s settings;
+
     switch (setting) { // Maps setting to the right validation
         case PATH:
             return settings_validate_path(input);
 
         case ADDRESS:
-            return settings_validate_address(input);
+            fetch_coordinates(input, &raw_coordinates);
+            return parse_coordinates(raw_coordinates, &settings);
 
         case DISTANCE:
             return settings_validate_distance(input);
@@ -127,8 +131,4 @@ int settings_validate_distance(char *input) {
     double distance = strtod(input, &endptr);
 
     return distance >= 0;
-}
-
-int settings_validate_address(char *input) {
-    // TODO: add validation for address
 }
