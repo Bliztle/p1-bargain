@@ -41,6 +41,23 @@ int parse_coop_stores(char *raw_stores, store_s **stores);
 int parse_coop_items(const nx_json *json, store_item_s **items);
 
 /**
+ * Parses a json object from Salling's suggestions API to an array of store_item_s structs
+ *
+ * @author Bliztle <asbjoern.r.e@gmail.com>
+ *
+ * @param json Object containing api response parsed to json
+ * @param stores A pointer to a null pointer. This will be modified to point at the items
+ *
+ * @returns how many items were parsed
+ */
+int parse_salling_items(char* raw_items, store_item_s **items);
+
+void parse_populate_item_unit(store_item_s *item);
+char *parse_try_regex_group(char* source, char* regex);
+double parse_try_extract_size(char *source, char *unit_str);
+char *parse_replace_char(char *source, char find, char replace);
+
+/**
  * Writes the contens of a file to the content argumment
  *
  * @author Bliztle <asbjoern.r.e@gmail.com>

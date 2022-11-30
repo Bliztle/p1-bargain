@@ -30,13 +30,14 @@ fetch_status_e fetch_get(char *url, fetch_auth_e token_type, char *token, char *
     CURLcode res_code;
     fetch_response_s res = {NULL, 0};
 
+    char *_url = encode_danish(url);
     struct curl_slist *headers = NULL;
     headers = curl_slist_append(headers, "Accept: application/json");
     headers = curl_slist_append(headers, "Content-type: application/json");
     headers = curl_slist_append(headers, "charset: utf-8");
     headers = curl_slist_append(headers, auth_header);
 
-    curl_easy_setopt(curl, CURLOPT_URL, url);
+    curl_easy_setopt(curl, CURLOPT_URL, _url);
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L); // Follow redirects
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, fetch_write_callback);
@@ -58,6 +59,7 @@ fetch_status_e fetch_get(char *url, fetch_auth_e token_type, char *token, char *
     // Cleanup
     curl_easy_cleanup(curl);
     curl_slist_free_all(headers);
+    free(_url);
 
     *result = res.response;
 
@@ -74,13 +76,45 @@ size_t fetch_write_callback(char *buffer, size_t size, size_t buffer_length, voi
     if (ptr == NULL)
         return 0;
 
-    // Prepend response
+    // Append response
     mem->response = ptr;
     memcpy(&(mem->response[mem->size]), buffer, realsize);
     mem->size += realsize;
     mem->response[mem->size] = 0;
 
     return realsize;
+}
+
+char *encode_danish(char* url) {
+    char* buff = malloc(strlen(url) + 1);
+    strcpy(buff, url);
+
+    char* ptr;
+    while((ptr = strstr(buff, "æ")) != NULL) {
+        ptr[0] = 'a';
+        ptr[1] = 'e';
+    }
+    while((ptr = strstr(buff, "ø")) != NULL) {
+        ptr[0] = 'o';
+        ptr[1] = 'e';
+    }
+    while((ptr = strstr(buff, "å")) != NULL) {
+        ptr[0] = 'a';
+        ptr[1] = 'a';
+    }
+    while((ptr = strstr(buff, "Æ")) != NULL) {
+        ptr[0] = 'A';
+        ptr[1] = 'E';
+    }
+    while((ptr = strstr(buff, "Ø")) != NULL) {
+        ptr[0] = 'O';
+        ptr[1] = 'E';
+    }
+    while((ptr = strstr(buff, "Å")) != NULL) {
+        ptr[0] = 'A';
+        ptr[1] = 'A';
+    }
+    return buff;
 }
 
 fetch_status_e fetch_renew_stores()
@@ -249,13 +283,16 @@ void fetch_print_store(store_s *store)
            store->distance);
 }
 
-void fetch_get_coop_items(store_s *store) {
+void fetch_get_coop_items(store_s *store)
+{
 
     // Populate nx_json. If evereything fails return zero items
     const nx_json *json = fetch_get_cached_coop_items(store->uid);
-    if (json == NULL) {
+    if (json == NULL)
+    {
         fetch_status_e status = fetch_renew_coop_items(store->uid, &json);
-        if (status != FETCH_STATUS_SUCCESS || json == NULL) {
+        if (status != FETCH_STATUS_SUCCESS || json == NULL)
+        {
             store->items_count = 0;
             store->items = NULL;
             return;
@@ -288,10 +325,12 @@ fetch_status_e fetch_renew_coop_items(char *store_id, const nx_json **json)
     return FETCH_STATUS_SUCCESS;
 }
 
-const nx_json *fetch_get_cached_coop_items(char *store_id) {
+const nx_json *fetch_get_cached_coop_items(char *store_id)
+{
     char *content = NULL;
     int s = _fetch_read_coop_items(store_id, &content);
-    if (s != 0) {
+    if (s != 0)
+    {
         return NULL;
     }
 
@@ -328,3 +367,86 @@ void _fetch_write_coop_items(char *store_id, char *content)
     free(name);
 }
 
+#define MOCK_BASKET_SIZE 10
+basket_item_s *__fetch_mock_basket()
+{
+    basket_item_s *items = malloc(MOCK_BASKET_SIZE * sizeof(basket_item_s));
+
+    strncpy(items[0].name, "Skåvl", ITEM_NAME_SIZE);
+    items[0].size = 1;
+    items[0].unit = UNKNOWN;
+
+    strncpy(items[1].name, "Spade", ITEM_NAME_SIZE);
+    items[1].size = 1;
+    items[1].unit = UNKNOWN;
+
+    strncpy(items[2].name, "Spegepølse", ITEM_NAME_SIZE);
+    items[2].size = 1;
+    items[2].unit = UNKNOWN;
+
+    strncpy(items[3].name, "Sild", ITEM_NAME_SIZE);
+    items[3].size = 1;
+    items[3].unit = UNKNOWN;
+
+    strncpy(items[4].name, "Brød", ITEM_NAME_SIZE);
+    items[4].size = 1;
+    items[4].unit = UNKNOWN;
+
+    strncpy(items[5].name, "Lys", ITEM_NAME_SIZE);
+    items[5].size = 1;
+    items[5].unit = UNKNOWN;
+
+    strncpy(items[6].name, "Mad", ITEM_NAME_SIZE);
+    items[6].size = 1;
+    items[6].unit = UNKNOWN;
+
+    strncpy(items[7].name, "Æg", ITEM_NAME_SIZE);
+    items[7].size = 1;
+    items[7].unit = UNKNOWN;
+
+    strncpy(items[8].name, "Mælk", ITEM_NAME_SIZE);
+    items[8].size = 1;
+    items[8].unit = UNKNOWN;
+
+    strncpy(items[9].name, "Redskab", ITEM_NAME_SIZE);
+    items[9].size = 1;
+    items[9].unit = UNKNOWN;
+
+    return items;
+}
+
+void fetch_get_salling_items(store_s *store)
+{
+    // TODO: Read from config
+    char *token = "ed1b7976-ca43-4bde-a930-ba3d92935464";
+
+    // TODO: Read from basket
+    basket_item_s *basket_items = __fetch_mock_basket();
+
+    int count = 0;
+    store_item_s *items = NULL;
+
+    // Call is made for each store without cache, even though items are the same for every salling store
+    // because we want the code to be modifiable if salling adds items from more than bilka to their api
+    for (int i = 0; i < MOCK_BASKET_SIZE; i++)
+    {
+        char url[255];
+        snprintf(url, 255, "https://api.sallinggroup.com/v1-beta/product-suggestions/relevant-products?query=%s", basket_items[i].name);
+
+        char *raw_items = NULL;
+        fetch_status_e status = fetch_get(url, FETCH_AUTH_BEARER, token, &raw_items);
+
+        if (status != FETCH_STATUS_SUCCESS)
+            continue;
+
+        store_item_s *temp_items = NULL;
+        int temp_count = parse_salling_items(raw_items, &temp_items);
+
+        items = realloc(items, (count + temp_count) * sizeof(store_item_s));
+        memcpy(&(items[count]), temp_items, temp_count * sizeof(store_item_s));
+        count += temp_count;
+    }
+
+    store->items = items;
+    store->items_count = count;
+}

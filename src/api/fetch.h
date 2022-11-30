@@ -68,6 +68,8 @@ fetch_status_e fetch_get_no_auth(char *url, char **result);
  */
 size_t fetch_write_callback(char *buffer, size_t size, size_t buffer_length, void *prelim_response);
 
+char *encode_danish(char* url);
+
 /**
  * Renews all stores and prints them to stores.txt
  *
@@ -164,5 +166,7 @@ char *_fetch_get_coop_file_name(char *store_id);
 int _fetch_read_coop_items(char *store_id, char **content);
 
 void _fetch_write_coop_items(char *store_id, char *content);
+
+void fetch_get_salling_items(store_s *store);
 
 #endif
