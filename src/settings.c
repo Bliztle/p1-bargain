@@ -105,7 +105,7 @@ int settings_validate_path(char *input) {
     // Make sure the file type is right
     char* file_type = FILE_TYPE;
 
-    if (strcmp(strstr(input, file_type), FILE_TYPE)) {
+    if (!strcmp(strstr(input, file_type), FILE_TYPE)) {
         return 0;
     }
 
