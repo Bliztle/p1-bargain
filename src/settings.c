@@ -22,6 +22,10 @@ void menu_settings() {
     while (1) {
         int selected_option = display_menu(options, menu_text, help_text);
 
+        if (selected_option == -1) {
+            break;
+        }
+
         switch (selected_option) {
             case PATH:
                 settings_edit(PATH);
@@ -54,10 +58,8 @@ void settings_edit(int setting) {
     printf("\n%s\n", menu_text);
 
     while (1) {
-
         printf(">");
         scanf(" %s", input);
-
 
         if (strstr(input, "!q")) {
             return;
@@ -65,10 +67,12 @@ void settings_edit(int setting) {
         else if (strstr(input, "!h")) {
             printf("%s\n", help_text);
         }
-
         else if (settings_validate(input, setting)) {
             // TODO: Write to config
             return;
+        }
+        else {
+            printf("Error: invalid command\n");
         }
     }
 }
