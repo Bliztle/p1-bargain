@@ -1,5 +1,6 @@
 add_executable( main main.c
                 calc.c
+                menu.c
                 api/fetch.c
                 api/parse.c
                 api/nxjson/nxjson.c )
