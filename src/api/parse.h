@@ -1,28 +1,30 @@
-#ifndef PARSE_H
-#define PARSE_H
+#ifndef P1_BARGAIN_PARSE_H
+#define P1_BARGAIN_PARSE_H
 
-typedef double coord_lat_t;
-typedef double coord_lon_t;
+#include "../items_types.h"
 
-typedef struct
-{
-    char id[20];
-    char prod_id[20];
-    char title[100];
-    char description[100];
-    char img[100];
-    char link[100];
-    double price;
-} salling_relevant_products_suggestion;
+/**
+ * Parses a raw json string from Salling's store API to an array of store_s structs
+ *
+ * @author Bliztle <asbjoern.r.e@gmail.com>
+ *
+ * @param raw_stores The raw json to parse to store_s objects
+ * @param stores A pointer to a null pointer. This will be modified to point at the stores
+ *
+ * @returns how many stores were parsed
+ */
+int parse_salling_stores(char *raw_stores, store_s **stores);
 
-typedef struct
-{
-    salling_relevant_products_suggestion *suggestions;
-    int length;
-} salling_relevant_products;
-
-salling_relevant_products *parse_salling_relevant_products(char *json_string);
-void free_salling_relevant_products(salling_relevant_products *products);
-void print_salling_relevant_products(salling_relevant_products *products);
+/**
+ * Parses a raw json string from COOP's store API to an array of store_s structs
+ *
+ * @author Bliztle <asbjoern.r.e@gmail.com>
+ *
+ * @param raw_stores The raw json to parse to store_s objects
+ * @param stores A pointer to a null pointer. This will be modified to point at the stores
+ *
+ * @returns how many stores were parsed
+ */
+int parse_coop_stores(char *raw_stores, store_s **stores);
 
 #endif
