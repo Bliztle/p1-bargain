@@ -147,6 +147,7 @@ void fetch_print_stores(store_s *stores, int count);
 /**
  * Get address coordinates from Google Maps
  * @param input_address the address that the user inputs
+ * @param raw_coordinates the raw json as output parameter
  * @return success status
 */
-fetch_status_e fetch_coordinates(char* input_address); 
+fetch_status_e fetch_coordinates(char* input_address, char** raw_coordinates); 

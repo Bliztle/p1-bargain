@@ -99,15 +99,13 @@ int parse_coop_stores(char *raw_stores, store_s **stores)
 }
 
 void parse_coordinates(char* raw_coordinates) {
-    const nx_json *json = nx_json_parse_utf8(raw_coordinates);
+    printf("Raw coords: %s", raw_coordinates);
+
+    const nx_json* json = nx_json_parse_utf8(raw_coordinates);
     
-    const nx_json *lat = nx_json_get(nx_json_get(nx_json_get(nx_json_get(json, "results"), "geometry"), "location"), "lat")->text_value;
-    const nx_json *lon = nx_json_get(nx_json_get(nx_json_get(nx_json_get(json, "results"), "geometry"), "location"), "lat")->text_value;
+    printf("%s", raw_coordinates);
 
-    conf_settings_s setting;
 
-    setting.address_lat = strtod(lat->text_value, NULL);
-    setting.address_lon = strtod(lon->text_value, NULL);
 
-    printf("lat: %lf, lon: %lf\n", setting.address_lat, setting.address_lon);
+    nx_json_free(json);
 }

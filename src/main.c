@@ -10,10 +10,11 @@ int main(int argc, char **args)
 {
     printf("Hello, World!\n");
 
-    char input_address[10] = "Aalborg";
+    char *input_address = "aalborg";
+    char *raw_coordinates;
 
-    fetch_coordinates(input_address);
-    //parse_coordinates(address);
+    fetch_coordinates(input_address, &raw_coordinates);
+    parse_coordinates(raw_coordinates);
 
     return 0;
 }

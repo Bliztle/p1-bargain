@@ -263,7 +263,7 @@ void fetch_print_store(store_s *store)
            store->distance);
 }
 
-fetch_status_e fetch_coordinates(char* input_address) {
+fetch_status_e fetch_coordinates(char* input_address, char** raw_coordinates) {
     char* url_start = "https://maps.googleapis.com/maps/api/geocode/json?address=";
     char* token = "&key=AIzaSyCwIirwXs-zd2_TZU6uLll6BOHdaIQVDeM";
 
@@ -314,13 +314,9 @@ fetch_status_e fetch_coordinates(char* input_address) {
     free(address);
     address = NULL;
 
-    char* result;
-
-    fetch_status_e status = fetch_get_no_auth(url, &result);
+    fetch_status_e status = fetch_get_no_auth(url, raw_coordinates);
 
     if (status != FETCH_STATUS_SUCCESS) {
         return status;
     }
-
-    printf("%s", result);
 }
