@@ -31,8 +31,9 @@ int parse_coop_stores(char *raw_stores, store_s **stores);
 /**
 * Parses coordinates from Google API into latitude and longtitude
 *
-* @param raw_coords Raw json to parse into latitude and longtitude
+* @param raw_coordinates Raw json to parse into latitude and longtitude
+* @param settings settings struct
 */
-void parse_coordinates(char* raw_coordinates);
+void parse_coordinates(char* raw_coordinates, conf_settings_s* settings);
 
 #endif

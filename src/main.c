@@ -13,8 +13,13 @@ int main(int argc, char **args)
     char *input_address = "aalborg";
     char *raw_coordinates;
 
+    conf_settings_s settings;
+
     fetch_coordinates(input_address, &raw_coordinates);
-    parse_coordinates(raw_coordinates);
+
+    parse_coordinates(raw_coordinates, &settings);
+
+    printf("lat: %lf, lon: %lf\n", settings.address_lat, settings.address_lon);
 
     return 0;
 }
