@@ -72,7 +72,7 @@ int parse_coop_stores(char *raw_stores, store_s **stores)
 
         store->group = SALLING;
         store->distance = 0; // TODO: Add distance, possibly doing something while filtering on it
-        snprintf(store->uid, STORE_UID_SIZE, "%d", (int)nx_json_get(json_store, "StoreId")->num.u_value);
+        snprintf(store->uid, STORE_UID_SIZE, "%d", (int)nx_json_get(json_store, "Kardex")->num.u_value);
         strncpy(store->name, nx_json_get(json_store, "Name")->text_value, STORE_NAME_SIZE);
 
         const nx_json *coordinates = nx_json_get(nx_json_get(json_store, "Location"), "coordinates");
@@ -96,4 +96,68 @@ int parse_coop_stores(char *raw_stores, store_s **stores)
     }
 
     return count;
+}
+
+int parse_coop_items(const nx_json *json, store_item_s **items)
+{
+    *items = NULL;
+    int count = 0;
+    for (const nx_json *json_item = json->children.first;
+         json_item != NULL;
+         json_item = json_item->next)
+    {
+        *items = realloc(*items, ++count * sizeof(store_item_s));
+        // store_item_s *items = &((*items)[count - 1]);
+
+        strncpy((*items)[count-1].name, nx_json_get(json_item, "Navn")->text_value, ITEM_NAME_SIZE);
+        (*items)[count-1].price = nx_json_get(json_item, "Pris")->num.dbl_value;
+
+        // TODO: Write function looking thought names to get these
+        (*items)[count-1].unit = UNKNOWN;
+        (*items)[count-1].size = 0;
+        (*items)[count-1].price_per_unit = 0;
+    }
+
+    return count;
+}
+
+// Heavily inspired https://stackoverflow.com/a/2029227
+int parse_read_file_to_end(char *file_name, char **content)
+{
+    FILE *fp = fopen(file_name, "r");
+
+    if (fp == NULL)
+        return 1;
+
+    /* Go to the end of the file. */
+    if (fseek(fp, 0L, SEEK_END) == 0)
+    {
+        /* Get the size of the file. */
+        long bufsize = ftell(fp);
+        if (bufsize == -1) /* Error */
+            return 1;
+
+        /* Allocate our buffer to that size. */
+        *content = realloc(*content, sizeof(char) * (bufsize + 1));
+
+        /* Go back to the start of the file. */
+        if (fseek(fp, 0L, SEEK_SET) != 0) /* Error */
+        {
+            free(content);
+            return 1;
+        }
+
+        /* Read the entire file into memory. */
+        size_t newLen = fread(*content, sizeof(char), bufsize, fp);
+        if (ferror(fp) != 0)
+        {
+            free(content);
+            return 1;
+        }
+
+        (*content)[newLen++] = '\0'; /* Just to be safe. */
+    }
+    fclose(fp);
+
+    return 0;
 }

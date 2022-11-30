@@ -19,6 +19,7 @@ typedef char store_uid_t[STORE_UID_SIZE];
 
 typedef enum
 {
+    UNKNOWN = 0,
     KILOGRAMS,
     LITERS,
     UNITS

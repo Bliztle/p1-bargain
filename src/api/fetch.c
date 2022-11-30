@@ -1,5 +1,6 @@
 #include "fetch.h"
 #include "parse.h"
+#include "nxjson/nxjson.h"
 #include "../calc.h"
 #include "../items_types.h"
 #include <stdio.h>
@@ -100,17 +101,7 @@ fetch_status_e fetch_renew_coop_stores(store_s **stores, int *count)
     int distance = 6000;
     char *token = "8042a78a1c91463e80140b0cb11b8b47";
 
-    // char url[255];
-    // snprintf(url, 255,
-    //          "https://api.cl.coop.dk/storeapi/v1/stores?page=1&size=5000",
-    //          distance, lat, lon);
-
     char *url = "https://api.cl.coop.dk/storeapi/v1/stores?page=1&size=5000";
-
-    // char url[255];
-    // snprintf(url, 255,
-    //          "https://api.cl.coop.dk/storeapi/v1/stores/find/radius/%d?latitude=%f&longitude=%f",
-    //          distance, lat, lon);
 
     char *raw_stores = NULL;
     fetch_status_e status = fetch_get(url, FETCH_AUTH_OCP_APIM, token, &raw_stores);
@@ -124,17 +115,12 @@ fetch_status_e fetch_renew_coop_stores(store_s **stores, int *count)
     for (int i = 0; i < new_count; i++)
     {
         if (calc_coordinate_distance(lat, lon, parsed_stores[i].lat, parsed_stores[i].lon) * 1000 < distance)
-        // if (1)
         {
             *stores = realloc(*stores, (++(*count)) * sizeof(store_s));
             (*stores)[*count - 1] = parsed_stores[i];
         }
     }
 
-    // *stores = realloc(*stores, (*count + new_count) * sizeof(store_s));
-    // memcpy(&(*stores[(*count)]), parsed_stores, new_count * sizeof(store_s));
-
-    // *count += new_count;
     free(raw_stores);
 
     return FETCH_STATUS_SUCCESS;
@@ -262,3 +248,83 @@ void fetch_print_store(store_s *store)
            store->chain,
            store->distance);
 }
+
+void fetch_get_coop_items(store_s *store) {
+
+    // Populate nx_json. If evereything fails return zero items
+    const nx_json *json = fetch_get_cached_coop_items(store->uid);
+    if (json == NULL) {
+        fetch_status_e status = fetch_renew_coop_items(store->uid, &json);
+        if (status != FETCH_STATUS_SUCCESS || json == NULL) {
+            store->items_count = 0;
+            store->items = NULL;
+            return;
+        }
+    }
+
+    store->items_count = parse_coop_items(json, &store->items);
+}
+
+fetch_status_e fetch_renew_coop_items(char *store_id, const nx_json **json)
+{
+    // TODO: Read from config
+    char *token = "8042a78a1c91463e80140b0cb11b8b47";
+    char url[100];
+    snprintf(url, 100, "https://api.cl.coop.dk/productapi/v1/product/%s", store_id);
+
+    char *response = NULL;
+    fetch_status_e status = fetch_get(url, FETCH_AUTH_OCP_APIM, token, &response);
+
+    if (status != FETCH_STATUS_SUCCESS)
+    {
+        response = realloc(response, 3);
+        strcpy(response, "[]");
+        response[2] = '\0';
+        return status;
+    }
+
+    _fetch_write_coop_items(store_id, response);
+    *json = nx_json_parse_utf8(response);
+    return FETCH_STATUS_SUCCESS;
+}
+
+const nx_json *fetch_get_cached_coop_items(char *store_id) {
+    char *content = NULL;
+    int s = _fetch_read_coop_items(store_id, &content);
+    if (s != 0) {
+        return NULL;
+    }
+
+    const nx_json *json = nx_json_parse_utf8(content);
+    time_t now = time(NULL);
+    time_t cached = nx_json_get(json, COOP_FIELD_TIME)->num.u_value;
+    if (now > cached + TIME_SECONDS_IN_WEEK) // Renew once a week to limit API calls
+        return NULL;
+    return nx_json_get(json, COOP_FIELD_ITEMS);
+}
+
+char *_fetch_get_coop_file_name(char *store_id)
+{
+    int length = strlen(store_id) + strlen(FILE_ITEMS_SUFFIX) + 1;
+    char *file_name = malloc(length);
+    snprintf(file_name, length, "%s%s", store_id, FILE_ITEMS_SUFFIX);
+    return file_name;
+}
+
+int _fetch_read_coop_items(char *store_id, char **content)
+{
+    char *name = _fetch_get_coop_file_name(store_id);
+    int s = parse_read_file_to_end(name, content);
+    free(name);
+    return s;
+}
+
+void _fetch_write_coop_items(char *store_id, char *content)
+{
+    char *name = _fetch_get_coop_file_name(store_id);
+    FILE *fp = fopen(name, "w");
+    fprintf(fp, "{\"%s\":%ld,\"%s\":%s}", COOP_FIELD_TIME, time(NULL), COOP_FIELD_ITEMS, content);
+    fclose(fp);
+    free(name);
+}
+
