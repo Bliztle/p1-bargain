@@ -101,10 +101,11 @@ int settings_validate(char *input, int setting) {
 }
 
 int settings_validate_path(char *input) {
-    // Make sure the file type is right
-    char file_type[] = FILE_TYPE;
 
-    if (strstr(input, file_type) != file_type) {
+    // Make sure the file type is right
+    char* file_type = FILE_TYPE;
+
+    if (strcmp(strstr(input, file_type), FILE_TYPE)) {
         return 0;
     }
 
@@ -117,6 +118,8 @@ int settings_validate_path(char *input) {
     }
 
     fclose(file);
+
+    printf("success");
 
     return 1;
 }

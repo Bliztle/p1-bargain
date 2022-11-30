@@ -10,14 +10,7 @@ int main(int argc, char **args)
 {
     printf("Hello, World!\n");
 
-    //menu_settings();
-
-    char* input_address = "Selma Lagerløfs Vej";
-    char* raw_coordinates;
-
-    fetch_coordinates(input_address, &raw_coordinates);
-
-    printf("%s", raw_coordinates);
+    settings_validate_path("C:/Users/Mikkel Tygesen/Desktop/save.txt");
 
     return 0;
 }
