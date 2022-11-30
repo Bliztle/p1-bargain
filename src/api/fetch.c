@@ -268,14 +268,14 @@ fetch_status_e fetch_coordinates(char* input_address, char** raw_coordinates) {
     char* token = "&key=AIzaSyCwIirwXs-zd2_TZU6uLll6BOHdaIQVDeM";
 
     int address_len = strlen(input_address);
-    char* address = malloc(address_len * sizeof(char));
+    char* address = malloc(address_len * sizeof(int));
 
     if (address == NULL) {
         perror("Exit");
         exit(EXIT_FAILURE);
     }
 
-    strcpy(address, input_address);
+    strncpy(address, input_address, address_len);
 
     int url_len = strlen(url_start);
     int token_len = strlen(token);
@@ -285,15 +285,21 @@ fetch_status_e fetch_coordinates(char* input_address, char** raw_coordinates) {
 
             address_len += 2;
 
-            char* tmp = realloc(address, address_len);
+            char* tmp = realloc(address, address_len * sizeof(int));
 
             if (tmp == NULL) {
                 perror("Error");
+
+                free(address);
+                address = NULL;
+
                 exit(EXIT_FAILURE);
             }
-            else {
+            else if (address != tmp) {
                 address = tmp;
             }
+
+            tmp = NULL;
 
             memmove(address + i + 3, address + i + 1, address_len - i - 1);
 
@@ -305,7 +311,7 @@ fetch_status_e fetch_coordinates(char* input_address, char** raw_coordinates) {
 
     int len = address_len + url_len + token_len;
 
-    char url[len];
+    char url[len + 1];
 
     strncpy(url, url_start, len);
     strncat(url, address, len);

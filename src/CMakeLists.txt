@@ -17,4 +17,14 @@ add_test(NAME test_items COMMAND test_items)
 add_executable(calc_test calc_test.c calc.c)
 target_link_libraries(calc_test m)
 add_test(NAME calc_test COMMAND calc_test)
+add_executable( test_settings 
+                test_settings.c
+                settings.c 
+                api/fetch.c
+                api/parse.c
+                api/nxjson/nxjson.c
+                menu.c
+                calc.c)
+target_link_libraries(test_settings libcurl m)
+add_test(NAME test_settings COMMAND test_settings)
 
