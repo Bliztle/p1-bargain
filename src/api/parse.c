@@ -98,10 +98,12 @@ int parse_coop_stores(char *raw_stores, store_s **stores)
     return count;
 }
 
-void parse_coordinates(char* raw_coordinates, conf_settings_s* settings) {
+int parse_coordinates(char* raw_coordinates, conf_settings_s* settings) {
     const nx_json* json = nx_json_parse_utf8(raw_coordinates);
 
     const nx_json* results = nx_json_get(json, "results");
+
+    if (results->children.length == 0) return 0;
 
     // Take the first element in the array
     const nx_json* result_first_child = results->children.first;
@@ -111,7 +113,8 @@ void parse_coordinates(char* raw_coordinates, conf_settings_s* settings) {
     settings->address_lon = nx_json_get(nx_json_get(nx_json_get(result_first_child, "geometry"), "location"), "lng")->num.dbl_value;
 
     // Cleanup
-    nx_json_free(result_first_child);
-    nx_json_free(results);
     nx_json_free(json);
+    json = NULL;
+
+    return 1;
 }

@@ -33,7 +33,9 @@ int parse_coop_stores(char *raw_stores, store_s **stores);
 *
 * @param raw_coordinates Raw json to parse into latitude and longtitude
 * @param settings settings struct
+*
+* @return returns true or false
 */
-void parse_coordinates(char* raw_coordinates, conf_settings_s* settings);
+int parse_coordinates(char* raw_coordinates, conf_settings_s* settings);
 
 #endif

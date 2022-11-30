@@ -10,7 +10,7 @@ int main(int argc, char **args)
 {
     printf("Hello, World!\n");
 
-    char *input_address = "aalborg";
+    char *input_address = "Aalboawdadawdrg";
     char *raw_coordinates;
 
     conf_settings_s settings;
