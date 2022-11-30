@@ -20,9 +20,9 @@ typedef struct {
  * Reads and parses the settings file stored on disk
  * @returns the parsed config
  */
-conf_settings_s conf_read_settings();
+conf_settings_s conf_read_settings(char * path);
 
 /**
  * TODO
  */
-void conf_write_settings(conf_settings_s settings);
+void conf_write_settings(conf_settings_s settings, char * path);

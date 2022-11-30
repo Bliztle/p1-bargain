@@ -5,11 +5,12 @@
 #include <string.h>
 #include "config.h"
 
-static const char* SETTINGS_PATH = "settings.conf";
+#define SETTINGS_PATH "settings.conf"
+
 static const char* TOKENS_PATH = "tokens.conf";
 
 int main(void) {
-    conf_settings_s current_settings = conf_read_settings();
+    conf_settings_s current_settings = conf_read_settings(SETTINGS_PATH);
     printf("%s\n", current_settings.shopping_list_save_path);
     printf("%d\n", current_settings.max_distance);
     printf("%s\n", current_settings.address);
@@ -23,12 +24,11 @@ int main(void) {
     current_settings.address_lat = 57.025760;
     current_settings.address_lon = 9.958440;
 
-    conf_write_settings(current_settings);
+    conf_write_settings(current_settings, SETTINGS_PATH);
 }
 
-conf_settings_s conf_read_settings() {
+conf_settings_s conf_read_settings(char * path) {
     FILE * config_file;
-    char * path = "C:\\Users\\mlren\\CLionProjects\\p1-bargain\\src\\settings.conf";
     config_file = fopen(path, "r");
     if (config_file == NULL) {
         perror("File does not exist in this path");
@@ -55,9 +55,8 @@ conf_settings_s conf_read_settings() {
     return read_settings;
 }
 
-void conf_write_settings(conf_settings_s settings) {
+void conf_write_settings(conf_settings_s settings, char * path) {
     FILE * config_file;
-    char * path = "C:\\Users\\mlren\\CLionProjects\\p1-bargain\\src\\settings.conf";
     config_file = fopen(path, "w");
     if (config_file == NULL) {
         perror("File does not exist in this path");
