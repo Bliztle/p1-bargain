@@ -6,16 +6,11 @@
 #include "items.h"
 #include "time.h"
 
-int main() {
-    int test_items = (!test_items_filter_items());
-    assert(test_items);
-    return 0;
-}
-
-int test_items_filter_items() {
+int test_items_filter_items()
+{
 
     time_t tmp = 0;
-    srand((unsigned) time((&tmp)));
+    srand((unsigned)time((&tmp)));
 
     char *names[16];
 
@@ -47,8 +42,7 @@ int test_items_filter_items() {
     store_s store = {
         .found_items = malloc(100 * sizeof(store_item_s)),
         .items = malloc(100 * sizeof(store_item_s)),
-        .missing_items = malloc(100 * sizeof(store_item_s))
-    };
+        .missing_items = malloc(100 * sizeof(store_item_s))};
 
     store_item_s item1 = {
         .name = "Almond jelly",
@@ -188,73 +182,59 @@ int test_items_filter_items() {
     basket_item_s basket_item1 = {
         .name = "Almond jelly",
         .unit = 1,
-        .size = rand_size()
-    };
+        .size = rand_size()};
     basket_item_s basket_item2 = {
         .name = "Coconut pudding",
         .unit = rand_unit(),
-        .size = rand_size()
-    };
+        .size = rand_size()};
     basket_item_s basket_item3 = {
         .name = "Clootie dumpling",
         .unit = rand_unit(),
-        .size = rand_size()
-    };
+        .size = rand_size()};
     basket_item_s basket_item4 = {
         .name = "Chocolate Biscuit pudding",
         .unit = rand_unit(),
-        .size = rand_size()
-    };
+        .size = rand_size()};
     basket_item_s basket_item5 = {
         .name = "Che",
         .unit = rand_unit(),
-        .size = rand_size()
-    };
+        .size = rand_size()};
     basket_item_s basket_item6 = {
         .name = "Cabinet pudding",
         .unit = rand_unit(),
-        .size = rand_size()
-    };
+        .size = rand_size()};
     basket_item_s basket_item7 = {
         .name = "Brown Betty",
         .unit = rand_unit(),
-        .size = rand_size()
-    };
+        .size = rand_size()};
     basket_item_s basket_item8 = {
         .name = "Bread and butter pudding",
         .unit = rand_unit(),
-        .size = rand_size()
-    };
+        .size = rand_size()};
     basket_item_s basket_item9 = {
         .name = "Blancmange",
         .unit = rand_unit(),
-        .size = rand_size()
-    };
+        .size = rand_size()};
     basket_item_s basket_item10 = {
         .name = "Banh chuoi",
         .unit = rand_unit(),
-        .size = rand_size()
-    };
+        .size = rand_size()};
     basket_item_s basket_item11 = {
         .name = "rope",
         .unit = rand_unit(),
-        .size = rand_size()
-    };
+        .size = rand_size()};
     basket_item_s basket_item12 = {
         .name = "milk",
         .unit = rand_unit(),
-        .size = rand_size()
-    };
+        .size = rand_size()};
     basket_item_s basket_item13 = {
         .name = "genius",
         .unit = rand_unit(),
-        .size = rand_size()
-    };
+        .size = rand_size()};
     basket_item_s basket_item14 = {
         .name = "pudding",
         .unit = rand_unit(),
-        .size = rand_size()
-    };
+        .size = rand_size()};
 
     basket[0] = basket_item1;
     basket[1] = basket_item2;
@@ -285,10 +265,11 @@ int test_items_filter_items() {
     store.found_items_count = 0;
     store.missing_items_count = 0;
 
-    items_filter_items(basket, 14, &store);
+    items_filter_items(&store);
 
     printf("Store Items\n--------------------------------\n");
-    for (int i = 0; i < store.items_count; ++i) {
+    for (int i = 0; i < store.items_count; ++i)
+    {
 
         printf("Item %d:\n", i);
         printf("name: %s\n"
@@ -302,7 +283,6 @@ int test_items_filter_items() {
                store.items[i].size,
                bargain_get_unit(store.items[i].unit));
     }
-
 
     printf("Found Items\n--------------------------------\n");
     for (int i = 0; i < store.found_items_count; i++)
@@ -323,7 +303,6 @@ int test_items_filter_items() {
                store.found_items[i].product_price * store.found_items[i].count);
     }
 
-
     printf("Missing Items\n--------------------------------\n");
     for (int i = 0; i < store.missing_items_count; i++)
     {
@@ -333,37 +312,25 @@ int test_items_filter_items() {
         printf("unit: %s\n\n", bargain_get_unit(store.missing_items[i].unit));
     }
 
-   free(store.items);
-   free(store.found_items);
-   free(store.missing_items);
-   
+    free(store.items);
+    free(store.found_items);
+    free(store.missing_items);
+
     return 0;
 }
 
-int rand_size() {
+int rand_size()
+{
     // rand() % (max_number + 1 - minimum_number) + minimum_number
     return rand() % (5 + 1 - 1) + 1;
 }
 
-int rand_unit() {
+int rand_unit()
+{
     return rand() % (2 + 1);
 }
 
-double rand_price() {
+double rand_price()
+{
     return rand() % (500 + 1 - 1) + 1;
-}
-
-char* bargain_get_unit(int n) {
-
-    switch (n) {
-        case 0: {
-            return "KILOGRAMS";
-        }
-        case 1: {
-            return "LITERS";
-        }
-        case 2: {
-            return "UNITS";
-       }
-    }
 }

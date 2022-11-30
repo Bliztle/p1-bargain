@@ -9,7 +9,7 @@
  * @param stores list of stores to find items for
  * @param store_count amount of stores to find items for
 */
-void stores_populate_store_items(store_s **stores, int store_count);
+void stores_populate_store_items(store_s *stores, int store_count);
 
 /**
  * Helping function for q sort. Evalutes 2 shops first on amount of found items, then if those are even on cheapest total price.

@@ -21,7 +21,8 @@ typedef enum
 {
     KILOGRAMS,
     LITERS,
-    UNITS
+    UNITS,
+    UNKNOWN
 } item_unit_e;
 
 typedef enum

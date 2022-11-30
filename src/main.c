@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <curl/curl.h>
 #include "api/fetch.h"
+#include "bargain.h"
 
 char *CURRENT_DIRECTORY;
 
