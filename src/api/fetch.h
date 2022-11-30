@@ -146,7 +146,7 @@ void fetch_print_stores(store_s *stores, int count);
 
 /**
  * Get address coordinates from Google Maps
- * @param address the address that the user 
+ * @param input_address the address that the user inputs
  * @return success status
 */
-fetch_status_e fetch_coordinates(char* address); 
+fetch_status_e fetch_coordinates(char* input_address); 

@@ -10,17 +10,10 @@ int main(int argc, char **args)
 {
     printf("Hello, World!\n");
 
-    char* address = malloc(100 * sizeof(char));
+    char input_address[10] = "Aalborg";
 
-    if (address == NULL) {
-        perror("Exit");
-        exit(EXIT_FAILURE);
-    }
-
-    strcpy(address, "Løgumkloster");
-
-    fetch_coordinates(address);
-    parse_coordinates(address);
+    fetch_coordinates(input_address);
+    //parse_coordinates(address);
 
     return 0;
 }

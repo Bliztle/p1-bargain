@@ -263,11 +263,20 @@ void fetch_print_store(store_s *store)
            store->distance);
 }
 
-fetch_status_e fetch_coordinates(char* address) {
+fetch_status_e fetch_coordinates(char* input_address) {
     char* url_start = "https://maps.googleapis.com/maps/api/geocode/json?address=";
     char* token = "&key=AIzaSyCwIirwXs-zd2_TZU6uLll6BOHdaIQVDeM";
 
-    int address_len = strlen(address);
+    int address_len = strlen(input_address);
+    char* address = malloc(address_len * sizeof(char));
+
+    if (address == NULL) {
+        perror("Exit");
+        exit(EXIT_FAILURE);
+    }
+
+    strcpy(address, input_address);
+
     int url_len = strlen(url_start);
     int token_len = strlen(token);
 
@@ -303,6 +312,7 @@ fetch_status_e fetch_coordinates(char* address) {
     strncat(url, token, len);
 
     free(address);
+    address = NULL;
 
     char* result;
 
