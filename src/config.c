@@ -11,10 +11,19 @@ static const char* TOKENS_PATH = "tokens.conf";
 int main(void) {
     conf_settings_s current_settings = conf_read_settings();
     printf("%s\n", current_settings.shopping_list_save_path);
-    printf("%dm\n", current_settings.max_distance);
-    printf("%s", current_settings.address);
+    printf("%d\n", current_settings.max_distance);
+    printf("%s\n", current_settings.address);
     printf("%lf %lf\n", current_settings.address_lat, current_settings.address_lon);
     printf("%lf\n", current_settings.deviance);
+
+    strcpy(current_settings.shopping_list_save_path, "C:\\Users\\username\\desktop\\bargain\\shoppinglist.txt");
+    strcpy(current_settings.address , "korruptionsgade 5 100 christiansborg");
+    current_settings.max_distance = 1500;
+    current_settings.deviance = 0.050;
+    current_settings.address_lat = 57.025760;
+    current_settings.address_lon = 9.958440;
+
+    conf_write_settings(current_settings);
 }
 
 conf_settings_s conf_read_settings() {
@@ -27,59 +36,39 @@ conf_settings_s conf_read_settings() {
     }
 
     conf_settings_s read_settings;
-    config_parse_path(config_file, read_settings.shopping_list_save_path);
-    config_parse_distance(config_file, &read_settings.max_distance);
-    config_parse_address(config_file, &read_settings.address);
-    config_parse_coords(config_file, &read_settings.address_lat, &read_settings.address_lon);
-    config_parse_deviance(config_file, &read_settings.deviance);
+
+    fscanf(config_file, "%*s %s", read_settings.shopping_list_save_path);
+    fscanf(config_file, "%*s %d", &read_settings.max_distance);
+    fscanf(config_file, "%*s %[^\n]s", read_settings.address);
+
+    char lat_temp[20], lon_temp[20];
+    fscanf(config_file, "%*s %s %s", lat_temp, lon_temp);
+    char * endptr;
+    read_settings.address_lat = strtod(lat_temp, &endptr);
+    read_settings.address_lon = strtod(lon_temp, &endptr);
+
+    char dev_temp[20];
+    fscanf(config_file, "%*s %s", dev_temp);
+    read_settings.deviance = strtod(dev_temp, endptr);
 
     fclose(config_file);
     return read_settings;
 }
 
-void config_write_settings(conf_settings_s settings) {
-
-}
-
-void config_parse_path(FILE * config_file, conf_save_path_t save_path) {
-    fscanf(config_file, "%*s %s", save_path);
-    while (fgetc(config_file) != '\n') {
-        // move the cursor to the end of the line
+void conf_write_settings(conf_settings_s settings) {
+    FILE * config_file;
+    char * path = "C:\\Users\\mlren\\CLionProjects\\p1-bargain\\src\\settings.conf";
+    config_file = fopen(path, "w");
+    if (config_file == NULL) {
+        perror("File does not exist in this path");
+        exit(EXIT_FAILURE);
     }
-}
 
-void config_parse_distance(FILE * config_file, conf_max_distance_t * distance) {
-    fscanf(config_file, "%*s %d", distance);
-    while (fgetc(config_file) != '\n') {
-        // move the cursor to the end of the line
-    }
-}
+    fprintf(config_file, "path %s\n", settings.shopping_list_save_path);
+    fprintf(config_file, "distance %d\n", settings.max_distance);
+    fprintf(config_file, "address %s\n", settings.address);
+    fprintf(config_file, "coords %lf %lf\n", settings.address_lat, settings.address_lon);
+    fprintf(config_file, "deviance %lf", settings.deviance);
 
-void config_parse_address(FILE * config_file, conf_address_t * address) {
-    int size = sizeof(conf_address_t) / sizeof(char);
-    char str[size];
-    fgets(str, size, config_file);
-    char * ptr = strstr(str, " ") + 1; // Shift the pointer by 1 to remove the whitespace
-    strcpy(address, ptr);
-}
-
-void config_parse_coords(FILE * config_file, coord_lat_t * address_lat, coord_lon_t * address_lon) {
-    char lat_temp[20], lon_temp[20];
-    fscanf(config_file, "%*s %s %s", lat_temp, lon_temp);
-    char * endptr;
-    *address_lat = strtod(lat_temp, endptr);
-    *address_lon = strtod(lon_temp, endptr);
-    while (fgetc(config_file) != '\n') {
-        // move the cursor to the end of the line
-    }
-}
-
-void config_parse_deviance(FILE * config_file, conf_deviance_t * deviance) {
-    char dev_temp[20];
-    fscanf(config_file, "%*s %s", dev_temp);
-    char * endptr;
-    *deviance = strtod(dev_temp, endptr);
-    while (fgetc(config_file) != '\n') {
-        // move the cursor to the end of the line
-    }
+    fclose(config_file);
 }

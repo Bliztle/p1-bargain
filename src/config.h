@@ -23,42 +23,6 @@ typedef struct {
 conf_settings_s conf_read_settings();
 
 /**
- * Writes the given settings to the settings file on disk
- * @param settings The settings to write
+ * TODO
  */
 void conf_write_settings(conf_settings_s settings);
-
-/**
- * Takes file and reads save path into char[]
- * @param config_file The file to read from
- * @param save_path The char[] to save to
- */
-void config_parse_path(FILE * config_file, conf_save_path_t save_path);
-
-/**
- * Takes file and reads distance into int
- * @param config_file The file to read from
- * @param distance The int to save to
- */
-void config_parse_distance(FILE * config_file, conf_max_distance_t * distance);
-
-/**
- * Takes file and reads address into char[]
- * @param config_file The file to read from
- * @param address The char[] to save to
- */
-void config_parse_address(FILE * config_file, conf_address_t * address);
-
-/**
- * TODO write documentation this is not correct
- * @param config_file The file to read from
- * @param address The char[] to save to
- */
-void config_parse_coords(FILE * config_file, coord_lat_t * address_lat, coord_lon_t * address_lon);
-
-/**
- * TODO write documentation this is not correct
- * @param config_file The file to read from
- * @param address The char[] to save to
- */
-void config_parse_deviance(FILE * config_file, conf_deviance_t * deviance);
