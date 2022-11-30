@@ -119,8 +119,6 @@ int settings_validate_path(char *input) {
 
     fclose(file);
 
-    printf("success");
-
     return 1;
 }
 
