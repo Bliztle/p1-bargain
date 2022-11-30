@@ -45,8 +45,6 @@
         .found_items_total_price = 0
     };
 
-
-
 int main() {
 
     bargain_menu_find_bargain();
