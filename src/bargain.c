@@ -40,7 +40,7 @@ void bargain_menu_find_bargain() {
         free(option);
     }
     
-    int selected_bargain = _display_menu(options, store_count, menu_text, "Enter a number to select a bargain.");
+    int selected_bargain = display_menu(options, menu_text, "Enter a number to select a bargain.");
 
     if (selected_bargain == -1) {
         return;
@@ -96,7 +96,7 @@ void bargain_menu_print_bargain(store_s store) {
 
     char* bargain_string = bargain_get_print_bargain_string(store);
 
-    int n = _display_menu(&options, 1, bargain_string, "!s saves the shopping list as a text file to the localtion specified in user settings.\n" );
+    int n = display_menu(&options, bargain_string, "!s saves the shopping list as a text file to the localtion specified in user settings.\n" );
     if (n == -1) {
         return;
     }
