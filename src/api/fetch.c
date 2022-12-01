@@ -456,7 +456,9 @@ fetch_status_e fetch_coordinates(char* input_address, char** raw_coordinates) {
     char* token = "&key=AIzaSyCwIirwXs-zd2_TZU6uLll6BOHdaIQVDeM";
 
     int address_len = strlen(input_address);
-    char* address = malloc(2 * address_len * (char)sizeof(int)); // Assume every character is 2 bytes so it works with 'æ', 'ø' and 'å'
+
+    // Assume every character is 2 bytes so it works with 'æ', 'ø' and 'å'
+    char* address = malloc(2 * address_len * (char)sizeof(int));
 
     if (address == NULL) {
         perror("Exit");
@@ -473,7 +475,8 @@ fetch_status_e fetch_coordinates(char* input_address, char** raw_coordinates) {
 
             address_len += 2;
 
-            char* tmp = realloc(address, 2 * address_len * sizeof(char)); // Assume every character is 2 bytes so it works with 'æ', 'ø' and 'å'
+            // Assume every character is 2 bytes so it works with 'æ', 'ø' and 'å'
+            char* tmp = realloc(address, 2 * address_len * sizeof(char));
 
             if (tmp == NULL) {
                 perror("Error");
