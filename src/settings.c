@@ -80,23 +80,16 @@ void settings_edit(int setting) { // Edit the given setting
             // TODO: Write to config
             return;
         }
-        else {
-            printf("\nError: Invalid input\n");
-        }
     }
 }
 
 int settings_validate(char *input, int setting) {
-    char* raw_coordinates;
-    conf_settings_s settings;
-
     switch (setting) { // Maps setting to the right validation
         case PATH:
             return settings_validate_path(input);
 
         case ADDRESS:
-            fetch_coordinates(input, &raw_coordinates);
-            return parse_coordinates(raw_coordinates, &settings);
+            return settings_validate_address(input);
 
         case DISTANCE:
             return settings_validate_distance(input);
@@ -115,11 +108,13 @@ int settings_validate_path(char *input) {
 
     // If there is no substring
     if (substring == NULL) {
+        perror("Error");
         return 0;
     }
 
     // If there exists a substring but its not equivalent to the file type
     if (strcmp(substring, FILE_TYPE)) {
+        perror("Error");
         return 0;
     }
 
@@ -127,6 +122,7 @@ int settings_validate_path(char *input) {
     FILE* file = fopen(input, "r");
 
     if (file == NULL) { // A folder cannot be opened by fopen()
+        perror("Error");
         return 0;
     }
 
@@ -135,12 +131,37 @@ int settings_validate_path(char *input) {
     return 1;
 }
 
-int settings_validate_deviation(char *input) {
+int settings_validate_address(char* input) {
+    char* raw_coordinates;
+    conf_settings_s settings;
+
+    int status_code = fetch_coordinates(input, &raw_coordinates) != FETCH_STATUS_SUCCESS; 
+  
+    if (status_code != FETCH_STATUS_SUCCESS) {
+        printf("Error: fetch status %d", status_code);
+    }
+
+    if (!parse_coordinates(raw_coordinates, &settings)) {
+        printf("Error: Invalid address\n");
+
+        return 0;
+    }
+
+    return 1;
+}
+
+int settings_validate_deviation(char* input) {
     // Converts string to double and checks if it's valid as a deviation
     char *endptr;
     double deviation = strtod(input, &endptr);
 
-    return deviation >= 0;
+    if (deviation <= 0) {
+        printf("Error: Invalid deviation");
+
+        return 0;
+    }
+    
+    return 1;
 }
 
 int settings_validate_distance(char *input) {
@@ -148,5 +169,11 @@ int settings_validate_distance(char *input) {
     char *endptr;
     double distance = strtod(input, &endptr);
 
-    return distance >= 0;
+    if (distance <= 0) {
+        printf("Error: Invalid distance");
+
+        return 0;
+    }
+    
+    return 1;
 }

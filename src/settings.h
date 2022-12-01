@@ -35,28 +35,38 @@ void settings_edit(int setting);
 
 /**
  * @brief Validates settings
- * @param new_input new user input
+ * @param user user input
  * @param setting the setting to validate
  * @return true or false
  */
-int settings_validate(char* new_input, int setting);
-
-/**
- * @brief Validates distance
- * @return true or false
- */
-int settings_validate_distance(char* new_input);
-
-/**
- * @brief Validates the deviation
- * @return true or false
-*/
-int settings_validate_deviation(char* new_input);
+int settings_validate(char* input, int setting);
 
 /**
  * @brief Validates the path
+ * @param input user input
  * @return true or false
 */
-int settings_validate_path(char* new_input);
+int settings_validate_path(char* input);
+
+/**
+ * @brief Validates the address
+ * @param input 
+ * @return true or false 
+ */
+int settings_validate_address(char* input);
+
+/**
+ * @brief Validates distance
+ * @param input user input
+ * @return true or false
+ */
+int settings_validate_distance(char* input);
+
+/**
+ * @brief Validates the deviation
+ * @param input user input
+ * @return true or false
+*/
+int settings_validate_deviation(char* input);
 
 #endif
