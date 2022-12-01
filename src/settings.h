@@ -1,5 +1,5 @@
-#ifndef SETTINGS_H
-#define SETTINGS_H
+#ifndef P1_BARGAIN_SETTINGS_H
+#define P1_BARGAIN_SETTINGS_H
 
 /// INCLUDES
 #include <stdio.h>

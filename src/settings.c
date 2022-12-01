@@ -22,11 +22,11 @@ void menu_settings() {
     while (1) {
         int selected_option = display_menu(options, menu_text, help_text);
 
-        if (selected_option == -1) {
+        if (selected_option == -1) { // If !q
             break;
         }
 
-        switch (selected_option) {
+        switch (selected_option) { // Select option that fits the input
             case PATH:
                 settings_edit(PATH);
                 break;
@@ -42,15 +42,11 @@ void menu_settings() {
             case DEVIATION:
                 settings_edit(DEVIATION);
                 break;
-
-            default:
-                printf("Invalid command, please enter again\n");
-                break;
         }
     }
 }
 
-void settings_edit(int setting) {
+void settings_edit(int setting) { // Edit the given setting
     char input[MAX_INPUT_SIZE];
 
     char* str1 = "Current setting is ";
@@ -65,6 +61,7 @@ void settings_edit(int setting) {
     strncat(menu_text, str2, len);
     strncat(menu_text, str3, len);
 
+    // Print the menu text with current setting
     printf("\n%s\n", menu_text);
 
     char* help_text = "!q to go back";
@@ -73,13 +70,13 @@ void settings_edit(int setting) {
         printf(">");
         scanf(" %s", input);
 
-        if (strstr(input, "!q")) {
+        if (strstr(input, "!q")) { // Return to menu_settings();
             return;
         }
-        else if (strstr(input, "!h")) {
+        else if (strstr(input, "!h")) { // Print help text
             printf("%s\n", help_text);
         }
-        else if (settings_validate(input, setting)) {
+        else if (settings_validate(input, setting)) { // If input is valid for the current setting
             // TODO: Write to config
             return;
         }
