@@ -10,6 +10,7 @@
 #include "api/parse.h"
 
 /// DEFINES
+#define MAX_INPUT_SIZE 100
 #define FILE_TYPE ".txt"
 
 /// TYPEDEFS

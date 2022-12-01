@@ -16,8 +16,8 @@ void menu_settings() {
     options[2] = "Change the distance limit";
     options[3] = "Change the size deviation";
 
-    char menu_text[100] = "Choose the setting you want to edit";
-    char help_text[100] = "!q to quit the program";
+    char* menu_text = "Choose the setting you want to edit";
+    char* help_text = "!q to quit the program";
 
     while (1) {
         int selected_option = display_menu(options, menu_text, help_text);
@@ -51,12 +51,24 @@ void menu_settings() {
 }
 
 void settings_edit(int setting) {
-    char input[100];
+    char input[MAX_INPUT_SIZE];
 
-    char menu_text[100] = "Current setting is [setting]\nEnter new setting";
-    char help_text[100] = "!q to go back";
+    char* str1 = "Current setting is ";
+    char* str2 = "[setting]"; // TODO: = read from config
+    char* str3 = "\nEnter new setting";
+
+    int len = strlen(str1) + strlen(str2) + strlen(str3);
+
+    char menu_text[len];
+
+    strncpy(menu_text, str1, len);
+    strncat(menu_text, str2, len);
+    strncat(menu_text, str3, len);
+
     printf("\n%s\n", menu_text);
 
+    char* help_text = "!q to go back";
+    
     while (1) {
         printf(">");
         scanf(" %s", input);
@@ -72,7 +84,7 @@ void settings_edit(int setting) {
             return;
         }
         else {
-            printf("Error: invalid command\n");
+            printf("Error: invalid input\n");
         }
     }
 }

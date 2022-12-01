@@ -8,13 +8,7 @@ char *CURRENT_DIRECTORY;
 
 int main(int argc, char **args)
 {
-
-    char* raw_coordinates;
-    char* input_address = "Selma Lagerløfs Vej 300";
-
-    fetch_coordinates(input_address, &raw_coordinates);
-    
-    printf("%s", raw_coordinates);
+    menu_settings();
 
     return 0;
 }
