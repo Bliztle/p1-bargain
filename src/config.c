@@ -52,3 +52,18 @@ int conf_write_settings(conf_settings_s settings) {
     fclose(config_file);
     return 1;
 }
+
+int conf_setup() {
+    if (!conf_check_valid()) {
+        conf_create();
+        if (conf_check_valid()) {
+            printf("Error in creation of file");
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int conf_check_valid() {
+
+}

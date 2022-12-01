@@ -28,3 +28,9 @@ int conf_read_settings(conf_settings_s * conf_settings);
  * @returns true (1) if successful and false (0) in case of an error
  */
 int conf_write_settings(conf_settings_s settings);
+
+int conf_setup();
+
+int conf_check_valid();
+
+void conf_create();
