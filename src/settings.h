@@ -35,7 +35,7 @@ void settings_edit(int setting);
 
 /**
  * @brief Validates settings
- * @param user user input
+ * @param input user input
  * @param setting the setting to validate
  * @return true or false
  */
