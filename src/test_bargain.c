@@ -38,7 +38,9 @@ const basket_item_s item5 = {
 
 int main()
 {
-    bargain_menu_find_bargain();
+    store_s *stores = malloc(sizeof(store_s) * 3);
+    int stores_count = bargain_find_bargain(stores);
+    test_bargain_make_assertions(stores, stores_count);
     int test_items = (!test_items_filter_items());
     assert(test_items);
 
@@ -166,7 +168,7 @@ int get_expected_stores(store_s *stores)
         .distance = 3,
         .items_count = 4,
         .items = malloc(3 * sizeof(store_item_s)),
-        .found_items = malloc(3 * sizeof(found_item_s)),
+        .found_items = malloc(4 * sizeof(found_item_s)),
         .found_items_count = 4,
         .missing_items = malloc(5 * sizeof(basket_item_s)),
         .missing_items_count = 1,
@@ -297,23 +299,24 @@ int compare_stores_structs(store_s x, store_s y)
     return 1;
 }
 
-int test_stores(store_s *stores)
+int test_stores(store_s *stores, int store_count)
 {
     store_s *expected_stores = malloc(3 * sizeof(store_s));
     int expected_stores_count = get_expected_stores(expected_stores);
 
+    int store_counts_match = (expected_stores_count == store_count);
+    assert(store_counts_match);
     for (int i = 0; i < 3; i++)
     {
         int test_store_result_match_expectation = (!compare_stores_structs(stores[i], expected_stores[i]));
-        //printf("Test %d", test_store_result_match_expectation);
         assert(test_store_result_match_expectation);
     }
     return 1;
 }
 
-int test_bargain_make_assertions(store_s *stores)
+int test_bargain_make_assertions(store_s *stores, int store_count)
 {
-    test_stores(stores);
+    test_stores(stores, store_count);
     return 0;
 }
 

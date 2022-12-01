@@ -40,7 +40,6 @@ void bargain_menu_find_bargain()
         options[i] = option;
     }
 
-    test_bargain_make_assertions(stores);
     int selected_bargain = display_menu(options, menu_text, "Enter a number to select a bargain.");
 
     if (selected_bargain == -1)
