@@ -1,10 +1,18 @@
-#pragma once
+#ifndef P1_BARGAIN_FETCH_H
+#define P1_BARGAIN_FETCH_H
 
 #include <stddef.h>
 #include "../items_types.h"
+#include "nxjson/nxjson.h"
 
 #define FILE_STORES "stores.txt"
 #define FILE_STORES_SEPERATOR '|'
+#define FILE_ITEMS_SUFFIX "-coop-items.txt"
+#define FILE_ITEMS_SEPERATOR '|'
+
+#define COOP_FIELD_TIME "cache_time"
+#define COOP_FIELD_ITEMS "items"
+#define TIME_SECONDS_IN_WEEK 60 * 60 * 24 * 7 
 
 typedef enum
 {
@@ -59,6 +67,8 @@ fetch_status_e fetch_get_no_auth(char *url, char **result);
  * collects data in chunks from buffer and writes to the prelimenary response
  */
 size_t fetch_write_callback(char *buffer, size_t size, size_t buffer_length, void *prelim_response);
+
+char *encode_danish(char* url);
 
 /**
  * Renews all stores and prints them to stores.txt
@@ -144,6 +154,21 @@ void fetch_print_store(store_s *store);
  */
 void fetch_print_stores(store_s *stores, int count);
 
+
+void fetch_get_coop_items(store_s *store);
+
+fetch_status_e fetch_renew_coop_items(char *store_id, const nx_json **json);
+
+const nx_json *fetch_get_cached_coop_items(char *store_id);
+
+char *_fetch_get_coop_file_name(char *store_id);
+
+int _fetch_read_coop_items(char *store_id, char **content);
+
+void _fetch_write_coop_items(char *store_id, char *content);
+
+void fetch_get_salling_items(store_s *store);
+
 /**
  * Get address coordinates from Google Maps
  * @param input_address the address that the user inputs
@@ -151,3 +176,5 @@ void fetch_print_stores(store_s *stores, int count);
  * @return success status
 */
 fetch_status_e fetch_coordinates(char* input_address, char** raw_coordinates); 
+
+#endif

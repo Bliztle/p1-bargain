@@ -1,5 +1,6 @@
 #include "fetch.h"
 #include "parse.h"
+#include "nxjson/nxjson.h"
 #include "../calc.h"
 #include "../items_types.h"
 #include <stdio.h>
@@ -29,13 +30,14 @@ fetch_status_e fetch_get(char *url, fetch_auth_e token_type, char *token, char *
     CURLcode res_code;
     fetch_response_s res = {NULL, 0};
 
+    char *_url = encode_danish(url);
     struct curl_slist *headers = NULL;
     headers = curl_slist_append(headers, "Accept: application/json");
     headers = curl_slist_append(headers, "Content-type: application/json");
     headers = curl_slist_append(headers, "charset: utf-8");
     headers = curl_slist_append(headers, auth_header);
 
-    curl_easy_setopt(curl, CURLOPT_URL, url);
+    curl_easy_setopt(curl, CURLOPT_URL, _url);
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L); // Follow redirects
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, fetch_write_callback);
@@ -57,6 +59,7 @@ fetch_status_e fetch_get(char *url, fetch_auth_e token_type, char *token, char *
     // Cleanup
     curl_easy_cleanup(curl);
     curl_slist_free_all(headers);
+    free(_url);
 
     *result = res.response;
 
@@ -73,13 +76,45 @@ size_t fetch_write_callback(char *buffer, size_t size, size_t buffer_length, voi
     if (ptr == NULL)
         return 0;
 
-    // Prepend response
+    // Append response
     mem->response = ptr;
     memcpy(&(mem->response[mem->size]), buffer, realsize);
     mem->size += realsize;
     mem->response[mem->size] = 0;
 
     return realsize;
+}
+
+char *encode_danish(char* url) {
+    char* buff = malloc(strlen(url) + 1);
+    strcpy(buff, url);
+
+    char* ptr;
+    while((ptr = strstr(buff, "æ")) != NULL) {
+        ptr[0] = 'a';
+        ptr[1] = 'e';
+    }
+    while((ptr = strstr(buff, "ø")) != NULL) {
+        ptr[0] = 'o';
+        ptr[1] = 'e';
+    }
+    while((ptr = strstr(buff, "å")) != NULL) {
+        ptr[0] = 'a';
+        ptr[1] = 'a';
+    }
+    while((ptr = strstr(buff, "Æ")) != NULL) {
+        ptr[0] = 'A';
+        ptr[1] = 'E';
+    }
+    while((ptr = strstr(buff, "Ø")) != NULL) {
+        ptr[0] = 'O';
+        ptr[1] = 'E';
+    }
+    while((ptr = strstr(buff, "Å")) != NULL) {
+        ptr[0] = 'A';
+        ptr[1] = 'A';
+    }
+    return buff;
 }
 
 fetch_status_e fetch_renew_stores()
@@ -100,17 +135,7 @@ fetch_status_e fetch_renew_coop_stores(store_s **stores, int *count)
     int distance = 6000;
     char *token = "8042a78a1c91463e80140b0cb11b8b47";
 
-    // char url[255];
-    // snprintf(url, 255,
-    //          "https://api.cl.coop.dk/storeapi/v1/stores?page=1&size=5000",
-    //          distance, lat, lon);
-
     char *url = "https://api.cl.coop.dk/storeapi/v1/stores?page=1&size=5000";
-
-    // char url[255];
-    // snprintf(url, 255,
-    //          "https://api.cl.coop.dk/storeapi/v1/stores/find/radius/%d?latitude=%f&longitude=%f",
-    //          distance, lat, lon);
 
     char *raw_stores = NULL;
     fetch_status_e status = fetch_get(url, FETCH_AUTH_OCP_APIM, token, &raw_stores);
@@ -124,17 +149,12 @@ fetch_status_e fetch_renew_coop_stores(store_s **stores, int *count)
     for (int i = 0; i < new_count; i++)
     {
         if (calc_coordinate_distance(lat, lon, parsed_stores[i].lat, parsed_stores[i].lon) * 1000 < distance)
-        // if (1)
         {
             *stores = realloc(*stores, (++(*count)) * sizeof(store_s));
             (*stores)[*count - 1] = parsed_stores[i];
         }
     }
 
-    // *stores = realloc(*stores, (*count + new_count) * sizeof(store_s));
-    // memcpy(&(*stores[(*count)]), parsed_stores, new_count * sizeof(store_s));
-
-    // *count += new_count;
     free(raw_stores);
 
     return FETCH_STATUS_SUCCESS;
@@ -261,6 +281,174 @@ void fetch_print_store(store_s *store)
            store->group,
            store->chain,
            store->distance);
+}
+
+void fetch_get_coop_items(store_s *store)
+{
+
+    // Populate nx_json. If evereything fails return zero items
+    const nx_json *json = fetch_get_cached_coop_items(store->uid);
+    if (json == NULL)
+    {
+        fetch_status_e status = fetch_renew_coop_items(store->uid, &json);
+        if (status != FETCH_STATUS_SUCCESS || json == NULL)
+        {
+            store->items_count = 0;
+            store->items = NULL;
+            return;
+        }
+    }
+
+    store->items_count = parse_coop_items(json, &store->items);
+}
+
+fetch_status_e fetch_renew_coop_items(char *store_id, const nx_json **json)
+{
+    // TODO: Read from config
+    char *token = "8042a78a1c91463e80140b0cb11b8b47";
+    char url[100];
+    snprintf(url, 100, "https://api.cl.coop.dk/productapi/v1/product/%s", store_id);
+
+    char *response = NULL;
+    fetch_status_e status = fetch_get(url, FETCH_AUTH_OCP_APIM, token, &response);
+
+    if (status != FETCH_STATUS_SUCCESS)
+    {
+        response = realloc(response, 3);
+        strcpy(response, "[]");
+        response[2] = '\0';
+        return status;
+    }
+
+    _fetch_write_coop_items(store_id, response);
+    *json = nx_json_parse_utf8(response);
+    return FETCH_STATUS_SUCCESS;
+}
+
+const nx_json *fetch_get_cached_coop_items(char *store_id)
+{
+    char *content = NULL;
+    int s = _fetch_read_coop_items(store_id, &content);
+    if (s != 0)
+    {
+        return NULL;
+    }
+
+    const nx_json *json = nx_json_parse_utf8(content);
+    time_t now = time(NULL);
+    time_t cached = nx_json_get(json, COOP_FIELD_TIME)->num.u_value;
+    if (now > cached + TIME_SECONDS_IN_WEEK) // Renew once a week to limit API calls
+        return NULL;
+    return nx_json_get(json, COOP_FIELD_ITEMS);
+}
+
+char *_fetch_get_coop_file_name(char *store_id)
+{
+    int length = strlen(store_id) + strlen(FILE_ITEMS_SUFFIX) + 1;
+    char *file_name = malloc(length);
+    snprintf(file_name, length, "%s%s", store_id, FILE_ITEMS_SUFFIX);
+    return file_name;
+}
+
+int _fetch_read_coop_items(char *store_id, char **content)
+{
+    char *name = _fetch_get_coop_file_name(store_id);
+    int s = parse_read_file_to_end(name, content);
+    free(name);
+    return s;
+}
+
+void _fetch_write_coop_items(char *store_id, char *content)
+{
+    char *name = _fetch_get_coop_file_name(store_id);
+    FILE *fp = fopen(name, "w");
+    fprintf(fp, "{\"%s\":%ld,\"%s\":%s}", COOP_FIELD_TIME, time(NULL), COOP_FIELD_ITEMS, content);
+    fclose(fp);
+    free(name);
+}
+
+#define MOCK_BASKET_SIZE 10
+basket_item_s *__fetch_mock_basket()
+{
+    basket_item_s *items = malloc(MOCK_BASKET_SIZE * sizeof(basket_item_s));
+
+    strncpy(items[0].name, "Skåvl", ITEM_NAME_SIZE);
+    items[0].size = 1;
+    items[0].unit = UNKNOWN;
+
+    strncpy(items[1].name, "Spade", ITEM_NAME_SIZE);
+    items[1].size = 1;
+    items[1].unit = UNKNOWN;
+
+    strncpy(items[2].name, "Spegepølse", ITEM_NAME_SIZE);
+    items[2].size = 1;
+    items[2].unit = UNKNOWN;
+
+    strncpy(items[3].name, "Sild", ITEM_NAME_SIZE);
+    items[3].size = 1;
+    items[3].unit = UNKNOWN;
+
+    strncpy(items[4].name, "Brød", ITEM_NAME_SIZE);
+    items[4].size = 1;
+    items[4].unit = UNKNOWN;
+
+    strncpy(items[5].name, "Lys", ITEM_NAME_SIZE);
+    items[5].size = 1;
+    items[5].unit = UNKNOWN;
+
+    strncpy(items[6].name, "Mad", ITEM_NAME_SIZE);
+    items[6].size = 1;
+    items[6].unit = UNKNOWN;
+
+    strncpy(items[7].name, "Æg", ITEM_NAME_SIZE);
+    items[7].size = 1;
+    items[7].unit = UNKNOWN;
+
+    strncpy(items[8].name, "Mælk", ITEM_NAME_SIZE);
+    items[8].size = 1;
+    items[8].unit = UNKNOWN;
+
+    strncpy(items[9].name, "Redskab", ITEM_NAME_SIZE);
+    items[9].size = 1;
+    items[9].unit = UNKNOWN;
+
+    return items;
+}
+
+void fetch_get_salling_items(store_s *store)
+{
+    // TODO: Read from config
+    char *token = "ed1b7976-ca43-4bde-a930-ba3d92935464";
+
+    // TODO: Read from basket
+    basket_item_s *basket_items = __fetch_mock_basket();
+
+    int count = 0;
+    store_item_s *items = NULL;
+
+    // Call is made for each store without cache, even though items are the same for every salling store
+    // because we want the code to be modifiable if salling adds items from more than bilka to their api
+    for (int i = 0; i < MOCK_BASKET_SIZE; i++)
+    {
+        char url[255];
+        snprintf(url, 255, "https://api.sallinggroup.com/v1-beta/product-suggestions/relevant-products?query=%s", basket_items[i].name);
+
+        char *raw_items = NULL;
+        fetch_status_e status = fetch_get(url, FETCH_AUTH_BEARER, token, &raw_items);
+
+        if (status != FETCH_STATUS_SUCCESS)
+            continue;
+
+        store_item_s *temp_items = NULL;
+        int temp_count = parse_salling_items(raw_items, &temp_items);
+
+        items = realloc(items, (count + temp_count) * sizeof(store_item_s));
+        memcpy(&(items[count]), temp_items, temp_count * sizeof(store_item_s));
+        count += temp_count;
+    }
+
+    store->items = items;
+    store->items_count = count;
 }
 
 fetch_status_e fetch_coordinates(char* input_address, char** raw_coordinates) {
