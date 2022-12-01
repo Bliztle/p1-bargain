@@ -1,4 +1,6 @@
-#pragma once
+#ifndef P1_BARGAIN_CONFIG_H
+#define P1_BARGAIN_CONFIG_H
+
 #include "api/parse.h"
 
 typedef char conf_address_t[100];
@@ -34,3 +36,5 @@ int conf_setup();
 int conf_check_valid();
 
 void conf_create();
+
+#endif
