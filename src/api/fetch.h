@@ -2,6 +2,7 @@
 #define P1_BARGAIN_FETCH_H
 
 #include <stddef.h>
+#include <ctype.h>
 #include "../items_types.h"
 #include "nxjson/nxjson.h"
 
