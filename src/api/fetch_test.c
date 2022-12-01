@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include "fetch.h"
 #include "../items_types.h"
+#include <string.h>
+#include <stdlib.h>
 
 /**
  * Tests for fetch.c
@@ -17,12 +19,16 @@ int main()
     int count = 0;
     store_s *stores = NULL;
 
+    /****************** General tests ******************/
     printf("General fetch tests\n");
+
     char *result = NULL;
     fetch_status_e fetch_get_status = fetch_get_no_auth("https://example.com", &result); // fetch_get_no_auth is basically aliassing fetch_get
     assert(fetch_get_status == FETCH_STATUS_SUCCESS);
 
+    /****************** Store tests ******************/
     printf("Fetch renew tests\n");
+
     fetch_status_e fetch_renew_salling_stores_status = fetch_renew_salling_stores(&stores, &count);
     assert(fetch_renew_salling_stores_status == FETCH_STATUS_SUCCESS);
 
@@ -44,5 +50,39 @@ int main()
     assert(read_count == lines || read_count == lines - 1);
     fetch_print_stores(stores, read_count);
 
+    /****************** Items tests ******************/
+    printf("\nfetch items test\n");
+    //? Not sure how i should test these functions
+
+    //! Not run, as we have limited api calls
+    //! Git does not cache like us when testing
+    printf("\nCOOP\n");
+    store_s coop_store_1290;
+
+    strcpy(coop_store_1290.uid, "24216");
+    fetch_get_coop_items(&coop_store_1290);
+    for (int i = 0; i < coop_store_1290.items_count; i++)
+    {
+        printf("[%d]\nName: %s\nPrice: %f\nSize: %f\nUnit: %i\nPPU: %f\n\n", i,
+               coop_store_1290.items[i].name,
+               coop_store_1290.items[i].price,
+               coop_store_1290.items[i].size,
+               coop_store_1290.items[i].unit,
+               coop_store_1290.items[i].price_per_unit);
+    }
+
+    printf("\nSALLING\n");
+    store_s salling_store;
+
+    fetch_get_salling_items(&salling_store);
+    for (int i = 0; i < salling_store.items_count; i++)
+    {
+        printf("[%d]\nName: %s\nPrice: %f\nSize: %f\nUnit: %i\nPPU: %f\n\n", i,
+               salling_store.items[i].name,
+               salling_store.items[i].price,
+               salling_store.items[i].size,
+               salling_store.items[i].unit,
+               salling_store.items[i].price_per_unit);
+    }
     return 0;
 }
