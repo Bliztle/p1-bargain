@@ -3,7 +3,8 @@
 #include <string.h>
 
 /// TYPEDEFS
-typedef struct {
+typedef struct
+{
     // TODO: add settings
 } basket_item_s;
 
@@ -42,5 +43,5 @@ void menu_basket_remove(basket_item_s items);
 /**
  * Adds an item to the basket
  * @param items
-*/
+ */
 void menu_basket_add(basket_item_s items);

@@ -7,49 +7,125 @@
 #include "items_types.h"
 #include "menu.h"
 #include "test_bargain.h"
-// #include "api/fetch.h"
+#include "api/fetch.h"
+#include "test_functions.h"
 
 #define MAX_STORES_COUNT 3
+#define MAIN_MENU_ITEMS_COUNT 4
 
 typedef int (*compfn)(const void *, const void *);
 
-void bargain_menu_find_bargain()
+void bargain_run_bargain()
 {
 
+    char *options[MAIN_MENU_ITEMS_COUNT];
+
+    options[0] = "Find Bargains";
+    options[1] = "Edit Shopping List";
+    options[2] = "Settings";
+    options[3] = "Quit";
+
+    int choice = display_menu(options, "Main Menu", "Enter the number of the option you want to choose, or 4 to quit");
+
+    switch (choice)
+    {
+    case 0:
+        bargain_menu_find_bargain();
+        break;
+    case 1:
+        // TODO: Implement Basket Editor
+        break;
+    case 2:
+        // TODO: Implement Settings
+        break;
+    case 3:
+        printf("Goodbye!\n");
+        return;
+    }
+    bargain_run_bargain();
+}
+
+store_s copy_store(store_s *source)
+{
+    store_s new_store = {
+        .group = source->group,
+        .chain = source->chain,
+        .lat = source->lat,
+        .lon = source->lon,
+        .found_items_count = source->found_items_count,
+        .found_items_total_price = source->found_items_total_price,
+        .items = source->items,
+        .items_count = source->items_count,
+    };
+    strcpy(new_store.name, source->name);
+    strcpy(new_store.address, source->address);
+    strcpy(new_store.uid, source->uid);
+
+    return new_store;
+}
+
+store_s *filter_stores(store_s *stores, int store_count, int *bargain_counter)
+{
+    store_s *bargains = malloc(sizeof(store_s) * store_count);
+
+    int skipped = 0;
+    for (int i = 0; i < store_count; i++)
+    {
+        if (stores[i].found_items_count > 0)
+        {
+
+            bargains[*bargain_counter - skipped] = stores[i];
+            (*bargain_counter)++;
+        }
+        else
+        {
+            skipped++;
+        }
+    }
+
+    return bargains;
+}
+
+void bargain_menu_find_bargain()
+{
     store_s *stores = malloc(MAX_STORES_COUNT * sizeof(store_s));
     int store_count = bargain_find_bargain(stores);
 
-    char *options[store_count];
+    int bargain_count = 0;
+    store_s *bargains = filter_stores(stores, store_count, &bargain_count);
+
+    char *options[bargain_count];
 
     char *menu_text = "Found Bargains\nStore | Address | Distance | Total price | Items found\n--------------------------------\n";
 
-    for (int i = 0; i < store_count; i++)
+    for (int i = 0; i < bargain_count; i++)
     {
 
-        size_t option_length = (100 + strlen(stores[i].name) + strlen(stores[i].address)) * sizeof(char);
+        size_t option_length = (100 + strlen(bargains[i].name) + strlen(bargains[i].address)) * sizeof(char);
         char *option = malloc(option_length);
 
         snprintf(option, option_length, ": %s | %s | %d m. | %lf dkk. | %d/%d\n",
-                 stores[i].name,
-                 stores[i].address,
-                 stores[i].distance,
-                 stores[i].found_items_total_price,
-                 stores[i].found_items_count,
-                 stores[i].missing_items_count + stores[i].found_items_count);
+                 bargains[i].name,
+                 bargains[i].address,
+                 bargains[i].distance,
+                 bargains[i].found_items_total_price,
+                 bargains[i].found_items_count,
+                 bargains[i].missing_items_count + bargains[i].found_items_count);
 
         options[i] = option;
     }
 
     int selected_bargain = display_menu(options, menu_text, "Enter a number to select a bargain.");
 
+    // TODO: Fix this so it uses the menu macro for input validation, and doesn't run the entire program again on invalid input.
     if (selected_bargain == -1)
     {
         return;
     }
 
-    else if (selected_bargain >= 0)
+    else if (selected_bargain >= 0 && selected_bargain < bargain_count)
     {
-        bargain_menu_print_bargain(stores[selected_bargain]);
+        bargain_menu_print_bargain(bargains[selected_bargain]);
         bargain_menu_find_bargain();
     }
 }
@@ -57,8 +133,9 @@ void bargain_menu_find_bargain()
 int bargain_find_bargain(store_s *stores)
 {
 
-    int store_count = test_fetch_get_stores(stores); // fetch_get_stores(&stores); TODO: Make sure everything in store structs is initialised beyond this point.
-
+    int store_count = test_fetch_get_stores(stores);
+    // int store_count = fetch_get_stores(&stores); // TODO: Make sure everything in store structs is initialised beyond this point.
+    printf("Store count: %d\n", store_count);
     stores_populate_store_items(stores, store_count);
 
     qsort(stores, store_count, sizeof(store_s), (compfn)stores_compare_stores);
@@ -73,7 +150,7 @@ void bargain_print_bargain_result(store_s store)
 
     for (int i = 0; i < store.found_items_count; i++)
     {
-
+        // TODO: Find out why store.found_items[i].price_per_unit is 0.0
         printf("%d | %s | %d | %lf | %lf\n", i + 1, store.found_items[i].name, store.found_items[i].count, store.found_items[i].price_per_unit, store.found_items[i].total_price);
     }
 

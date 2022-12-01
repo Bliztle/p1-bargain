@@ -3,8 +3,54 @@
 #include <math.h>
 #include <string.h>
 #include "test_items.h"
-#include "malloc.h"       // TODO remove when basket is read from file.
-#include "test_bargain.h" // TODO remove when basket is read from file.
+#include "malloc.h" // TODO remove when basket is read from file.
+#include "test_bargain.h"
+#include "bargain.h"
+
+// TODO: Remove when basked read from file is implemented.
+basket_item_s *test_get_basket(int *basket_item_counter)
+{
+
+    basket_item_s *basket = malloc(5 * sizeof(basket_item_s));
+    const basket_item_s item1 = {
+        .name = "Milk\0",
+        .size = 1,
+        .unit = LITERS,
+    };
+
+    const basket_item_s item2 = {
+        .name = "Beef\0",
+        .size = 2,
+        .unit = KILOGRAMS,
+    };
+
+    const basket_item_s item3 = {
+        .name = "Noodles\0",
+        .size = 3,
+        .unit = UNITS,
+    };
+
+    const basket_item_s item4 = {
+        .name = "Snickers\0",
+        .size = 4,
+        .unit = UNITS,
+    };
+
+    const basket_item_s item5 = {
+        .name = "Pudding\0",
+        .size = 5,
+        .unit = UNITS,
+    };
+
+    basket[0] = item1;
+    basket[1] = item2;
+    basket[2] = item3;
+    basket[3] = item4;
+    basket[4] = item5;
+
+    *basket_item_counter = 5;
+    return basket;
+}
 
 int items_find_best_match(basket_item_s requested_item, store_s *store, found_item_s *found_destination, basket_item_s *missing_destination)
 {
@@ -88,8 +134,8 @@ int items_is_in_variation(double store_item_size, double variance, double reques
 void items_filter_items(store_s *store)
 {
     // TODO Change to read basket from file
-    basket_item_s *basket = malloc(5 * sizeof(basket_item_s));
-    int basket_size = test_get_basket(basket);
+    int basket_size = 0;
+    basket_item_s *basket = test_get_basket(&basket_size);
 
     for (int i = 0; i < basket_size; i++)
     {

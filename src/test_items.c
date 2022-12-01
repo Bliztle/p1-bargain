@@ -5,6 +5,7 @@
 #include "test_items.h"
 #include "items.h"
 #include "time.h"
+#include "bargain.h"
 
 int test_items_filter_items()
 {

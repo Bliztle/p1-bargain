@@ -3,6 +3,8 @@
 #include "items_types.h"
 #include "stddef.h"
 
+void bargain_run_bargain();
+
 /**
  * Starts the process of finding the cheapest store.
  *
