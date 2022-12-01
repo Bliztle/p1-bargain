@@ -455,11 +455,12 @@ fetch_status_e fetch_coordinates(char* input_address, char** raw_coordinates) {
     char* url_start = "https://maps.googleapis.com/maps/api/geocode/json?address=";
     char* token = "&key=AIzaSyCwIirwXs-zd2_TZU6uLll6BOHdaIQVDeM";
 
-    int address_len = strlen(input_address);
+    int address_len = strlen(input_address); // Get length of the address
 
     // Assume every character is 2 bytes so it works with 'æ', 'ø' and 'å'
     char* address = malloc(2 * address_len * (char)sizeof(int));
 
+    // If no memory available print error and exit
     if (address == NULL) {
         perror("Exit");
         exit(EXIT_FAILURE);
@@ -470,19 +471,20 @@ fetch_status_e fetch_coordinates(char* input_address, char** raw_coordinates) {
     int url_len = strlen(url_start);
     int token_len = strlen(token);
 
+    // Loop over address and checks if there is a space. A space needs to be replaced with "%20" for the url to work
     for (int i = 0; i < address_len; ++i) {
         if (address[i] == ' ') {    
 
-            address_len += 2;
+            address_len += 2; // Address need to grow with two spaces for the '2' and the '0'. '%' replaces ' '.
 
-            // Assume every character is 2 bytes so it works with 'æ', 'ø' and 'å'
-            char* tmp = realloc(address, 2 * address_len * sizeof(char));
+            // Using tmp variable so we dont get a memory leak if there is not enough room to reallocate
+            char* tmp = realloc(address, 2 * address_len * sizeof(char)); 
 
-            if (tmp == NULL) {
+            if (tmp == NULL) { // If not enough memory
                 perror("Error");
 
-                free(address);
-                address = NULL;
+                free(address); 
+                address = NULL; // No dangling pointer
 
                 exit(EXIT_FAILURE);
             }
@@ -490,30 +492,34 @@ fetch_status_e fetch_coordinates(char* input_address, char** raw_coordinates) {
                 address = tmp;
             }
 
-            tmp = NULL;
+            tmp = NULL; 
 
+            // Moves the memory so there is space for "20"
             memmove(address + i + 3, address + i + 1, address_len - i - 1);
 
+            // Replace ' ' with '%'
             address[i] = '%';
+
+            // Fills in the "20" on empty spaces
             address[i + 1] = '2';
             address[i + 2] = '0';
         }
     }
 
-    int len = address_len + url_len + token_len;
+    int len = address_len + url_len + token_len; // Total len of the sub-strings
 
-    char url[len + 1];
+    char url[len];
 
-    strncpy(url, url_start, len);
-    strncat(url, address, len);
+    strncpy(url, url_start, len); // Copy first part since we dont want to append it to the empty string
+    strncat(url, address, len); // Concat the two other parts
     strncat(url, token, len);
 
     free(address);
     address = NULL;
 
-    fetch_status_e status = fetch_get_no_auth(url, raw_coordinates);
+    fetch_status_e status = fetch_get_no_auth(url, raw_coordinates); // Call api
 
-    if (status != FETCH_STATUS_SUCCESS) {
+    if (status != FETCH_STATUS_SUCCESS) { // If call failed return the error status
         return status;
     }
 }

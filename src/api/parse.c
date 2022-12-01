@@ -309,7 +309,7 @@ int parse_coordinates(char* raw_coordinates, conf_settings_s* settings) {
 
     if (results->children.length == 0) return 0;
 
-    // Take the first element in the array
+    // Save the first result
     const nx_json* result_first_child = results->children.first;
 
     // Get value of lat and long and put them into the settings struct
@@ -318,7 +318,7 @@ int parse_coordinates(char* raw_coordinates, conf_settings_s* settings) {
 
     // Cleanup
     nx_json_free(json);
-    json = NULL;
+    json = NULL; // No dangling pointer
 
     return 1;
 }
