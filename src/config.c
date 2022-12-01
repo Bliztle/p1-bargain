@@ -51,6 +51,7 @@ int conf_write_settings(conf_settings_s settings) {
     return 1;
 }
 
+/*
 int conf_setup() {
     if (!conf_check_valid()) {
         conf_create();
@@ -64,4 +65,4 @@ int conf_setup() {
 
 int conf_check_valid() {
 
-}
+}*/
