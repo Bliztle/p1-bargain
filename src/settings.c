@@ -68,7 +68,7 @@ void settings_edit(int setting) { // Edit the given setting
     
     while (1) {
         printf(">");
-        scanf(" %s", input);
+        scanf("%s", input);
 
         if (strstr(input, "!q")) { // Return to menu_settings();
             return;
@@ -81,7 +81,7 @@ void settings_edit(int setting) { // Edit the given setting
             return;
         }
         else {
-            printf("Error: invalid input\n");
+            printf("\nError: Invalid input\n");
         }
     }
 }
@@ -111,15 +111,22 @@ int settings_validate(char *input, int setting) {
 
 int settings_validate_path(char *input) {
     // Make sure the file type is right
-    if (strcmp(strstr(input, FILE_TYPE), FILE_TYPE)) {
+    char* substring = strstr(input, FILE_TYPE);
+
+    // If there is no substring
+    if (substring == NULL) {
         return 0;
     }
 
-    // Since it technically still could be a folder, we open the file
+    // If there exists a substring but its not equivalent to the file type
+    if (strcmp(substring, FILE_TYPE)) {
+        return 0;
+    }
+
+    // Since it technically still could be a folder ending on .txt, we open the file
     FILE* file = fopen(input, "r");
 
     if (file == NULL) { // A folder cannot be opened by fopen()
-        perror("Error");
         return 0;
     }
 
