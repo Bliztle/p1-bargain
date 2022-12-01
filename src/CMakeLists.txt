@@ -9,7 +9,6 @@ add_subdirectory(api)
 configure_file(settings.conf settings.conf COPYONLY)
 
 add_executable(settings settings.c)
-add_executable(config config.c)
 
 # Testing
 add_executable(test_items test_items.c items.c)
