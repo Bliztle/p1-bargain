@@ -19,16 +19,8 @@ int conf_read_settings(conf_settings_s * conf_settings) {
     fscanf(config_file, "%*s %s", conf_settings->shopping_list_save_path);
     fscanf(config_file, "%*s %d", &conf_settings->max_distance);
     fscanf(config_file, "%*s %[^\n]s", conf_settings->address);
-
-    char lat_temp[20], lon_temp[20];
-    fscanf(config_file, "%*s %s %s", lat_temp, lon_temp);
-    char * endptr;
-    conf_settings->address_lat = strtod(lat_temp, &endptr);
-    conf_settings->address_lon = strtod(lon_temp, &endptr);
-
-    char dev_temp[20];
-    fscanf(config_file, "%*s %s", dev_temp);
-    conf_settings->deviance = strtod(dev_temp, &endptr);
+    fscanf(config_file, "%*s %lf %lf", &conf_settings->address_lat, &conf_settings->address_lon);
+    fscanf(config_file, "%*s %lf", &conf_settings->deviance);
 
     fclose(config_file);
     return 1;
