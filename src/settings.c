@@ -119,13 +119,13 @@ int settings_validate_path(char* input) {
 
     // If there is no substring
     if (substring == NULL) {
-        perror("Error");
+        printf("Error: Unsupported file type");
         return 0;
     }
 
     // If there exists a substring but its not equivalent to the file type
     if (strcmp(substring, FILE_TYPE)) {
-        perror("Error");
+        printf("Error: Invalid file type");
         return 0;
     }
 
