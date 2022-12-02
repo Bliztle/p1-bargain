@@ -26,23 +26,7 @@ void menu_settings() {
             break;
         }
 
-        switch (selected_option) { // Select option that fits the input
-            case PATH:
-                settings_edit(PATH);
-                break;
-
-            case ADDRESS:
-                settings_edit(ADDRESS);
-                break;
-
-            case DISTANCE:
-                settings_edit(DISTANCE);
-                break;
-
-            case DEVIATION:
-                settings_edit(DEVIATION);
-                break;
-        }
+        settings_edit(selected_option);
     }
 }
 
