@@ -11,7 +11,7 @@
 #include "test_functions.h"
 
 #define MAX_STORES_COUNT 3
-#define MAIN_MENU_ITEMS_COUNT 4
+#define MAIN_MENU_ITEMS_COUNT 3
 
 typedef int (*compfn)(const void *, const void *);
 
@@ -23,12 +23,14 @@ void bargain_run_bargain()
     options[0] = "Find Bargains";
     options[1] = "Edit Shopping List";
     options[2] = "Settings";
-    options[3] = "Quit";
 
-    int choice = display_menu(options, "Main Menu", "Enter the number of the option you want to choose, or 4 to quit");
+    int choice = display_menu(options, "Main Menu", "Enter the number of the option you want to choose, or !q to quit");
 
     switch (choice)
     {
+    case -1:
+        printf("Goodbye!\n");
+        return;
     case 0:
         bargain_menu_find_bargain();
         break;
@@ -38,9 +40,6 @@ void bargain_run_bargain()
     case 2:
         // TODO: Implement Settings
         break;
-    case 3:
-        printf("Goodbye!\n");
-        return;
     }
     bargain_run_bargain();
 }
