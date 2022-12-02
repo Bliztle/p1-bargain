@@ -52,7 +52,8 @@ void settings_edit(int setting) { // Edit the given setting
     
     while (1) {
         printf(">");
-        scanf("%s", input);
+        fgets(input, MAX_INPUT_SIZE, stdin);
+        input[strcspn(input, "\r\n")] = '\0';
 
         if (strstr(input, "!q")) { // Return to menu_settings();
             return;
@@ -61,18 +62,17 @@ void settings_edit(int setting) { // Edit the given setting
             printf("%s\n", help_text);
         }
         else if (settings_validate(input, setting)) { // If input is valid for the current setting
-            if (setting == ADDRESS) {
+            /*if (setting == ADDRESS) {
                 fetch_status_e status_code = fetch_renew_stores();
 
                 if (status_code != FETCH_STATUS_SUCCESS) {
-                    printf("Error: fetch code %d", status_code); 
+                    printf("Error: fetch code %d\n", status_code); 
 
                     return;
                 }
-            }
+            }*/
 
             // TODO: conf_write_settings()
-
             return;
         }
     }
@@ -103,13 +103,13 @@ int settings_validate_path(char* input) {
 
     // If there is no substring
     if (substring == NULL) {
-        printf("Error: Unsupported file type");
+        printf("Error: Unsupported file type\n");
         return 0;
     }
 
     // If there exists a substring but its not equivalent to the file type
     if (strcmp(substring, FILE_TYPE)) {
-        printf("Error: Invalid file type");
+        printf("Error: Invalid file type\n");
         return 0;
     }
 
@@ -133,7 +133,7 @@ int settings_validate_address(char* input) { // Checks if it was able to fetch a
     fetch_status_e status_fetch = fetch_coordinates(input, &raw_coordinates) != FETCH_STATUS_SUCCESS; 
   
     if (status_fetch != FETCH_STATUS_SUCCESS) {
-        printf("Error: fetch status %d", status_fetch);
+        printf("Error: Fetch status %d\n", status_fetch);
         
         return 0;
     }
@@ -155,7 +155,7 @@ int settings_validate_deviation(char* input) {
     double deviation = strtod(input, &endptr);
 
     if (deviation <= 0) {
-        printf("Error: Invalid deviation");
+        printf("Error: Invalid deviation\n");
 
         return 0;
     }
@@ -169,7 +169,7 @@ int settings_validate_distance(char* input) {
     double distance = strtod(input, &endptr);
 
     if (distance <= 0) {
-        printf("Error: Invalid distance");
+        printf("Error: Invalid distance\n");
 
         return 0;
     }
