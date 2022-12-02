@@ -126,7 +126,7 @@ int settings_validate_path(char* input) {
     return 1;
 }
 
-int settings_validate_address(char* input) {
+int settings_validate_address(char* input) { // Checks if it was able to fetch and parse the input
     char* raw_coordinates;
     conf_settings_s settings;
 
