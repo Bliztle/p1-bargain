@@ -103,7 +103,7 @@ int settings_validate_path(char* input) {
 
     // If there is no substring
     if (substring == NULL) {
-        printf("Error: Unsupported file type\n");
+        printf("Error: Unsupported file name\n");
         return 0;
     }
 
