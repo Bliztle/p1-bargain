@@ -77,7 +77,18 @@ void settings_edit(int setting) { // Edit the given setting
             printf("%s\n", help_text);
         }
         else if (settings_validate(input, setting)) { // If input is valid for the current setting
-            // TODO: Write to config
+            if (setting == ADDRESS) {
+                fetch_status_e status_code = fetch_renew_stores();
+
+                if (status_code != FETCH_STATUS_SUCCESS) {
+                    printf("Error: fetch code %d", status_code); 
+
+                    return;
+                }
+            }
+
+            // TODO: conf_write_settings()
+
             return;
         }
     }
@@ -135,10 +146,12 @@ int settings_validate_address(char* input) {
     char* raw_coordinates;
     conf_settings_s settings;
 
-    int status_code = fetch_coordinates(input, &raw_coordinates) != FETCH_STATUS_SUCCESS; 
+    fetch_status_e status_code = fetch_coordinates(input, &raw_coordinates) != FETCH_STATUS_SUCCESS; 
   
     if (status_code != FETCH_STATUS_SUCCESS) {
         printf("Error: fetch status %d", status_code);
+        
+        return 0;
     }
 
     if (!parse_coordinates(raw_coordinates, &settings)) {

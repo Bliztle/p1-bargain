@@ -23,7 +23,7 @@ typedef struct {
  * @param conf_settings The struct to save the stored values on
  * @returns true (1) if successful and false (0) in case of an error
  */
-int conf_read_settings(conf_settings_s * conf_settings);
+int conf_read_settings(conf_settings_s* conf_settings);
 
 /**
  * @param settings The struct to overwrite the current config
