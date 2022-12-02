@@ -94,7 +94,7 @@ void settings_edit(int setting) { // Edit the given setting
     }
 }
 
-int settings_validate(char *input, int setting) {
+int settings_validate(char* input, int setting) {
     switch (setting) { // Maps setting to the right validation
         case PATH:
             return settings_validate_path(input);
@@ -113,7 +113,7 @@ int settings_validate(char *input, int setting) {
     }
 }
 
-int settings_validate_path(char *input) {
+int settings_validate_path(char* input) {
     // Make sure the file type is right
     char* substring = strstr(input, FILE_TYPE);
 
@@ -146,15 +146,17 @@ int settings_validate_address(char* input) {
     char* raw_coordinates;
     conf_settings_s settings;
 
-    fetch_status_e status_code = fetch_coordinates(input, &raw_coordinates) != FETCH_STATUS_SUCCESS; 
+    fetch_status_e status_fetch = fetch_coordinates(input, &raw_coordinates) != FETCH_STATUS_SUCCESS; 
   
-    if (status_code != FETCH_STATUS_SUCCESS) {
-        printf("Error: fetch status %d", status_code);
+    if (status_fetch != FETCH_STATUS_SUCCESS) {
+        printf("Error: fetch status %d", status_fetch);
         
         return 0;
     }
 
-    if (!parse_coordinates(raw_coordinates, &settings)) {
+    int status_parse = parse_coordinates(raw_coordinates, &settings);
+
+    if (!status_parse) {
         printf("Error: Invalid address\n");
 
         return 0;
@@ -177,7 +179,7 @@ int settings_validate_deviation(char* input) {
     return 1;
 }
 
-int settings_validate_distance(char *input) {
+int settings_validate_distance(char* input) {
     // Converts string to double and checks if it's valid as a distance
     char *endptr;
     double distance = strtod(input, &endptr);
