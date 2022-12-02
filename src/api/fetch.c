@@ -519,7 +519,5 @@ fetch_status_e fetch_coordinates(char* input_address, char** raw_coordinates) {
 
     fetch_status_e status = fetch_get_no_auth(url, raw_coordinates); // Call api
 
-    if (status != FETCH_STATUS_SUCCESS) { // If call failed return the error status
-        return status;
-    }
+    return status;
 }
