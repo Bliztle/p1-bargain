@@ -17,7 +17,6 @@ typedef int (*compfn)(const void *, const void *);
 
 void bargain_run_bargain()
 {
-
     char *options[MAIN_MENU_ITEMS_COUNT];
 
     options[0] = "Find Bargains";
@@ -44,7 +43,7 @@ void bargain_run_bargain()
     bargain_run_bargain();
 }
 
-store_s copy_store(store_s *source)
+store_s deep_copy_store(store_s *source)
 {
     store_s new_store = {
         .group = source->group,
@@ -53,14 +52,49 @@ store_s copy_store(store_s *source)
         .lon = source->lon,
         .found_items_count = source->found_items_count,
         .found_items_total_price = source->found_items_total_price,
-        .items = source->items,
         .items_count = source->items_count,
-    };
+        .missing_items_count = source->missing_items_count};
+
     strcpy(new_store.name, source->name);
     strcpy(new_store.address, source->address);
     strcpy(new_store.uid, source->uid);
 
+    new_store.items = malloc(sizeof(store_item_s) * source->items_count);
+    new_store.found_items = malloc(sizeof(store_item_s) * source->found_items_count);
+    new_store.missing_items = malloc(sizeof(store_item_s) * source->missing_items_count);
+
+    for (int i = 0; i < source->items_count; i++)
+    {
+        new_store.items[i] = source->items[i];
+    }
+
+    for (int i = 0; i < source->found_items_count; i++)
+    {
+        new_store.found_items[i] = source->found_items[i];
+    }
+
+    for (int i = 0; i < source->missing_items_count; i++)
+    {
+        new_store.missing_items[i] = source->missing_items[i];
+    }
+
     return new_store;
+}
+
+void free_store(store_s *store)
+{
+    if (store->items_count > 0)
+    {
+        free(store->items);
+    }
+    if (store->found_items_count > 0)
+    {
+        free(store->found_items);
+    }
+    if (store->missing_items_count > 0)
+    {
+        free(store->missing_items);
+    }
 }
 
 store_s *filter_stores(store_s *stores, int store_count, int *bargain_counter)
@@ -73,7 +107,7 @@ store_s *filter_stores(store_s *stores, int store_count, int *bargain_counter)
         if (stores[i].found_items_count > 0)
         {
 
-            bargains[*bargain_counter - skipped] = stores[i];
+            bargains[i - skipped] = deep_copy_store(&stores[i]);
             (*bargain_counter)++;
         }
         else
@@ -92,6 +126,14 @@ void bargain_menu_find_bargain()
 
     int bargain_count = 0;
     store_s *bargains = filter_stores(stores, store_count, &bargain_count);
+
+    for (int i = 0; i < store_count; i++)
+    {
+        // free_store(&stores[i]);
+    }
+    // free(stores);
+
+    // free_store_array(stores, store_count);
 
     char *options[bargain_count];
 
@@ -114,19 +156,19 @@ void bargain_menu_find_bargain()
         options[i] = option;
     }
 
-    int selected_bargain = display_menu(options, menu_text, "Enter a number to select a bargain.");
+    int selected_bargain = 10;
 
-    // TODO: Fix this so it uses the menu macro for input validation, and doesn't run the entire program again on invalid input.
-    if (selected_bargain == -1)
+    while (1)
     {
-        return;
-    }
-
-    else if (selected_bargain >= 0 && selected_bargain < bargain_count)
-    {
+        selected_bargain = display_menu(options, menu_text, "Enter a number to select a bargain.");
+        if (selected_bargain == -1)
+        {
+            break;
+        }
         bargain_menu_print_bargain(bargains[selected_bargain]);
-        bargain_menu_find_bargain();
     }
+
+    main();
 }
 
 int bargain_find_bargain(store_s *stores)
@@ -207,18 +249,13 @@ void bargain_menu_print_bargain(store_s store)
     char *options = "save shopping list: !s";
 
     // char *bargain_string = bargain_get_print_bargain_string(store);
-    bargain_print_bargain_result(store);
+    // bargain_print_bargain_result(store);
 
-    int n = display_menu(&options, "", "!s saves the shopping list as a text file to the localtion specified in user settings.\n");
-    if (n == -1)
+    int selected_option = 10;
+    while (selected_option != -1)
     {
-        return;
-    }
-    else if (n > 0)
-    {
-        // export_bargain(); //TODO Impliment
         bargain_print_bargain_result(store);
-        bargain_menu_print_bargain(store); // Stay in menu after export.
+        selected_option = display_menu(&options, "", "!s saves the shopping list as a text file to the localtion specified in user settings.\n");
     }
 }
 

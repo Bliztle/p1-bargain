@@ -85,32 +85,39 @@ size_t fetch_write_callback(char *buffer, size_t size, size_t buffer_length, voi
     return realsize;
 }
 
-char *encode_danish(char* url) {
-    char* buff = malloc(strlen(url) + 1);
+char *encode_danish(char *url)
+{
+    char *buff = malloc(strlen(url) + 1);
     strcpy(buff, url);
 
-    char* ptr;
-    while((ptr = strstr(buff, "æ")) != NULL) {
+    char *ptr;
+    while ((ptr = strstr(buff, "æ")) != NULL)
+    {
         ptr[0] = 'a';
         ptr[1] = 'e';
     }
-    while((ptr = strstr(buff, "ø")) != NULL) {
+    while ((ptr = strstr(buff, "ø")) != NULL)
+    {
         ptr[0] = 'o';
         ptr[1] = 'e';
     }
-    while((ptr = strstr(buff, "å")) != NULL) {
+    while ((ptr = strstr(buff, "å")) != NULL)
+    {
         ptr[0] = 'a';
         ptr[1] = 'a';
     }
-    while((ptr = strstr(buff, "Æ")) != NULL) {
+    while ((ptr = strstr(buff, "Æ")) != NULL)
+    {
         ptr[0] = 'A';
         ptr[1] = 'E';
     }
-    while((ptr = strstr(buff, "Ø")) != NULL) {
+    while ((ptr = strstr(buff, "Ø")) != NULL)
+    {
         ptr[0] = 'O';
         ptr[1] = 'E';
     }
-    while((ptr = strstr(buff, "Å")) != NULL) {
+    while ((ptr = strstr(buff, "Å")) != NULL)
+    {
         ptr[0] = 'A';
         ptr[1] = 'A';
     }

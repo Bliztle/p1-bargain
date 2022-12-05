@@ -6,6 +6,7 @@
 #include "malloc.h" // TODO remove when basket is read from file.
 #include "test_bargain.h"
 #include "bargain.h"
+#include "api/parse.h"
 
 // TODO: Remove when basked read from file is implemented.
 basket_item_s *test_get_basket(int *basket_item_counter)
@@ -61,11 +62,12 @@ int items_find_best_match(basket_item_s requested_item, store_s *store, found_it
     // creating unexpected results.
     found_item_s best_item = {
         .count = 0,
-        .price_per_unit = -1, // Set to -1 to differentiate first run.
+        .price_per_unit = 50000000, // Set to -1 to differentiate first run.
+        .product_price = 50000000,
+        .unit = UNKNOWN,
     };
 
     int item_found = 0;
-
     for (int i = 0; i < store->items_count; i++)
     {
 
@@ -77,11 +79,11 @@ int items_find_best_match(basket_item_s requested_item, store_s *store, found_it
             continue;
 
         // If the store_item unit is known.
-        if (store->items[i].unit == requested_item.unit)
+        if ((requested_item.unit != UNKNOWN) && (store->items[i].unit == requested_item.unit))
         {
 
             // If the store_item unit prise is better than the current best_item, or if it has not been set yet.
-            if (store->items[i].price_per_unit < best_item.price_per_unit || best_item.price_per_unit == -1)
+            if (store->items[i].price_per_unit < best_item.price_per_unit || best_item.price_per_unit == 50000000)
             {
 
                 // Gets the amount of items needed to satisfy the requested size.
@@ -97,9 +99,8 @@ int items_find_best_match(basket_item_s requested_item, store_s *store, found_it
 
             // If the store_item unit is not known, then it should only be used if no other store item has a known unit that matches.
         }
-        else if (store->items[i].unit == UNKNOWN && best_item.unit == UNKNOWN && store->items[1].price < best_item.product_price)
+        else if ((requested_item.unit == UNKNOWN) || (best_item.unit == UNKNOWN && store->items[i].price < best_item.product_price))
         {
-
             best_item = items_convert_to_found_item(store->items[i], 1);
             item_found = 1;
         }
@@ -134,8 +135,8 @@ int items_is_in_variation(double store_item_size, double variance, double reques
 void items_filter_items(store_s *store)
 {
     // TODO Change to read basket from file
-    int basket_size = 0;
-    basket_item_s *basket = test_get_basket(&basket_size);
+    int basket_size = 10;
+    basket_item_s *basket = __fetch_mock_basket(); // test_get_basket(&basket_size);
 
     for (int i = 0; i < basket_size; i++)
     {
@@ -199,6 +200,10 @@ found_item_s items_convert_to_found_item(store_item_s input_item, int item_count
 
 int items_compare_item_names(char *name_to_find, char *name_to_search)
 {
+    int buffer_length = strlen(name_to_find) + 3;
+    char buffer[buffer_length];
 
-    return strstr(name_to_search, name_to_find) != NULL;
+    snprintf(buffer, buffer_length, "(%s)", name_to_find);
+
+    return parse_try_regex_group(name_to_search, buffer) != NULL;
 }

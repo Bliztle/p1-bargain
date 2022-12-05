@@ -109,6 +109,12 @@ int parse_coop_items(const nx_json *json, store_item_s **items)
          json_item = json_item->next)
     {
         *items = realloc(*items, ++count * sizeof(store_item_s));
+        if (*items == NULL)
+        {
+            printf("Failed to allocate memory for items");
+            // Handle the error by returning an error code or logging a message
+            return -1;
+        }
         store_item_s *item = (&(*items)[count - 1]);
 
         strncpy(item->name, nx_json_get(json_item, "Navn")->text_value, ITEM_NAME_SIZE);

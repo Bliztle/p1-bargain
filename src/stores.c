@@ -20,8 +20,8 @@ void stores_populate_store_items(store_s *stores, int store_count)
             // fetch_get_coop_items(&stores[n]); // TODO: Implement when function get_coop_items has been implemented.
             break;
         case SALLING:
-            test_fetch_get_store_items(&stores[n], n);
-            // fetch_get_salling_items(&stores[n]); // TODO: Implement when function get_salling_items has been implemented.
+            // test_fetch_get_store_items(&stores[n], n);
+            fetch_get_salling_items(&(stores[n])); // TODO: Implement when function get_salling_items has been implemented.
             break;
         default:
             // TODO make able to print any type after got enum.
