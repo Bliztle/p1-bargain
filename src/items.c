@@ -98,6 +98,9 @@ void items_filter_items(store_s *store)
     int basket_size = 0;
     basket_item_s *basket = test_get_basket(&basket_size);
 
+    store->found_items = malloc(sizeof(found_item_s) * store->items_count);
+    store->missing_items = malloc(sizeof(basket_item_s) * store->items_count);
+
     for (int i = 0; i < basket_size; i++)
     {
 

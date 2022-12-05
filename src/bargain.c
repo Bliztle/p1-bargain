@@ -195,8 +195,8 @@ void bargain_menu_find_bargain()
 int bargain_find_bargain(store_s *stores)
 {
 
-    int store_count = test_fetch_get_stores(stores);
-    // int store_count = fetch_get_stores(&stores); // TODO: Make sure everything in store structs is initialised beyond this point.
+    // int store_count = fetch_get_stores(stores);
+    int store_count = fetch_get_stores(&stores); // TODO: Make sure everything in store structs is initialised beyond this point.
     printf("Store count: %d\n", store_count);
     stores_populate_store_items(stores, store_count);
 

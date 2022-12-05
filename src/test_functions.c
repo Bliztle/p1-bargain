@@ -9,7 +9,7 @@ int test_fetch_get_stores(store_s *stores)
     store_s store1 = {
         .name = "Bilka",
         .uid = "Xx_69_longasssallinguuid_420_xX",
-        .group = STORE_GROUP_BILKA,
+        .group = STORE_CHAIN_BILKA,
         .chain = SALLING,
         .address = "Testvænget 1 - 1337 Testby",
         .lat = 1,
@@ -175,7 +175,7 @@ int test_get_items_two(store_s *store)
         .price_per_unit = 2};
 
     store_item_s item2 = {
-        .name = "Beef\0",
+        .name = "Bananer",
         .price = 4,
         .size = 2,
         .unit = KILOGRAMS,

@@ -12,7 +12,7 @@ https://stackoverflow.com/a/16490394
 #include <math.h>
 
 static const char *store_chain_map[] = {
-    [STORE_GROUP_BILKA] = "bilka",
+    [STORE_CHAIN_BILKA] = "bilka",
 
     [STORE_GROUP_SUPER_BRUGSEN] = "SuperBrugsen",
     [STORE_GROUP_KVICKLY] = "Kvickly",
@@ -38,7 +38,7 @@ int parse_salling_stores(char *raw_stores, store_s **stores)
         *stores = realloc(*stores, ++count * sizeof(store_s));
         store_s *store = &(*stores)[count - 1];
 
-        store->chain = STORE_GROUP_BILKA;
+        store->chain = STORE_CHAIN_BILKA;
         store->group = SALLING;
         store->distance = nx_json_get(json_store, "distance_km")->num.dbl_value;
         strncpy(store->uid, nx_json_get(json_store, "id")->text_value, STORE_UID_SIZE);
@@ -72,7 +72,7 @@ int parse_coop_stores(char *raw_stores, store_s **stores)
         *stores = realloc(*stores, ++count * sizeof(store_s));
         store_s *store = &(*stores)[count - 1];
 
-        store->group = SALLING;
+        store->group = COOP;
         store->distance = 0;
         snprintf(store->uid, STORE_UID_SIZE, "%d", (int)nx_json_get(json_store, "Kardex")->num.u_value);
         strncpy(store->name, nx_json_get(json_store, "Name")->text_value, STORE_NAME_SIZE);
@@ -149,11 +149,6 @@ int parse_salling_items(char *raw_items, store_item_s **items)
 
         strncpy(item->name, nx_json_get(json_item, "title")->text_value, ITEM_NAME_SIZE);
         item->price = nx_json_get(json_item, "price")->num.dbl_value;
-
-        if (strstr(item->name, "PAPTALLERKEN"))
-        {
-            int i = 0;
-        }
 
         parse_populate_item_unit(item);
     }

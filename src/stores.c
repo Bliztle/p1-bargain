@@ -14,7 +14,7 @@ void stores_populate_store_items(store_s *stores, int store_count)
     for (int n = 0; n < store_count; n++)
     {
         // switch in case we add more chains
-        switch (stores[n].chain)
+        switch (stores[n].group)
         {
         case COOP:
             // stores[n].items_count = test_get_items_one(&stores[n]);

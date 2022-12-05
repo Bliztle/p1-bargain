@@ -4,6 +4,7 @@
 #include "../calc.h"
 #include "../items_types.h"
 #include "../config.h"
+#include "../test_functions.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -437,7 +438,8 @@ basket_item_s *__fetch_mock_basket()
 void fetch_get_salling_items(store_s *store)
 {
     // TODO: Read from basket
-    basket_item_s *basket_items = __fetch_mock_basket();
+    int basket_size = 0;
+    basket_item_s *basket_items = test_get_basket(&basket_size);
 
     int count = 0;
     store_item_s *items = NULL;
@@ -459,9 +461,13 @@ void fetch_get_salling_items(store_s *store)
             continue;
         }
 
+        if (raw_items == NULL)
+        {
+            free(raw_items);
+            return;
+        }
         store_item_s *temp_items = NULL;
         int temp_count = parse_salling_items(raw_items, &temp_items);
-
         free(raw_items);
         items = realloc(items, (count + temp_count) * sizeof(store_item_s));
         memcpy(&(items[count]), temp_items, temp_count * sizeof(store_item_s));
