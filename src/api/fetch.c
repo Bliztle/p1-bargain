@@ -45,6 +45,11 @@ fetch_status_e fetch_get(char *url, fetch_auth_e token_type, char *token, char *
 
     res_code = curl_easy_perform(curl);
 
+    // Cleanup
+    curl_easy_cleanup(curl);
+    curl_slist_free_all(headers);
+    free(_url);
+
     // Check for errors
     switch (res_code)
     {
@@ -55,11 +60,6 @@ fetch_status_e fetch_get(char *url, fetch_auth_e token_type, char *token, char *
     default:
         return FETCH_STATUS_UNKNOWN_ERROR;
     }
-
-    // Cleanup
-    curl_easy_cleanup(curl);
-    curl_slist_free_all(headers);
-    free(_url);
 
     *result = res.response;
 
@@ -85,32 +85,39 @@ size_t fetch_write_callback(char *buffer, size_t size, size_t buffer_length, voi
     return realsize;
 }
 
-char *encode_danish(char* url) {
-    char* buff = malloc(strlen(url) + 1);
+char *encode_danish(char *url)
+{
+    char *buff = malloc(strlen(url) + 1);
     strcpy(buff, url);
 
-    char* ptr;
-    while((ptr = strstr(buff, "æ")) != NULL) {
+    char *ptr;
+    while ((ptr = strstr(buff, "æ")) != NULL)
+    {
         ptr[0] = 'a';
         ptr[1] = 'e';
     }
-    while((ptr = strstr(buff, "ø")) != NULL) {
+    while ((ptr = strstr(buff, "ø")) != NULL)
+    {
         ptr[0] = 'o';
         ptr[1] = 'e';
     }
-    while((ptr = strstr(buff, "å")) != NULL) {
+    while ((ptr = strstr(buff, "å")) != NULL)
+    {
         ptr[0] = 'a';
         ptr[1] = 'a';
     }
-    while((ptr = strstr(buff, "Æ")) != NULL) {
+    while ((ptr = strstr(buff, "Æ")) != NULL)
+    {
         ptr[0] = 'A';
         ptr[1] = 'E';
     }
-    while((ptr = strstr(buff, "Ø")) != NULL) {
+    while ((ptr = strstr(buff, "Ø")) != NULL)
+    {
         ptr[0] = 'O';
         ptr[1] = 'E';
     }
-    while((ptr = strstr(buff, "Å")) != NULL) {
+    while ((ptr = strstr(buff, "Å")) != NULL)
+    {
         ptr[0] = 'A';
         ptr[1] = 'A';
     }
@@ -132,7 +139,7 @@ fetch_status_e fetch_renew_coop_stores(store_s **stores, int *count)
 {
     // TODO: Read from config
     double lat = 57.025760, lon = 9.958440;
-    int distance = 6000;
+    int max_distance = 6000;
     char *token = "8042a78a1c91463e80140b0cb11b8b47";
 
     char *url = "https://api.cl.coop.dk/storeapi/v1/stores?page=1&size=5000";
@@ -148,9 +155,12 @@ fetch_status_e fetch_renew_coop_stores(store_s **stores, int *count)
 
     for (int i = 0; i < new_count; i++)
     {
-        if (calc_coordinate_distance(lat, lon, parsed_stores[i].lat, parsed_stores[i].lon) * 1000 < distance)
+        double distance = calc_coordinate_distance(lat, lon, parsed_stores[i].lat, parsed_stores[i].lon) * 1000;
+        if (distance < max_distance)
         {
             *stores = realloc(*stores, (++(*count)) * sizeof(store_s));
+            parsed_stores[i].distance = distance;
+            (*stores)[(*count) - 1] = parsed_stores[i];
             (*stores)[*count - 1] = parsed_stores[i];
         }
     }
@@ -286,7 +296,7 @@ void fetch_print_store(store_s *store)
 void fetch_get_coop_items(store_s *store)
 {
 
-    // Populate nx_json. If evereything fails return zero items
+    // Populate nx_json. If everything fails return zero items
     const nx_json *json = fetch_get_cached_coop_items(store->uid);
     if (json == NULL)
     {
@@ -314,14 +324,14 @@ fetch_status_e fetch_renew_coop_items(char *store_id, const nx_json **json)
 
     if (status != FETCH_STATUS_SUCCESS)
     {
-        response = realloc(response, 3);
-        strcpy(response, "[]");
-        response[2] = '\0';
+        if (status != FETCH_STATUS_CURL_ERROR) // Memory was likely allocated
+            free(response);
         return status;
     }
 
     _fetch_write_coop_items(store_id, response);
     *json = nx_json_parse_utf8(response);
+    free(response);
     return FETCH_STATUS_SUCCESS;
 }
 
