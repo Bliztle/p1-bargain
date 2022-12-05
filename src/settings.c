@@ -9,15 +9,15 @@
 #include "settings.h"
 
 void menu_settings(conf_settings_s *settings) {
-    char* options[4];
+    char *options[4];
 
     options[0] = "Change the export path";
     options[1] = "Change the address";
     options[2] = "Change the distance limit";
     options[3] = "Change the size deviation";
 
-    char* menu_text = "Choose the setting you want to edit";
-    char* help_text = "!q to quit the program";
+    char *menu_text = "Choose the setting you want to edit";
+    char *help_text = "!q to quit the program";
     
     conf_read_settings(settings);
 
@@ -94,7 +94,7 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
                 }
             }*/
 
-            //conf_write_settings(settings);
+            conf_write_settings(settings);
 
             return;
         }
@@ -114,9 +114,6 @@ int settings_validate(char *input, int setting) {
 
         case DEVIATION:
             return settings_validate_deviation(input);
-
-        default:
-            return 0;
     }
 }
 
