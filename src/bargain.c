@@ -167,8 +167,6 @@ void bargain_menu_find_bargain()
         }
         bargain_menu_print_bargain(bargains[selected_bargain]);
     }
-
-    main();
 }
 
 int bargain_find_bargain(store_s *stores)
