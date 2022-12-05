@@ -73,7 +73,7 @@ int parse_coop_stores(char *raw_stores, store_s **stores)
         store_s *store = &(*stores)[count - 1];
 
         store->group = SALLING;
-        store->distance = 0; // TODO: Add distance, possibly doing something while filtering on it
+        store->distance = 0;
         snprintf(store->uid, STORE_UID_SIZE, "%d", (int)nx_json_get(json_store, "Kardex")->num.u_value);
         strncpy(store->name, nx_json_get(json_store, "Name")->text_value, STORE_NAME_SIZE);
 
