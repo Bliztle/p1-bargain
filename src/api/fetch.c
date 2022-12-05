@@ -3,6 +3,7 @@
 #include "nxjson/nxjson.h"
 #include "../calc.h"
 #include "../items_types.h"
+#include "../config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -138,8 +139,11 @@ fetch_status_e fetch_renew_stores()
 fetch_status_e fetch_renew_coop_stores(store_s **stores, int *count)
 {
     // TODO: Read from config
-    double lat = 57.025760, lon = 9.958440;
-    int max_distance = 6000;
+    conf_settings_s conf;
+    conf_read_settings(&conf);
+
+    // double lat = 57.025760, lon = 9.958440;
+    // int max_distance = 6000;
     char *token = "8042a78a1c91463e80140b0cb11b8b47";
 
     char *url = "https://api.cl.coop.dk/storeapi/v1/stores?page=1&size=5000";
@@ -155,8 +159,10 @@ fetch_status_e fetch_renew_coop_stores(store_s **stores, int *count)
 
     for (int i = 0; i < new_count; i++)
     {
-        double distance = calc_coordinate_distance(lat, lon, parsed_stores[i].lat, parsed_stores[i].lon) * 1000;
-        if (distance < max_distance)
+        // double distance = calc_coordinate_distance(lat, lon, parsed_stores[i].lat, parsed_stores[i].lon) * 1000;
+        double distance = calc_coordinate_distance(conf.address_lat, conf.address_lon, parsed_stores[i].lat, parsed_stores[i].lon) * 1000;
+        // if (distance < max_distance)
+        if (distance < conf.max_distance)
         {
             *stores = realloc(*stores, (++(*count)) * sizeof(store_s));
             parsed_stores[i].distance = distance;
@@ -301,7 +307,9 @@ void fetch_get_coop_items(store_s *store)
     if (json == NULL)
     {
         fetch_status_e status = fetch_renew_coop_items(store->uid, &json);
-        if (status != FETCH_STATUS_SUCCESS || json == NULL)
+        if (status == FETCH_STATUS_SUCCESS && json != NULL)
+            return fetch_get_coop_items(store); // Successful fetch, data was cached. Last minute weird errors are occurring when continuing with *json, but never when reading cache. Posibly memory things above my head.
+        else
         {
             store->items_count = 0;
             store->items = NULL;
@@ -314,6 +322,7 @@ void fetch_get_coop_items(store_s *store)
 
 fetch_status_e fetch_renew_coop_items(char *store_id, const nx_json **json)
 {
+    conf_settings_s settings;
     // TODO: Read from config
     char *token = "8042a78a1c91463e80140b0cb11b8b47";
     char url[100];
