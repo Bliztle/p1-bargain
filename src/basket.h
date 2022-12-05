@@ -42,15 +42,6 @@ void basket_remove(basket_s **basket, size_t index);
  */
 void basket_remove_first(basket_s **basket);
 /**
- * Gets an item at a given index from a basket.
- * If you want to access all the items in the list anyway, then it's probably better to iterate over the basket manually, since doing it with this is O(n^2)
- * See the test `basket_test_iterate` for an example of iterating over the basket correctly
- * @param basket the basket to get the item from
- * @param index the index of the item
- * @return the item at `index`
- */
-basket_item_s basket_get(basket_s *basket, size_t index);
-/**
  * Prints a basket to the console
  * @param basket the basket to print
  */
