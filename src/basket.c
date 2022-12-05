@@ -21,6 +21,10 @@ void basket_push(basket_s *basket, basket_item_s item) {
 }
 
 void basket_remove(basket_s *basket, size_t index) {
+    if (index == 0) {
+        basket_remove_first(basket);
+        return;
+    }
     basket_s *element = basket;
     basket_s *prev = NULL;
     for (int i = 0; i < index; i++) {
