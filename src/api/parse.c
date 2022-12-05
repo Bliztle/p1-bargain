@@ -72,7 +72,7 @@ int parse_coop_stores(char *raw_stores, store_s **stores)
         store_s *store = &(*stores)[count - 1];
 
         store->group = SALLING;
-        store->distance = 0; // TODO: Add distance, possibly doing something while filtering on it
+        store->distance = 0;
         snprintf(store->uid, STORE_UID_SIZE, "%d", (int)nx_json_get(json_store, "Kardex")->num.u_value);
         strncpy(store->name, nx_json_get(json_store, "Name")->text_value, STORE_NAME_SIZE);
 
@@ -216,7 +216,9 @@ double parse_try_extract_size(char *source, char *unit_str)
     char regex_str[20];
     snprintf(regex_str, 20, "([0-9,.]+)[ ]?%s", unit_str);
     char *count_str = parse_try_regex_group(parse_replace_char(source, ',', '.'), regex_str);
-    return count_str ? strtod(count_str, NULL) : 0;
+    int count = count_str ? strtod(count_str, NULL) : 0;
+    free(count_str);
+    return count;
 }
 
 char *parse_replace_char(char *source, char find, char replace)
@@ -231,7 +233,7 @@ char *parse_replace_char(char *source, char find, char replace)
 // Inspired by https://stackoverflow.com/a/11864144
 char *parse_try_regex_group(char *source, char *regex)
 {
-    size_t maxGroups = 3;
+    size_t maxGroups = 2;
     regex_t regexCompiled;
     regmatch_t groupArray[maxGroups];
 
@@ -239,7 +241,6 @@ char *parse_try_regex_group(char *source, char *regex)
 
     if (regcomp(&regexCompiled, regex, REG_EXTENDED | REG_ICASE))
     {
-        printf("Could not compile regular expression.\n");
         return NULL;
     };
 
@@ -249,10 +250,12 @@ char *parse_try_regex_group(char *source, char *regex)
         // Extract match using start / end indexes
         char sourceCopy[strlen(source) + 1];
         strcpy(sourceCopy, source);
-        sourceCopy[groupArray[1].rm_eo] = 0;
+        sourceCopy[groupArray[1].rm_eo] = '\0';
 
-        group = malloc(strlen(sourceCopy + groupArray[1].rm_so) * sizeof(char));
+        int l = strlen(sourceCopy + groupArray[1].rm_so) + 1;
+        group = malloc(l * sizeof(char));
         strcpy(group, sourceCopy + groupArray[1].rm_so);
+        group[l - 1] = '\0';
     }
 
     regfree(&regexCompiled);

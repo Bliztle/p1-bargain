@@ -12,7 +12,7 @@
 
 #define COOP_FIELD_TIME "cache_time"
 #define COOP_FIELD_ITEMS "items"
-#define TIME_SECONDS_IN_WEEK 60 * 60 * 24 * 7 
+#define TIME_SECONDS_IN_WEEK 60 * 60 * 24 * 7
 
 typedef enum
 {
@@ -68,7 +68,7 @@ fetch_status_e fetch_get_no_auth(char *url, char **result);
  */
 size_t fetch_write_callback(char *buffer, size_t size, size_t buffer_length, void *prelim_response);
 
-char *encode_danish(char* url);
+char *encode_danish(char *url);
 
 /**
  * Renews all stores and prints them to stores.txt
@@ -153,7 +153,6 @@ void fetch_print_store(store_s *store);
  * @param stores pointer to the store to print
  */
 void fetch_print_stores(store_s *stores, int count);
-
 
 void fetch_get_coop_items(store_s *store);
 
