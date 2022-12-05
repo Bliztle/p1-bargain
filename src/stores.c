@@ -6,6 +6,7 @@
 #include "items.h"
 #include "api/fetch.h"
 #include "test_bargain.h"
+#include "test_functions.h"
 
 void stores_populate_store_items(store_s *stores, int store_count)
 {
@@ -16,12 +17,12 @@ void stores_populate_store_items(store_s *stores, int store_count)
         switch (stores[n].chain)
         {
         case COOP:
-            test_fetch_get_store_items(&stores[n], n);
+            stores[n].items_count = test_get_items_one(&stores[n]);
             // fetch_get_coop_items(&stores[n]); // TODO: Implement when function get_coop_items has been implemented.
             break;
         case SALLING:
-            // test_fetch_get_store_items(&stores[n], n);
-            fetch_get_salling_items(&(stores[n])); // TODO: Implement when function get_salling_items has been implemented.
+            stores[n].items_count = test_get_items_one(&stores[n]);
+            // fetch_get_salling_items(&(stores[n])); // TODO: Implement when function get_salling_items has been implemented.
             break;
         default:
             // TODO make able to print any type after got enum.

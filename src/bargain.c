@@ -78,6 +78,9 @@ store_s deep_copy_store(store_s *source)
         new_store.missing_items[i] = source->missing_items[i];
     }
 
+    free(source->items);
+    free(source->found_items);
+    free(source->missing_items);
     return new_store;
 }
 
@@ -116,6 +119,7 @@ store_s *filter_stores(store_s *stores, int store_count, int *bargain_counter)
         }
     }
 
+    free(stores);
     return bargains;
 }
 
@@ -126,12 +130,6 @@ void bargain_menu_find_bargain()
 
     int bargain_count = 0;
     store_s *bargains = filter_stores(stores, store_count, &bargain_count);
-
-    for (int i = 0; i < store_count; i++)
-    {
-        // free_store(&stores[i]);
-    }
-    // free(stores);
 
     // free_store_array(stores, store_count);
 
@@ -168,7 +166,13 @@ void bargain_menu_find_bargain()
         bargain_menu_print_bargain(bargains[selected_bargain]);
     }
 
-    main();
+    for (int i = 0; i < bargain_count; i++)
+    {
+        free_store(&bargains[i]);
+        free(options[i]);
+    }
+
+    free(bargains);
 }
 
 int bargain_find_bargain(store_s *stores)
@@ -218,15 +222,16 @@ char *bargain_get_print_bargain_string(store_s store)
     // realloc on a something not allocated by malloc is undefined behaviour.
     // So we need to allocate a string with the size of the initial data, and then copy it to the malloced string.
     char *bargain_string_start = "SHOPPING LIST\n--------------------------------------\n# | Product | count | price/unit | total price\0";
+    int bargain_string_start_length = strlen(bargain_string_start);
     char *bargain_string = malloc(strlen(bargain_string_start) * sizeof(char));
-    strncat(bargain_string, bargain_string_start, strlen(bargain_string_start) * sizeof(char));
+    strncat(bargain_string, bargain_string_start, bargain_string_start_length * sizeof(char));
 
     int found_entry_size = 0;
     int missing_entry_size = 0;
 
     get_size_of_list_entries(store, &found_entry_size, &missing_entry_size);
 
-    bargain_string = realloc(bargain_string, sizeof(bargain_string) + found_entry_size);
+    bargain_string = realloc(bargain_string, bargain_string_start_length + found_entry_size);
 
     create_found_entries(store, &bargain_string, (strlen(bargain_string) * sizeof(char)));
 
@@ -274,7 +279,7 @@ void create_found_entries(store_s store, char **string_to_append_to, size_t size
                  bargain_get_unit(store.found_items[i].unit),
                  store.found_items[i].total_price);
 
-        strncat(*string_to_append_to, temp_string, size_of_string + sizeof(temp_string) - sizeof(char));
+        strncat(*string_to_append_to, temp_string, size_of_string + l - sizeof(char));
         free(temp_string);
     }
 }
@@ -284,8 +289,9 @@ void create_missing_entries(store_s store, char **string_to_append_to, size_t si
 
     char *missing_intro = "--------------------------------------\nUNAVAILABLE ITEMS\n--------------------------------------\n# | Product\n\0";
 
-    string_to_append_to = realloc(*string_to_append_to, sizeof(*string_to_append_to) + sizeof(*string_to_append_to) + sizeof(missing_intro));
-    strncat(*string_to_append_to, missing_intro, sizeof(*string_to_append_to) + sizeof(missing_intro) - sizeof(char));
+    int string_to_append_to_size = sizeof(char) * (strlen(*string_to_append_to) + strlen(*string_to_append_to) + strlen(missing_intro) + 1);
+    string_to_append_to = realloc(*string_to_append_to, string_to_append_to_size);
+    strncat(*string_to_append_to, missing_intro, sizeof(char) * (strlen(*string_to_append_to) + strlen(missing_intro)));
 
     for (int i = 0; i < store.missing_items_count; i++)
     {
@@ -296,7 +302,7 @@ void create_missing_entries(store_s store, char **string_to_append_to, size_t si
                  i,
                  store.missing_items[i].name);
 
-        strncat(*string_to_append_to, temp_string, sizeof(*string_to_append_to) + (sizeof(temp_string) - sizeof(char)));
+        strncat(*string_to_append_to, temp_string, string_to_append_to_size + size_of_name);
         free(temp_string);
     }
 }
@@ -336,12 +342,12 @@ void get_size_of_list_entries(store_s store, int *found_list_size, int *missing_
 
     for (int i = 0; i < store.found_items_count; i++)
     {
-        found_list_size += sizeof(store.found_items[i].name) + sizeof(char) * 46;
+        found_list_size += (strlen(store.found_items[i].name) + 10) * sizeof(char);
     }
 
     for (int i = 0; i < store.missing_items_count; i++)
     {
-        missing_list_size += sizeof(store.missing_items[i].name) + sizeof(char) * 6;
+        missing_list_size += (strlen(store.missing_items[i].name) + 10) * sizeof(char);
     }
 }
 

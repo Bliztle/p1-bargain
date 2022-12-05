@@ -136,7 +136,7 @@ void items_filter_items(store_s *store)
 {
     // TODO Change to read basket from file
     int basket_size = 10;
-    basket_item_s *basket = __fetch_mock_basket(); // test_get_basket(&basket_size);
+    basket_item_s *basket = test_get_basket(&basket_size); // __fetch_mock_basket();
 
     for (int i = 0; i < basket_size; i++)
     {
