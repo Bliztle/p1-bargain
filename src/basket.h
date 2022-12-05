@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include "items_types.h"
 
+static const char* TEMP_BASKET_PATH = ".temp_basket.txt";
+
 struct basket_s;
 typedef struct basket_s basket_s;
 
@@ -47,6 +49,11 @@ void basket_remove_first(basket_s *basket);
  */
 basket_item_s basket_get(basket_s *basket, size_t index);
 /**
+ * Prints a basket to the console
+ * @param basket the basket to print
+ */
+void basket_print(basket_s *basket);
+/**
  * Frees each item in the list from memory
  * @param basket the basket to be freed
  */
@@ -62,6 +69,7 @@ int basket_to_array(basket_s *basket, basket_item_s **items);
 basket_s *basket_read();
 void basket_write(basket_s *basket);
 
+void menu_basket_edit();
 void menu_basket_add();
 void menu_basket_remove();
 #endif
