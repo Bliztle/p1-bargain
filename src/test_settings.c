@@ -7,7 +7,7 @@ int main(void) {
     //char* input1 = "C:\\User\\Desktop\\file.txt";
     char* input2 = "Selma Lagerløfs Vej 300 Aalborg 9220";
     char* input3 = "10";
-    char* input4 = "0.5";
+    char* input4 = "15";
 
     //assert(settings_validate(input1, PATH));
     assert(settings_validate(input2, ADDRESS));
