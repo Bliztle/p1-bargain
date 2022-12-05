@@ -14,13 +14,19 @@ int conf_read_settings(conf_settings_s * conf_settings) {
         return 0;
     }
 
-    conf_settings_s read_settings;
-
     fscanf(config_file, "%*s %s", conf_settings->shopping_list_save_path);
     fscanf(config_file, "%*s %d", &conf_settings->max_distance);
     fscanf(config_file, "%*s %[^\n]s", conf_settings->address);
-    fscanf(config_file, "%*s %lf %lf", &conf_settings->address_lat, &conf_settings->address_lon);
-    fscanf(config_file, "%*s %lf", &conf_settings->deviance);
+
+    char lat_temp[20], lon_temp[20];
+    fscanf(config_file, "%*s %s %s", lat_temp, lon_temp);
+    char * endptr;
+    conf_settings->address_lat = strtod(lat_temp, &endptr);
+    conf_settings->address_lon = strtod(lon_temp, &endptr);
+
+    char dev_temp[20];
+    fscanf(config_file, "%*s %s", dev_temp);
+    conf_settings->deviance = strtod(dev_temp, &endptr);
 
     fclose(config_file);
     return 1;
@@ -43,11 +49,11 @@ int conf_write_settings(conf_settings_s settings) {
     return 1;
 }
 
-/*
+
 int conf_setup() {
     if (!conf_check_valid()) {
         conf_create();
-        if (conf_check_valid()) {
+        if (!conf_check_valid()) {
             printf("Error in creation of file");
             return 0;
         }
@@ -56,5 +62,106 @@ int conf_setup() {
 }
 
 int conf_check_valid() {
+    // Can it be opened?
+    FILE * config_file = fopen(SETTINGS_PATH, "r");
+    if (config_file == NULL) {
+        perror("File does not exist in this path");
+        return 0;
+    }
 
-}*/
+    // Is the savepath valid?
+    char temp_s[100];
+    fscanf(config_file, "%*s %s", temp_s);
+    FILE * save_path = fopen(temp_s, "r");
+
+    if  ( !strstr(temp_s, ".txt") || save_path == NULL) {
+        return 0;
+    }
+
+    // Is the distance valid?
+    int temp_d;
+    fscanf(config_file, "%*s %d", &temp_d);
+    if (temp_d < 0) {
+        return 0;
+    }
+
+    // are the address and coords valid?
+    fscanf(config_file, "%*s %[^\n]s", temp_s);
+    // TODO get coords from Google's api
+
+    // Is the deviance valid?
+    double temp_lf;
+    fscanf(config_file, "%*s %lf", &temp_lf);
+    if (temp_d < 0) {
+        return 0;
+    }
+
+    fclose(config_file);
+    return 1;
+}
+
+void conf_create() {
+    FILE * config_file = fopen(SETTINGS_PATH, "w");
+    conf_settings_s settings;
+
+    char temp_s[100];
+    printf("please enter the save-path for your shopping list\n >");
+    while (1) {
+        scanf(" %s", temp_s);
+
+        if (!strstr(temp_s, ".txt")) {
+            printf("Please enter the path of a .txt file\n >");
+            continue;
+        }
+        else {
+            FILE * save_path = fopen(temp_s, "r");
+            if (save_path == NULL) {
+                printf("path is invalid, please enter a different path\n >");
+                continue;
+            }
+        }
+
+        strcpy(settings.shopping_list_save_path, temp_s);
+        break;
+    }
+
+    int temp_d;
+    printf("please enter the distance\n >");
+    while (1) {
+        scanf(" %d", &temp_d);
+
+        if (temp_d < 0) {
+            printf("distance cannot be negative\n >");
+            continue;
+        }
+
+        settings.max_distance = temp_d;
+        break;
+    }
+
+    printf("please enter the address\n >");
+    while (1) {
+        scanf(" %[0-9a-zA-Z ]", temp_s);
+
+        // TODO function to get coords
+
+        break;
+    }
+
+    double temp_lf;
+    printf("please enter the deviance\n >");
+    while (1) {
+        scanf(" %lf", &temp_lf);
+
+        if (temp_lf < 0) {
+            printf("deviance cannot be negative\n >");
+            continue;
+        }
+
+        settings.deviance = temp_lf;
+        break;
+    }
+    conf_write_settings(settings);
+
+    fclose(config_file);
+}

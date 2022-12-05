@@ -23,18 +23,30 @@ typedef struct {
  * @param conf_settings The struct to save the stored values on
  * @returns true (1) if successful and false (0) in case of an error
  */
-int conf_read_settings(conf_settings_s * conf_settings);
+int conf_read_settings(conf_settings_s* conf_settings);
 
 /**
+ * Takes a struct as input and overwrites all data on config to the values in the struct
  * @param settings The struct to overwrite the current config
  * @returns true (1) if successful and false (0) in case of an error
  */
 int conf_write_settings(conf_settings_s settings);
 
+/**
+ * Used on startup, checks whether the current settings are incorrect in any way
+ * @returns true (1) if successful and false (0) in case of an error
+ */
 int conf_setup();
 
+/**
+ * Validates each parameter in the config file
+ * @returns true (1) if valid and false (0) if invalid
+ */
 int conf_check_valid();
 
+/**
+ * Used to create and/or overwrite the config
+ */
 void conf_create();
 
 #endif
