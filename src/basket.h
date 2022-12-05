@@ -29,16 +29,18 @@ basket_s *basket_new(basket_item_s item);
 void basket_push(basket_s *basket, basket_item_s item);
 /**
  * Removes an item at a given index from a basket
+ * This takes a pointer pointer, since the location of the head may be set to NULL to indicate an empty list
  * @param basket a pointer to the basket where the item should be removed from
  * @param index the index of the item to be removed
  */
-void basket_remove(basket_s *basket, size_t index);
+void basket_remove(basket_s **basket, size_t index);
 /**
  * Removes and frees the first element in a basket.
  * This mostly just a utility function, and using `basket_remove` should be preferred
+ * This takes a pointer pointer, since the location of the head may be set to NULL to indicate an empty list
  * @param basket the basket to remove from
  */
-void basket_remove_first(basket_s *basket);
+void basket_remove_first(basket_s **basket);
 /**
  * Gets an item at a given index from a basket.
  * If you want to access all the items in the list anyway, then it's probably better to iterate over the basket manually, since doing it with this is O(n^2)

@@ -20,27 +20,31 @@ void basket_push(basket_s *basket, basket_item_s item) {
     tail->next = new_item;
 }
 
-void basket_remove(basket_s *basket, size_t index) {
+void basket_remove(basket_s **basket, size_t index) {
     if (index == 0) {
         basket_remove_first(basket);
         return;
     }
-    basket_s *element = basket;
+    basket_s *element = *basket;
     basket_s *prev = NULL;
     for (int i = 0; i < index; i++) {
         prev = element;
         if (basket != NULL) {
-            element = basket->next;
+            element = (*basket)->next;
         }
     }
     prev->next = element->next;
     free(element);
 }
 
-void basket_remove_first(basket_s *basket) {
-    basket_s *old_second = basket->next;
-    basket_s new_head = *old_second;
-    *basket = new_head;
+void basket_remove_first(basket_s **basket) {
+    basket_s *old_second = (*basket)->next;
+    if (old_second != NULL) {
+        **basket = *old_second;
+    } else {
+        free(*basket);
+        *basket = NULL;
+    }
     free(old_second);
 }
 
@@ -82,6 +86,14 @@ basket_s *basket_read() {
         return NULL;
     }
 
+    // Check if the file is empty
+    fseek(file, 0, SEEK_END);
+    if (ftell(file) == 0) {
+        fclose(file);
+        return NULL;
+    }
+    rewind(file);
+
     basket_item_s item;
     // Starting the list with an empty item is a bit hacky, but we remove it later
     basket_s *basket = basket_new(item);
@@ -91,7 +103,7 @@ basket_s *basket_read() {
         basket_push(basket, item);
     }
 
-    basket_remove_first(basket);
+    basket_remove_first(&basket);
 
     fclose(file);
 
@@ -100,6 +112,11 @@ basket_s *basket_read() {
 
 void basket_write(basket_s *basket) {
     FILE *file = fopen(TEMP_BASKET_PATH, "w");
+
+    if (basket == NULL) {
+        fclose(file);
+        return;
+    }
 
     for (basket_s *element = basket; element != NULL; element = element->next) {
         fprintf(file, "%s|%lf|%d\n", element->item.name, element->item.size, element->item.unit);
@@ -214,8 +231,7 @@ void menu_basket_remove() {
 
     static const char* INVALID_OPTION_TEXT = "Please select a valid option\n\n";
 
-    while (1) {
-        basket_print(basket);
+    while (basket != NULL) {
         int item_count = 1;
         for (basket_s *element = basket; element != NULL; element = element->next) {
             printf("[%d] %s - %.2lf %s\n", item_count, element->item.name, element->item.size, UNIT_NAMES[element->item.unit]);
@@ -248,11 +264,15 @@ void menu_basket_remove() {
             }
             continue;
         }
-        if (option > item_count) {
+        if (option >= item_count) {
             printf("%s", INVALID_OPTION_TEXT);
             continue;
         }
-        basket_remove(basket, option-1);
+        basket_remove(&basket, option-1);
+    }
+
+    if (basket == NULL) {
+        printf("The basket is empty\n");
     }
 
     basket_write(basket);

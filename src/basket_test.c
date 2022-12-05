@@ -146,7 +146,7 @@ int basket_test_remove_middle() {
     basket_push(basket, second);
     basket_push(basket, third);
 
-    basket_remove(basket, 1);
+    basket_remove(&basket, 1);
 
     if (!basket_items_equal(basket->item, first)) {
         return 1;
