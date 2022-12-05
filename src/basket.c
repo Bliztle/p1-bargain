@@ -3,24 +3,24 @@
 #include "items_types.h"
 #include "config.h"
 
-basket_s* basket_new(basket_item_s item) {
-    basket_s* basket = malloc(sizeof(basket_s));
+basket_s *basket_new(basket_item_s item) {
+    basket_s *basket = malloc(sizeof(basket_s));
     basket->item = item;
     basket->next = NULL;
     return basket;
 }
 
-void basket_push(basket_s* basket, basket_item_s item) {
+void basket_push(basket_s *basket, basket_item_s item) {
     // find the last element in the list
-    basket_s* tail = basket;
+    basket_s *tail = basket;
     for (; tail->next != NULL; tail = tail->next);
-    basket_s* new_item = basket_new(item);
+    basket_s *new_item = basket_new(item);
     tail->next = new_item;
 }
 
-void basket_remove(basket_s* basket, size_t index) {
-    basket_s* element = basket;
-    basket_s* prev = NULL;
+void basket_remove(basket_s *basket, size_t index) {
+    basket_s *element = basket;
+    basket_s *prev = NULL;
     for (int i = 0; i < index; i++) {
         prev = element;
         if (basket != NULL) {
@@ -31,16 +31,16 @@ void basket_remove(basket_s* basket, size_t index) {
     free(element);
 }
 
-void basket_remove_first(basket_s* basket) {
-    basket_s* old_second = basket->next;
+void basket_remove_first(basket_s *basket) {
+    basket_s *old_second = basket->next;
     basket_s new_head = *old_second;
     *basket = new_head;
     free(old_second);
 }
 
-void basket_free(basket_s* basket) {
-    basket_s* element = basket;
-    basket_s* prev = NULL;
+void basket_free(basket_s *basket) {
+    basket_s *element = basket;
+    basket_s *prev = NULL;
     for (; element != NULL; element = element->next) {
         if (prev != NULL) {
             free(prev);
@@ -52,16 +52,16 @@ void basket_free(basket_s* basket) {
     }
 }
 
-basket_s* basket_read() {
+basket_s *basket_read() {
     conf_settings_s settings;
     conf_read_settings(&settings);
-    char* basket_path = settings.shopping_list_save_path;
+    char *basket_path = settings.shopping_list_save_path;
 
-    FILE* file = fopen(basket_path, "r");
+    FILE *file = fopen(basket_path, "r");
 
     basket_item_s item;
     // Starting the list with an empty item is a bit hacky, but we remove it later
-    basket_s* basket = basket_new(item);
+    basket_s *basket = basket_new(item);
 
     while (!feof(file)) {
         fscanf(file, " %s|%lf|%d\n", item.name, &item.size, &item.unit);
