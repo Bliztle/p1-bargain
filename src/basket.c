@@ -3,6 +3,7 @@
 #include "items_types.h"
 #include "menu.h"
 #include "api/parse.h"
+#include "api/fetch.h"
 #include <string.h>
 
 basket_s *basket_new(basket_item_s item) {
@@ -185,6 +186,14 @@ void menu_basket_add() {
             printf("Enter !q to exit or !h to get help\n");
             continue;
         }
+
+        const char seperator_string[2] = {FILE_ITEMS_SEPERATOR, '\0'};
+
+        if (strstr(input, seperator_string) != NULL) {
+            printf("The name of the item cannot contain the character '%c'\n\n", FILE_ITEMS_SEPERATOR);
+            continue;
+        }
+
 
         strcpy(item.name, input);
 
