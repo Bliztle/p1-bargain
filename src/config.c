@@ -5,8 +5,6 @@
 
 #define SETTINGS_PATH "settings.conf"
 
-//static const char* TOKENS_PATH = "tokens.conf";
-
 int conf_read_settings(conf_settings_s *settings) {
     FILE *config_file = fopen(SETTINGS_PATH, "r");
 
@@ -17,22 +15,9 @@ int conf_read_settings(conf_settings_s *settings) {
     }
 
     fscanf(config_file, "%*s %s", settings->shopping_list_save_path);
-    fscanf(config_file, "%*s %d", &settings->max_distance);
     fscanf(config_file, "%*s %[^\n]s", settings->address);
-
-    char lat_temp[20], lon_temp[20];
-
-    fscanf(config_file, "%*s %s %s", lat_temp, lon_temp);
-
-    char *endptr;
-    settings->address_lat = strtod(lat_temp, &endptr);
-    settings->address_lon = strtod(lon_temp, &endptr);
-
-    char dev_temp[20];
-
-    fscanf(config_file, "%*s %s", dev_temp);
-
-    settings->deviance = strtod(dev_temp, &endptr);
+    fscanf(config_file, "%*s %d", &settings->max_distance);
+    fscanf(config_file, "%*s %d", &settings->deviance);
 
     fclose(config_file);
 
@@ -50,7 +35,7 @@ int conf_write_settings(conf_settings_s *settings) {
     fprintf(config_file, "path %s\n", settings->shopping_list_save_path);
     fprintf(config_file, "address %s\n", settings->address);
     fprintf(config_file, "distance %d\n", settings->max_distance);
-    fprintf(config_file, "deviance %lf", settings->deviance);
+    fprintf(config_file, "deviance %d\n", settings->deviance);
 
     fclose(config_file);
 

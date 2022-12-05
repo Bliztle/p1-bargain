@@ -53,7 +53,7 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
             break;
 
         case DEVIATION:
-            sprintf(str2, "%lf", settings->deviance);
+            sprintf(str2, "%d", settings->deviance);
             break;
     }
 
@@ -93,6 +93,24 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
                     return;
                 }
             }*/
+
+            switch (setting) {
+                case PATH:
+                    sprintf(settings->shopping_list_save_path, "%s", input);
+                    break;
+                
+                case ADDRESS:
+                    sprintf(settings->address, "%s", input);
+                    break;
+
+                case DISTANCE:
+                    settings->max_distance = strtol(input, &input, 10);
+                    break;
+
+                case DEVIATION:
+                    settings->deviance = strtol(input, &input, 10);
+                    break;
+             }
 
             conf_write_settings(settings);
 
@@ -171,7 +189,7 @@ int settings_validate_address(char *input) { // Checks if it was able to fetch a
 
 int settings_validate_deviation(char *input) {
     // Converts string to double and checks if it's valid as a deviation
-    double deviation = strtod(input, &input);
+    int deviation = strtol(input, &input, 10);
 
     if (deviation <= 0) {
         printf("Error: Invalid deviation\n");
@@ -186,7 +204,7 @@ int settings_validate_distance(char *input) {
     // Converts string to double and checks if it's valid as a distance
     int distance = strtol(input, &input, 10);
 
-    if (distance < 1) {
+    if (distance <= 0) {
         printf("Error: Invalid distance\n");
 
         return 0;
