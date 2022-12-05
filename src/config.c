@@ -7,10 +7,12 @@
 
 //static const char* TOKENS_PATH = "tokens.conf";
 
-int conf_read_settings(conf_settings_s * conf_settings) {
-    FILE * config_file = fopen(SETTINGS_PATH, "r");
+int conf_read_settings(conf_settings_s *conf_settings) {
+    FILE *config_file = fopen(SETTINGS_PATH, "r");
+
     if (config_file == NULL) {
-        perror("File does not exist in this path");
+        perror("Error");
+
         return 0;
     }
 
@@ -19,33 +21,40 @@ int conf_read_settings(conf_settings_s * conf_settings) {
     fscanf(config_file, "%*s %[^\n]s", conf_settings->address);
 
     char lat_temp[20], lon_temp[20];
+
     fscanf(config_file, "%*s %s %s", lat_temp, lon_temp);
-    char * endptr;
+
+    char *endptr;
     conf_settings->address_lat = strtod(lat_temp, &endptr);
     conf_settings->address_lon = strtod(lon_temp, &endptr);
 
     char dev_temp[20];
+
     fscanf(config_file, "%*s %s", dev_temp);
+
     conf_settings->deviance = strtod(dev_temp, &endptr);
 
     fclose(config_file);
+
     return 1;
 }
 
-int conf_write_settings(conf_settings_s settings) {
-    FILE * config_file = fopen(SETTINGS_PATH, "w");
+int conf_write_settings(conf_settings_s *settings) {
+    FILE *config_file = fopen(SETTINGS_PATH, "w");
+
     if (config_file == NULL) {
-        perror("File does not exist in this path");
+        perror("Error");
         return 0;
     }
 
-    fprintf(config_file, "path %s\n", settings.shopping_list_save_path);
-    fprintf(config_file, "distance %d\n", settings.max_distance);
-    fprintf(config_file, "address %s\n", settings.address);
-    fprintf(config_file, "coords %lf %lf\n", settings.address_lat, settings.address_lon);
-    fprintf(config_file, "deviance %lf", settings.deviance);
+    fprintf(config_file, "path %s\n", settings->shopping_list_save_path);
+    fprintf(config_file, "distance %d\n", settings->max_distance);
+    fprintf(config_file, "address %s\n", settings->address);
+    fprintf(config_file, "coords %lf %lf\n", settings->address_lat, settings->address_lon);
+    fprintf(config_file, "deviance %lf", settings->deviance);
 
     fclose(config_file);
+
     return 1;
 }
 
@@ -53,26 +62,33 @@ int conf_write_settings(conf_settings_s settings) {
 int conf_setup() {
     if (!conf_check_valid()) {
         conf_create();
+
         if (!conf_check_valid()) {
             printf("Error in creation of file");
+
             return 0;
         }
     }
+
     return 1;
 }
 
 int conf_check_valid() {
     // Can it be opened?
     FILE * config_file = fopen(SETTINGS_PATH, "r");
+
     if (config_file == NULL) {
-        perror("File does not exist in this path");
+        perror("Error");
+
         return 0;
     }
 
     // Is the savepath valid?
     char temp_s[100];
+
     fscanf(config_file, "%*s %s", temp_s);
-    FILE * save_path = fopen(temp_s, "r");
+
+    FILE *save_path = fopen(temp_s, "r");
 
     if  ( !strstr(temp_s, ".txt") || save_path == NULL) {
         return 0;
@@ -80,7 +96,9 @@ int conf_check_valid() {
 
     // Is the distance valid?
     int temp_d;
+
     fscanf(config_file, "%*s %d", &temp_d);
+
     if (temp_d < 0) {
         return 0;
     }
@@ -91,21 +109,26 @@ int conf_check_valid() {
 
     // Is the deviance valid?
     double temp_lf;
+
     fscanf(config_file, "%*s %lf", &temp_lf);
+
     if (temp_d < 0) {
         return 0;
     }
 
     fclose(config_file);
+
     return 1;
 }
 
 void conf_create() {
-    FILE * config_file = fopen(SETTINGS_PATH, "w");
+    FILE *config_file = fopen(SETTINGS_PATH, "w");
     conf_settings_s settings;
 
     char temp_s[100];
-    printf("please enter the save-path for your shopping list\n >");
+
+    printf("Please enter the save-path for your shopping list\n >");
+
     while (1) {
         scanf(" %s", temp_s);
 
@@ -114,7 +137,7 @@ void conf_create() {
             continue;
         }
         else {
-            FILE * save_path = fopen(temp_s, "r");
+            FILE *save_path = fopen(temp_s, "r");
             if (save_path == NULL) {
                 printf("path is invalid, please enter a different path\n >");
                 continue;
@@ -161,7 +184,7 @@ void conf_create() {
         settings.deviance = temp_lf;
         break;
     }
-    conf_write_settings(settings);
+    conf_write_settings(&settings);
 
     fclose(config_file);
 }
