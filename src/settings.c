@@ -94,7 +94,9 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
                 }
             }*/
 
-            conf_write_settings(settings);
+            int status = conf_write_settings(settings);
+
+            printf("Status: %d\n", status);
 
             return;
         }

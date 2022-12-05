@@ -41,18 +41,19 @@ int conf_read_settings(conf_settings_s *settings) {
 
 int conf_write_settings(conf_settings_s *settings) {
     FILE *config_file = fopen(SETTINGS_PATH, "w");
+
     if (config_file == NULL) {
         perror("File does not exist in this path");
         return 0;
     }
 
     fprintf(config_file, "path %s\n", settings->shopping_list_save_path);
-    fprintf(config_file, "distance %d\n", settings->max_distance);
     fprintf(config_file, "address %s\n", settings->address);
-    fprintf(config_file, "coords %lf %lf\n", settings->address_lat, settings->address_lon);
+    fprintf(config_file, "distance %d\n", settings->max_distance);
     fprintf(config_file, "deviance %lf", settings->deviance);
 
     fclose(config_file);
+
     return 1;
 }
 
