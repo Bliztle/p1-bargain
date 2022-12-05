@@ -8,8 +8,7 @@ add_executable( main main.c
                 stores.c 
                 items.c 
                 test_items.c # remove when basket read is done.
-                test_functions.c)
-                api/nxjson/nxjson.c
+                test_functions.c
                 config.c )
 target_link_libraries(main libcurl m)
 add_subdirectory(api)
@@ -20,11 +19,11 @@ add_executable(settings settings.c)
 
 # Testing
 # TODO: Fix test_items and test_bargain dependencies, because this is ridiculous, but it builds.
-add_executable(test_items test_items.c items.c test_bargain.c bargain.c menu.c stores.c api/fetch.c api/parse.c api/nxjson/nxjson.c calc.c test_functions.c)
+add_executable(test_items test_items.c items.c test_bargain.c bargain.c menu.c stores.c api/fetch.c api/parse.c api/nxjson/nxjson.c calc.c test_functions.c config.c )
 target_link_libraries(test_items m libcurl)
 add_test(NAME test_items COMMAND test_items)
 
-add_executable(test_bargain test_bargain.c bargain.c stores.c menu.c items.c menu.c test_items.c items.c test_bargain.c api/fetch.c api/parse.c api/nxjson/nxjson.c calc.c test_functions.c)
+add_executable(test_bargain test_bargain.c bargain.c stores.c menu.c items.c menu.c test_items.c items.c test_bargain.c api/fetch.c api/parse.c api/nxjson/nxjson.c calc.c test_functions.c config.c )
 target_link_libraries(test_bargain m libcurl)
 add_test(test_bargain test_bargain)
 
