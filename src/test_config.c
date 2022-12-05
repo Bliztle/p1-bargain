@@ -9,7 +9,6 @@
 int main() {
 
     conf_settings_s settings;
-    assert(conf_read_settings(&settings));
 
     conf_settings_s new_settings;
     strcpy(new_settings.shopping_list_save_path, "shopping.txt");
