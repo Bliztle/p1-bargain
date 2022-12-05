@@ -150,7 +150,11 @@ fetch_status_e fetch_renew_coop_stores(store_s **stores, int *count)
     fetch_status_e status = fetch_get(url, FETCH_AUTH_OCP_APIM, COOP_TOKEN, &raw_stores);
 
     if (status != FETCH_STATUS_SUCCESS)
+    {
+        if (status != FETCH_STATUS_CURL_ERROR)
+            free(raw_stores);
         return status;
+    }
 
     store_s *parsed_stores = NULL;
     int new_count = parse_coop_stores(raw_stores, &parsed_stores);
@@ -186,7 +190,11 @@ fetch_status_e fetch_renew_salling_stores(store_s **stores, int *count)
     fetch_status_e status = fetch_get(url, FETCH_AUTH_BEARER, SALLING_TOKEN, &raw_stores);
 
     if (status != FETCH_STATUS_SUCCESS)
+    {
+        if (status != FETCH_STATUS_CURL_ERROR)
+            free(raw_stores);
         return status;
+    }
 
     store_s *parsed_stores = NULL;
     int new_count = parse_salling_stores(raw_stores, &parsed_stores);
@@ -444,11 +452,16 @@ void fetch_get_salling_items(store_s *store)
         fetch_status_e status = fetch_get(url, FETCH_AUTH_BEARER, SALLING_TOKEN, &raw_items);
 
         if (status != FETCH_STATUS_SUCCESS)
+        {
+            if (status != FETCH_STATUS_CURL_ERROR)
+                free(raw_items);
             continue;
+        }
 
         store_item_s *temp_items = NULL;
         int temp_count = parse_salling_items(raw_items, &temp_items);
 
+        free(raw_items);
         items = realloc(items, (count + temp_count) * sizeof(store_item_s));
         memcpy(&(items[count]), temp_items, temp_count * sizeof(store_item_s));
         count += temp_count;
