@@ -19,4 +19,5 @@ add_executable(test_config test_config.c config.c)
 add_executable(calc_test calc_test.c calc.c)
 target_link_libraries(calc_test m)
 add_test(NAME calc_test COMMAND calc_test)
-
+add_executable(basket_test basket_test.c basket.c)
+add_test(NAME basket_test COMMAND basket_test)
