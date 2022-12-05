@@ -9,6 +9,7 @@ add_executable( main main.c
 target_link_libraries(main libcurl m)
 add_subdirectory(api)
 configure_file(settings.conf settings.conf COPYONLY)
+configure_file(settings.conf api/settings.conf COPYONLY)
 
 add_executable(settings settings.c)
 
