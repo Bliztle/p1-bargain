@@ -12,7 +12,6 @@ int main() {
     assert(conf_read_settings(&settings));
 
     conf_settings_s new_settings;
-    strcpy(new_settings.shopping_list_save_path, "C:\\your\\mom\\a.hoe");
     new_settings.max_distance = 2000;
     strcpy(new_settings.address, "korruptionsgade 5 100 christiansborg");
     new_settings.deviance = 10;
@@ -20,8 +19,6 @@ int main() {
 
 
     conf_read_settings(&settings);
-
-    assert(strcmp(settings.shopping_list_save_path, new_settings.shopping_list_save_path) == 0);
     assert(settings.max_distance == new_settings.max_distance);
     assert(strcmp(settings.address, new_settings.address) == 0);
     assert(settings.deviance == new_settings.deviance);
