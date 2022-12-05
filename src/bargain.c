@@ -264,9 +264,9 @@ void create_found_entries(store_s store, char **string_to_append_to, size_t size
 
     for (int i = 0; i < store.found_items_count; i++)
     {
-
-        char *temp_string = malloc(sizeof(char) * 45 + ITEM_NAME_SIZE + 1);
-        snprintf(temp_string, sizeof(temp_string), "# %d | %s | %d | %.2lf/%s | %.2lf dkk.\n",
+        int l = sizeof(char) * 45 + ITEM_NAME_SIZE + 1;
+        char *temp_string = malloc(l);
+        snprintf(temp_string, l, "# %d | %s | %d | %.2lf/%s | %.2lf dkk.\n",
                  i,
                  store.found_items[i].name,
                  store.found_items[i].count,
@@ -290,9 +290,9 @@ void create_missing_entries(store_s store, char **string_to_append_to, size_t si
     for (int i = 0; i < store.missing_items_count; i++)
     {
 
-        int size_of_name = sizeof(store.missing_items[i].name);
-        char *temp_string = malloc(sizeof(char) * (7 + size_of_name));
-        snprintf(temp_string, sizeof(temp_string), "#%d | %s\n",
+        int size_of_name = (strlen(store.missing_items[i].name) + 256) * sizeof(char);
+        char *temp_string = malloc(size_of_name);
+        snprintf(temp_string, size_of_name, "#%d | %s\n",
                  i,
                  store.missing_items[i].name);
 
@@ -307,9 +307,10 @@ void append_outro_to_string(store_s store, char **string_to_append_to, size_t si
     char *items_outro = "--------------------------------------\nStore | Address | Distance | Items found | Total price\n\0";
     *string_to_append_to = realloc(*string_to_append_to, size_of_string + sizeof(char) * strlen(items_outro));
 
-    char *temp_string = malloc(35 + strlen(items_outro) * sizeof(char));
+    int l = 35 + strlen(items_outro) * sizeof(char);
+    char *temp_string = malloc(l);
 
-    snprintf(temp_string, sizeof(temp_string), "%s%s | %s | %d | %d/%d | %.2lf\n",
+    snprintf(temp_string, l, "%s%s | %s | %d | %d/%d | %.2lf\n",
              items_outro,
              store.name,
              store.address,
