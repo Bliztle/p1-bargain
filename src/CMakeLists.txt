@@ -5,7 +5,8 @@ add_executable( main main.c
                 api/parse.c
                 api/nxjson/nxjson.c
                 settings.c
-                menu.c)
+                menu.c
+                config.c)
 
 target_link_libraries(main libcurl m)
 add_subdirectory(api)
@@ -27,7 +28,8 @@ add_executable( test_settings
                 api/parse.c
                 api/nxjson/nxjson.c
                 menu.c
-                calc.c)
+                calc.c
+                config.c)
 target_link_libraries(test_settings libcurl m)
 add_test(NAME test_settings COMMAND test_settings)
 

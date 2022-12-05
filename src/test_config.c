@@ -18,7 +18,7 @@ int main() {
     new_settings.address_lat = 47.1915271;
     new_settings.address_lon = -52.8393801;
     new_settings.deviance = 0.25;
-    assert(conf_write_settings(new_settings));
+    assert(conf_write_settings(&new_settings));
 
 
     conf_read_settings(&settings);

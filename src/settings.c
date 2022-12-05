@@ -8,7 +8,7 @@
 
 #include "settings.h"
 
-void menu_settings() {
+void menu_settings(conf_settings_s *settings) {
     char* options[4];
 
     options[0] = "Change the export path";
@@ -18,6 +18,8 @@ void menu_settings() {
 
     char* menu_text = "Choose the setting you want to edit";
     char* help_text = "!q to quit the program";
+    
+    conf_read_settings(settings);
 
     while (1) {
         int selected_option = display_menu(options, menu_text, help_text);
@@ -26,15 +28,35 @@ void menu_settings() {
             break;
         }
 
-        settings_edit(selected_option);
+        settings_edit(settings, selected_option);
     }
 }
 
-void settings_edit(int setting) { // Edit the given setting
+void settings_edit(conf_settings_s *settings, int setting) { // Edit the given setting
     char input[MAX_INPUT_SIZE];
 
-    char* str1 = "Current setting is ";
-    char* str2 = "[setting]"; // TODO: = read from config
+    char *str1 = "Current setting is ";
+    
+    char str2[MAX_INPUT_SIZE];
+
+    switch (setting) {
+        case PATH:
+            sprintf(str2, "%s", settings->shopping_list_save_path);
+            break;
+        
+        case ADDRESS:
+            sprintf(str2, "%s", settings->address);
+            break;
+
+        case DISTANCE:
+            sprintf(str2, "%d", settings->max_distance);
+            break;
+
+        case DEVIATION:
+            sprintf(str2, "%lf", settings->deviance);
+            break;
+    }
+
     char* str3 = "\nEnter new setting";
 
     int len = strlen(str1) + strlen(str2) + strlen(str3);
@@ -72,13 +94,14 @@ void settings_edit(int setting) { // Edit the given setting
                 }
             }*/
 
-            // TODO: conf_write_settings()
+            //conf_write_settings(settings);
+
             return;
         }
     }
 }
 
-int settings_validate(char* input, int setting) {
+int settings_validate(char *input, int setting) {
     switch (setting) { // Maps setting to the right validation
         case PATH:
             return settings_validate_path(input);
@@ -97,7 +120,7 @@ int settings_validate(char* input, int setting) {
     }
 }
 
-int settings_validate_path(char* input) {
+int settings_validate_path(char *input) {
     // Make sure the file type is right
     char* substring = strstr(input, FILE_TYPE);
 
@@ -114,7 +137,7 @@ int settings_validate_path(char* input) {
     }
 
     // Since it technically still could be a folder ending on .txt, we open the file
-    FILE* file = fopen(input, "r");
+    FILE *file = fopen(input, "r");
 
     if (file == NULL) { // A folder cannot be opened by fopen()
         perror("Error");
@@ -126,9 +149,9 @@ int settings_validate_path(char* input) {
     return 1;
 }
 
-int settings_validate_address(char* input) { // Checks if it was able to fetch and parse the input
-    char* raw_coordinates;
-    conf_settings_s settings;
+int settings_validate_address(char *input) { // Checks if it was able to fetch and parse the input
+    char *raw_coordinates;
+    double lat, lon;
 
     fetch_status_e status_fetch = fetch_coordinates(input, &raw_coordinates) != FETCH_STATUS_SUCCESS; 
   
@@ -138,7 +161,7 @@ int settings_validate_address(char* input) { // Checks if it was able to fetch a
         return 0;
     }
 
-    int status_parse = parse_coordinates(raw_coordinates, &settings);
+    int status_parse = parse_coordinates(&lat, &lon, raw_coordinates);
 
     if (!status_parse) {
         printf("Error: Invalid address\n");
@@ -149,7 +172,7 @@ int settings_validate_address(char* input) { // Checks if it was able to fetch a
     return 1;
 }
 
-int settings_validate_deviation(char* input) {
+int settings_validate_deviation(char *input) {
     // Converts string to double and checks if it's valid as a deviation
     char *endptr;
     double deviation = strtod(input, &endptr);
@@ -163,7 +186,7 @@ int settings_validate_deviation(char* input) {
     return 1;
 }
 
-int settings_validate_distance(char* input) {
+int settings_validate_distance(char *input) {
     // Converts string to double and checks if it's valid as a distance
     char *endptr;
     double distance = strtod(input, &endptr);

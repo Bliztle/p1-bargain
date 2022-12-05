@@ -5,12 +5,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "config.h"
 #include "menu.h"
 #include "api/fetch.h"
 #include "api/parse.h"
 
 /// DEFINES
-#define MAX_INPUT_SIZE 100
+#define MAX_INPUT_SIZE 256
 #define FILE_TYPE ".txt"
 
 /// TYPEDEFS
@@ -25,13 +26,13 @@ typedef enum {
 /**
  * @brief Runs the settings menu
  */
-void menu_settings();
+void menu_settings(conf_settings_s *settings);
 
 /**
  * @brief Edit the given setting
  * @param setting the setting to change
  */
-void settings_edit(int setting);
+void settings_edit(conf_settings_s *settings, int setting);
 
 /**
  * @brief Validates settings
@@ -39,34 +40,34 @@ void settings_edit(int setting);
  * @param setting the setting to validate
  * @return true or false
  */
-int settings_validate(char* input, int setting);
+int settings_validate(char *input, int setting);
 
 /**
  * @brief Validates the path
  * @param input user input
  * @return true or false
 */
-int settings_validate_path(char* input);
+int settings_validate_path(char *input);
 
 /**
  * @brief Validates the address
  * @param input 
  * @return true or false 
  */
-int settings_validate_address(char* input);
+int settings_validate_address(char *input);
 
 /**
  * @brief Validates distance
  * @param input user input
  * @return true or false
  */
-int settings_validate_distance(char* input);
+int settings_validate_distance(char *input);
 
 /**
  * @brief Validates the deviation
  * @param input user input
  * @return true or false
 */
-int settings_validate_deviation(char* input);
+int settings_validate_deviation(char *input);
 
 #endif

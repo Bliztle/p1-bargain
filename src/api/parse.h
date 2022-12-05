@@ -1,8 +1,8 @@
 #ifndef P1_BARGAIN_PARSE_H
 #define P1_BARGAIN_PARSE_H
 
-#include "../items_types.h"
 #include "../config.h"
+#include "../items_types.h"
 #include "nxjson/nxjson.h"
 
 /**
@@ -71,13 +71,14 @@ char *parse_replace_char(char *source, char find, char replace);
 int parse_read_file_to_end(char *file_name, char **content);
 
 /**
-* Parses coordinates from Google API into latitude and longtitude
+* Parses coordinates from Google API into latitude and longtitude 
 *
+* @param lat pointer to latitude
+* @param lon pointer longitude
 * @param raw_coordinates Raw json to parse into latitude and longtitude
-* @param settings settings struct
 *
 * @return returns true or false
 */
-int parse_coordinates(char* raw_coordinates, conf_settings_s* settings);
+int parse_coordinates(double *lat, double *lon, char *raw_coordinates);
 
 #endif
