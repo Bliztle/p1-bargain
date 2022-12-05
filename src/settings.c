@@ -94,9 +94,7 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
                 }
             }*/
 
-            int status = conf_write_settings(settings);
-
-            printf("Status: %d\n", status);
+            conf_write_settings(settings);
 
             return;
         }
@@ -173,8 +171,7 @@ int settings_validate_address(char *input) { // Checks if it was able to fetch a
 
 int settings_validate_deviation(char *input) {
     // Converts string to double and checks if it's valid as a deviation
-    char *endptr;
-    double deviation = strtod(input, &endptr);
+    double deviation = strtod(input, &input);
 
     if (deviation <= 0) {
         printf("Error: Invalid deviation\n");
@@ -187,10 +184,9 @@ int settings_validate_deviation(char *input) {
 
 int settings_validate_distance(char *input) {
     // Converts string to double and checks if it's valid as a distance
-    char *endptr;
-    double distance = strtod(input, &endptr);
+    int distance = strtol(input, &input, 10);
 
-    if (distance <= 0) {
+    if (distance < 1) {
         printf("Error: Invalid distance\n");
 
         return 0;
