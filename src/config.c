@@ -39,7 +39,7 @@ int conf_read_settings(conf_settings_s *settings) {
     return 1;
 }
 
-int conf_write_settings(settings_s *settings) {
+int conf_write_settings(conf_settings_s *settings) {
     FILE *config_file = fopen(SETTINGS_PATH, "w");
 
     if (config_file == NULL) {
