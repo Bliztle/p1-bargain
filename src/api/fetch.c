@@ -9,6 +9,9 @@
 #include <string.h>
 #include <curl/curl.h>
 
+#define COOP_TOKEN "8042a78a1c91463e80140b0cb11b8b47"
+#define SALLING_TOKEN "ed1b7976-ca43-4bde-a930-ba3d92935464"
+
 static const char const *token_type_map[] = {
     [FETCH_AUTH_BEARER] = "Authorization: Bearer",
     [FETCH_AUTH_OCP_APIM] = "Ocp-Apim-Subscription-Key:",
@@ -138,30 +141,27 @@ fetch_status_e fetch_renew_stores()
 
 fetch_status_e fetch_renew_coop_stores(store_s **stores, int *count)
 {
-    // TODO: Read from config
     conf_settings_s conf;
     conf_read_settings(&conf);
-
-    // double lat = 57.025760, lon = 9.958440;
-    // int max_distance = 6000;
-    char *token = "8042a78a1c91463e80140b0cb11b8b47";
 
     char *url = "https://api.cl.coop.dk/storeapi/v1/stores?page=1&size=5000";
 
     char *raw_stores = NULL;
-    fetch_status_e status = fetch_get(url, FETCH_AUTH_OCP_APIM, token, &raw_stores);
+    fetch_status_e status = fetch_get(url, FETCH_AUTH_OCP_APIM, COOP_TOKEN, &raw_stores);
 
     if (status != FETCH_STATUS_SUCCESS)
+    {
+        if (status != FETCH_STATUS_CURL_ERROR)
+            free(raw_stores);
         return status;
+    }
 
     store_s *parsed_stores = NULL;
     int new_count = parse_coop_stores(raw_stores, &parsed_stores);
 
     for (int i = 0; i < new_count; i++)
     {
-        // double distance = calc_coordinate_distance(lat, lon, parsed_stores[i].lat, parsed_stores[i].lon) * 1000;
         double distance = calc_coordinate_distance(conf.address_lat, conf.address_lon, parsed_stores[i].lat, parsed_stores[i].lon) * 1000;
-        // if (distance < max_distance)
         if (distance < conf.max_distance)
         {
             *stores = realloc(*stores, (++(*count)) * sizeof(store_s));
@@ -178,21 +178,23 @@ fetch_status_e fetch_renew_coop_stores(store_s **stores, int *count)
 
 fetch_status_e fetch_renew_salling_stores(store_s **stores, int *count)
 {
-    // TODO: Read from config
-    double lat = 57.025760, lon = 9.958440;
-    int distance = 6000; // Closest store is 6 km away
-    char *token = "ed1b7976-ca43-4bde-a930-ba3d92935464";
+    conf_settings_s conf;
+    conf_read_settings(&conf);
 
     char url[255];
     snprintf(url, 255,
              "https://api.sallinggroup.com/v2/stores?brand=bilka&fields=address%%2Cbrand%%2Ccoordinates%%2Cdistance_km%%2Cname%%2Cid&geo=%.4f%%2C%.4f&page=1&per_page=100&radius=%.2f",
-             lat, lon, (double)distance / 1000);
+             conf.address_lat, conf.address_lon, (double)conf.max_distance / 1000);
 
     char *raw_stores = NULL;
-    fetch_status_e status = fetch_get(url, FETCH_AUTH_BEARER, token, &raw_stores);
+    fetch_status_e status = fetch_get(url, FETCH_AUTH_BEARER, SALLING_TOKEN, &raw_stores);
 
     if (status != FETCH_STATUS_SUCCESS)
+    {
+        if (status != FETCH_STATUS_CURL_ERROR)
+            free(raw_stores);
         return status;
+    }
 
     store_s *parsed_stores = NULL;
     int new_count = parse_salling_stores(raw_stores, &parsed_stores);
@@ -322,14 +324,11 @@ void fetch_get_coop_items(store_s *store)
 
 fetch_status_e fetch_renew_coop_items(char *store_id, const nx_json **json)
 {
-    conf_settings_s settings;
-    // TODO: Read from config
-    char *token = "8042a78a1c91463e80140b0cb11b8b47";
     char url[100];
     snprintf(url, 100, "https://api.cl.coop.dk/productapi/v1/product/%s", store_id);
 
     char *response = NULL;
-    fetch_status_e status = fetch_get(url, FETCH_AUTH_OCP_APIM, token, &response);
+    fetch_status_e status = fetch_get(url, FETCH_AUTH_OCP_APIM, COOP_TOKEN, &response);
 
     if (status != FETCH_STATUS_SUCCESS)
     {
@@ -436,9 +435,6 @@ basket_item_s *__fetch_mock_basket()
 
 void fetch_get_salling_items(store_s *store)
 {
-    // TODO: Read from config
-    char *token = "ed1b7976-ca43-4bde-a930-ba3d92935464";
-
     // TODO: Read from basket
     basket_item_s *basket_items = __fetch_mock_basket();
 
@@ -453,14 +449,19 @@ void fetch_get_salling_items(store_s *store)
         snprintf(url, 255, "https://api.sallinggroup.com/v1-beta/product-suggestions/relevant-products?query=%s", basket_items[i].name);
 
         char *raw_items = NULL;
-        fetch_status_e status = fetch_get(url, FETCH_AUTH_BEARER, token, &raw_items);
+        fetch_status_e status = fetch_get(url, FETCH_AUTH_BEARER, SALLING_TOKEN, &raw_items);
 
         if (status != FETCH_STATUS_SUCCESS)
+        {
+            if (status != FETCH_STATUS_CURL_ERROR)
+                free(raw_items);
             continue;
+        }
 
         store_item_s *temp_items = NULL;
         int temp_count = parse_salling_items(raw_items, &temp_items);
 
+        free(raw_items);
         items = realloc(items, (count + temp_count) * sizeof(store_item_s));
         memcpy(&(items[count]), temp_items, temp_count * sizeof(store_item_s));
         count += temp_count;
