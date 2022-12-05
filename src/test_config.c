@@ -12,9 +12,9 @@ int main() {
     assert(conf_read_settings(&settings));
 
     conf_settings_s new_settings;
-    strcpy(new_settings.shopping_list_save_path, "shoppinglist.txt");
-    new_settings.max_distance = 2000;
+    strcpy(new_settings.shopping_list_save_path, "shopping.txt");
     strcpy(new_settings.address, "korruptionsgade 5 100 christiansborg");
+    new_settings.max_distance = 2000;
     new_settings.deviance = 10;
     assert(conf_write_settings(&new_settings));
 
