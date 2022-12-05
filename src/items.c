@@ -136,7 +136,49 @@ void items_filter_items(store_s *store)
 {
     // TODO Change to read basket from file
     int basket_size = 10;
-    basket_item_s *basket = test_get_basket(&basket_size); // __fetch_mock_basket();
+    // basket_item_s *basket = __fetch_mock_basket(); // test_get_basket(&basket_size);
+
+    basket_item_s *basket = malloc(basket_size * sizeof(basket_item_s));
+
+    strncpy(basket[0].name, "Skåvl", ITEM_NAME_SIZE);
+    basket[0].size = 1;
+    basket[0].unit = UNKNOWN;
+
+    strncpy(basket[1].name, "Spade", ITEM_NAME_SIZE);
+    basket[1].size = 1;
+    basket[1].unit = UNKNOWN;
+
+    strncpy(basket[2].name, "Spegepølse", ITEM_NAME_SIZE);
+    basket[2].size = 1;
+    basket[2].unit = UNKNOWN;
+
+    strncpy(basket[3].name, "Sild", ITEM_NAME_SIZE);
+    basket[3].size = 1;
+    basket[3].unit = UNKNOWN;
+
+    strncpy(basket[4].name, "Brød", ITEM_NAME_SIZE);
+    basket[4].size = 1;
+    basket[4].unit = UNKNOWN;
+
+    strncpy(basket[5].name, "Lys", ITEM_NAME_SIZE);
+    basket[5].size = 1;
+    basket[5].unit = UNKNOWN;
+
+    strncpy(basket[6].name, "Mad", ITEM_NAME_SIZE);
+    basket[6].size = 1;
+    basket[6].unit = UNKNOWN;
+
+    strncpy(basket[7].name, "Æg", ITEM_NAME_SIZE);
+    basket[7].size = 1;
+    basket[7].unit = UNKNOWN;
+
+    strncpy(basket[8].name, "Mælk", ITEM_NAME_SIZE);
+    basket[8].size = 1;
+    basket[8].unit = UNKNOWN;
+
+    strncpy(basket[9].name, "Redskab", ITEM_NAME_SIZE);
+    basket[9].size = 1;
+    basket[9].unit = UNKNOWN;
 
     for (int i = 0; i < basket_size; i++)
     {
