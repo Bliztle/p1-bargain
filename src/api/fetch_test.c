@@ -56,33 +56,33 @@ int main()
 
     //! Not run, as we have limited api calls
     //! Git does not cache like us when testing
-    // printf("\nCOOP\n");
-    // store_s coop_store_1290;
+    printf("\nCOOP\n");
+    store_s coop_store_1290;
 
-    // strcpy(coop_store_1290.uid, "24216");
-    // fetch_get_coop_items(&coop_store_1290);
-    // for (int i = 0; i < coop_store_1290.items_count; i++)
-    // {
-    //     printf("[%d]\nName: %s\nPrice: %f\nSize: %f\nUnit: %i\nPPU: %f\n\n", i,
-    //            coop_store_1290.items[i].name,
-    //            coop_store_1290.items[i].price,
-    //            coop_store_1290.items[i].size,
-    //            coop_store_1290.items[i].unit,
-    //            coop_store_1290.items[i].price_per_unit);
-    // }
+    strcpy(coop_store_1290.uid, "24216");
+    fetch_get_coop_items(&coop_store_1290);
+    for (int i = 0; i < coop_store_1290.items_count; i++)
+    {
+        printf("[%d]\nName: %s\nPrice: %f\nSize: %f\nUnit: %i\nPPU: %f\n\n", i,
+               coop_store_1290.items[i].name,
+               coop_store_1290.items[i].price,
+               coop_store_1290.items[i].size,
+               coop_store_1290.items[i].unit,
+               coop_store_1290.items[i].price_per_unit);
+    }
 
-    // printf("\nSALLING\n");
-    // store_s salling_store;
+    printf("\nSALLING\n");
+    store_s salling_store;
 
-    // fetch_get_salling_items(&salling_store);
-    // for (int i = 0; i < salling_store.items_count; i++)
-    // {
-    //     printf("[%d]\nName: %s\nPrice: %f\nSize: %f\nUnit: %i\nPPU: %f\n\n", i,
-    //            salling_store.items[i].name,
-    //            salling_store.items[i].price,
-    //            salling_store.items[i].size,
-    //            salling_store.items[i].unit,
-    //            salling_store.items[i].price_per_unit);
-    // }
+    fetch_get_salling_items(&salling_store);
+    for (int i = 0; i < salling_store.items_count; i++)
+    {
+        printf("[%d]\nName: %s\nPrice: %f\nSize: %f\nUnit: %i\nPPU: %f\n\n", i,
+               salling_store.items[i].name,
+               salling_store.items[i].price,
+               salling_store.items[i].size,
+               salling_store.items[i].unit,
+               salling_store.items[i].price_per_unit);
+    }
     return 0;
 }
