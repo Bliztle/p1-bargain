@@ -334,6 +334,7 @@ fetch_status_e fetch_renew_coop_items(char *store_id, const nx_json **json)
     {
         if (status != FETCH_STATUS_CURL_ERROR) // Memory was likely allocated
             free(response);
+        printf("Coop failed");
         return status;
     }
 

@@ -17,8 +17,8 @@ void stores_populate_store_items(store_s *stores, int store_count)
         switch (stores[n].chain)
         {
         case COOP:
-            stores[n].items_count = test_get_items_one(&stores[n]);
-            // fetch_get_coop_items(&stores[n]); // TODO: Implement when function get_coop_items has been implemented.
+            // stores[n].items_count = test_get_items_one(&stores[n]);
+            fetch_get_coop_items(&stores[n]); // TODO: Implement when function get_coop_items has been implemented.
             break;
         case SALLING:
             stores[n].items_count = test_get_items_one(&stores[n]);

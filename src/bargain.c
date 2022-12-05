@@ -43,6 +43,25 @@ void bargain_run_bargain()
     bargain_run_bargain();
 }
 
+void free_store(store_s *store)
+{
+    if (store->items_count > 0)
+    {
+        free(store->items);
+        store->items_count = 0;
+    }
+    if (store->found_items_count > 0)
+    {
+        free(store->found_items);
+        store->found_items_count = 0;
+    }
+    if (store->missing_items_count > 0)
+    {
+        free(store->missing_items);
+        store->missing_items_count = 0;
+    }
+}
+
 store_s deep_copy_store(store_s *source)
 {
     store_s new_store = {
@@ -50,18 +69,34 @@ store_s deep_copy_store(store_s *source)
         .chain = source->chain,
         .lat = source->lat,
         .lon = source->lon,
+        .found_items = NULL,
+        .items = NULL,
+        .missing_items = NULL,
         .found_items_count = source->found_items_count,
         .found_items_total_price = source->found_items_total_price,
         .items_count = source->items_count,
         .missing_items_count = source->missing_items_count};
 
-    strcpy(new_store.name, source->name);
-    strcpy(new_store.address, source->address);
-    strcpy(new_store.uid, source->uid);
+    strncpy(new_store.name, source->name, STORE_NAME_SIZE);
+    strncpy(new_store.address, source->address, STORE_ADDRESS_SIZE);
+    strncpy(new_store.uid, source->uid, STORE_UID_SIZE);
 
-    new_store.items = malloc(sizeof(store_item_s) * source->items_count);
-    new_store.found_items = malloc(sizeof(store_item_s) * source->found_items_count);
-    new_store.missing_items = malloc(sizeof(store_item_s) * source->missing_items_count);
+    if (new_store.items_count > 0)
+    {
+
+        int size_to_malloc = sizeof(store_item_s) * (source->items_count);
+        new_store.items = realloc(new_store.items, size_to_malloc);
+    }
+    if (new_store.missing_items_count > 0)
+    {
+        int size_to_malloc = sizeof(basket_item_s) * (source->missing_items_count);
+        new_store.missing_items = realloc(new_store.missing_items, size_to_malloc);
+    }
+    if (new_store.found_items_count > 0)
+    {
+        int size_to_malloc = sizeof(found_item_s) * (source->found_items_count);
+        new_store.found_items = realloc(new_store.found_items, size_to_malloc);
+    }
 
     for (int i = 0; i < source->items_count; i++)
     {
@@ -78,26 +113,8 @@ store_s deep_copy_store(store_s *source)
         new_store.missing_items[i] = source->missing_items[i];
     }
 
-    free(source->items);
-    free(source->found_items);
-    free(source->missing_items);
+    free_store(source);
     return new_store;
-}
-
-void free_store(store_s *store)
-{
-    if (store->items_count > 0)
-    {
-        free(store->items);
-    }
-    if (store->found_items_count > 0)
-    {
-        free(store->found_items);
-    }
-    if (store->missing_items_count > 0)
-    {
-        free(store->missing_items);
-    }
 }
 
 store_s *filter_stores(store_s *stores, int store_count, int *bargain_counter)

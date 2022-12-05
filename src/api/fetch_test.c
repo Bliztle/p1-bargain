@@ -34,7 +34,7 @@ int main()
 
     //! Not run, as we have limited api calls
     // assert(fetch_renew_coop_stores(&stores, &count) == FETCH_STATUS_SUCCESS);
-    // assert(fetch_renew_stores() == FETCH_STATUS_SUCCESS);
+    assert(fetch_renew_stores() == FETCH_STATUS_SUCCESS);
 
     printf("\nfetch read test\n");
     stores = NULL;
