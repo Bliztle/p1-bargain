@@ -33,8 +33,10 @@ int main()
     parse_populate_item_unit(&regex_item);
 
     // char* c_size = parse_try_regex_group("some text here and 10 STK with more", "/([0-9]+)[ ]?STK/i");
-    char* c_size2 = parse_try_regex_group("some text here and 10 STK with more", "([0-9]+)[ ]?STK");
-    double size = parse_try_extract_size("some text here and 10 stk with more", "STK");
+    char* c_size = parse_try_regex_group("some text here and 10 STK with more", "([0-9]+)[ ]?STK");
+    assert(strcmp(c_size, "10") == 0);
+    double rexeg_size = parse_try_extract_size("some text here and 10 stk with more", "STK");
+    assert(rexeg_size == 10);
 
     return 0;
 }

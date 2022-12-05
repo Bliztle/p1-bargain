@@ -4,7 +4,8 @@ add_executable( main main.c
                 basket.c
                 api/fetch.c
                 api/parse.c
-                api/nxjson/nxjson.c )
+                api/nxjson/nxjson.c
+                config.c )
 target_link_libraries(main libcurl m)
 add_subdirectory(api)
 configure_file(settings.conf settings.conf COPYONLY)
