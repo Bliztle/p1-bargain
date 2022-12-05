@@ -51,6 +51,13 @@ basket_item_s basket_get(basket_s *basket, size_t index);
  * @param basket the basket to be freed
  */
 void basket_free(basket_s *basket);
+/**
+ * Converts a basket_s to a heap-allocated array of basket_item_s
+ * @param basket the list to be converted
+ * @param items an output parameter, where the location of the array will be placed
+ * @return the length of the array
+ */
+int basket_to_array(basket_s *basket, basket_item_s **items);
 
 basket_s *basket_read();
 void basket_write(basket_s *basket);

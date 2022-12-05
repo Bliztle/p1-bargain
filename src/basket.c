@@ -52,6 +52,23 @@ void basket_free(basket_s *basket) {
     }
 }
 
+int basket_to_array(basket_s *basket, basket_item_s **items) {
+    int length = 0;
+    basket_s *element = basket;
+    while (element != NULL) {
+        length++;
+        element = element->next;
+    }
+
+    *items = malloc(length * sizeof(basket_item_s));
+    element = basket;
+    for (int i = 0; i < length; i++) {
+        *items[i] = element->item;
+        element = element->next;
+    }
+    return length;
+}
+
 basket_s *basket_read() {
     conf_settings_s settings;
     conf_read_settings(&settings);
