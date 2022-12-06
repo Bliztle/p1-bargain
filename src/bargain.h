@@ -21,7 +21,7 @@ void bargain_menu_find_bargain();
  *
  * @param stores, the empty array.
  */
-int bargain_find_bargain(store_s *stores);
+int bargain_find_bargain(store_s **stores);
 
 void bargain_print_bargain_result(store_s store);
 

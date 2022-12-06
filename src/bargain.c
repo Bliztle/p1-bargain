@@ -25,22 +25,26 @@ void bargain_run_bargain()
 
     int choice = display_menu(options, "Main Menu", "Enter the number of the option you want to choose, or !q to quit");
 
-    switch (choice)
+    while (1)
     {
-    case -1:
-        printf("Goodbye!\n");
-        return;
-    case 0:
-        bargain_menu_find_bargain();
-        break;
-    case 1:
-        // TODO: Implement Basket Editor
-        break;
-    case 2:
-        // TODO: Implement Settings
-        break;
+        if (choice == -1)
+            break;
+
+        switch (choice)
+        {
+        case 0:
+            bargain_menu_find_bargain();
+            break;
+        case 1:
+            // TODO: Implement Basket Editor
+            break;
+        case 2:
+            // TODO: Implement Settings
+            break;
+        }
+
+        choice = display_menu(options, "Main Menu", "Enter the number of the option you want to choose, or !q to quit");
     }
-    bargain_run_bargain();
 }
 
 void free_store(store_s *store)
@@ -136,14 +140,14 @@ store_s *filter_stores(store_s *stores, int store_count, int *bargain_counter)
         }
     }
 
-    free(stores);
+    // free(stores);
     return bargains;
 }
 
 void bargain_menu_find_bargain()
 {
-    store_s *stores = malloc(MAX_STORES_COUNT * sizeof(store_s));
-    int store_count = bargain_find_bargain(stores);
+    store_s *stores = NULL;
+    int store_count = bargain_find_bargain(&stores);
 
     int bargain_count = 0;
     store_s *bargains = filter_stores(stores, store_count, &bargain_count);
@@ -178,7 +182,8 @@ void bargain_menu_find_bargain()
         selected_bargain = display_menu(options, menu_text, "Enter a number to select a bargain.");
         if (selected_bargain == -1)
         {
-            break;
+            printf("Goodbye!\n");
+            exit(EXIT_SUCCESS);
         }
         bargain_menu_print_bargain(bargains[selected_bargain]);
     }
@@ -192,15 +197,15 @@ void bargain_menu_find_bargain()
     free(bargains);
 }
 
-int bargain_find_bargain(store_s *stores)
+int bargain_find_bargain(store_s **stores)
 {
 
     // int store_count = fetch_get_stores(stores);
-    int store_count = fetch_get_stores(&stores); // TODO: Make sure everything in store structs is initialised beyond this point.
+    int store_count = fetch_get_stores(stores); // TODO: Make sure everything in store structs is initialised beyond this point.
     printf("Store count: %d\n", store_count);
-    stores_populate_store_items(stores, store_count);
+    stores_populate_store_items(*stores, store_count);
 
-    qsort(stores, store_count, sizeof(store_s), (compfn)stores_compare_stores);
+    qsort(*stores, store_count, sizeof(store_s), (compfn)stores_compare_stores);
 
     return store_count;
 }
