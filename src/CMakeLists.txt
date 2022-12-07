@@ -1,6 +1,7 @@
 add_executable( main main.c
                 calc.c
                 menu.c
+                basket.c
                 api/fetch.c
                 api/parse.c
                 api/nxjson/nxjson.c
@@ -10,6 +11,10 @@ add_executable( main main.c
 
 target_link_libraries(main libcurl m)
 add_subdirectory(api)
+configure_file(settings.conf settings.conf COPYONLY)
+configure_file(settings.conf api/settings.conf COPYONLY)
+
+add_executable(settings settings.c)
 
 # Testing
 add_executable(test_items test_items.c items.c)
@@ -31,4 +36,6 @@ add_executable( test_settings
                 config.c)
 target_link_libraries(test_settings libcurl m)
 add_test(NAME test_settings COMMAND test_settings)
-
+add_executable(basket_test basket_test.c basket.c menu.c api/parse.c api/nxjson/nxjson.c)
+target_link_libraries(basket_test m)
+add_test(NAME basket_test COMMAND basket_test)
