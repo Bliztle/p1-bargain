@@ -85,9 +85,10 @@ store_s deep_copy_store(store_s *source)
     strncpy(new_store.address, source->address, STORE_ADDRESS_SIZE);
     strncpy(new_store.uid, source->uid, STORE_UID_SIZE);
 
+    // Prøv med præcise array størelser, da vi kender dem fra source store_s. possible segfault løsning.
+
     if (new_store.items_count > 0)
     {
-
         int size_to_malloc = sizeof(store_item_s) * (source->items_count);
         new_store.items = realloc(new_store.items, size_to_malloc);
     }
@@ -140,7 +141,7 @@ store_s *filter_stores(store_s *stores, int store_count, int *bargain_counter)
         }
     }
 
-    // free(stores);
+    free(stores);
     return bargains;
 }
 
@@ -151,8 +152,6 @@ void bargain_menu_find_bargain()
 
     int bargain_count = 0;
     store_s *bargains = filter_stores(stores, store_count, &bargain_count);
-
-    // free_store_array(stores, store_count);
 
     char *options[bargain_count];
 
@@ -181,26 +180,22 @@ void bargain_menu_find_bargain()
     {
         selected_bargain = display_menu(options, menu_text, "Enter a number to select a bargain.");
         if (selected_bargain == -1)
-        {
-            printf("Goodbye!\n");
+        {   
+            for (int i = 0; i < bargain_count; i++)
+            {
+                free_store(&bargains[i]);
+                free(options[i]);
+            }
+            free(bargains);
+            printf("Goodbye!\n"); 
             exit(EXIT_SUCCESS);
         }
         bargain_menu_print_bargain(bargains[selected_bargain]);
     }
-
-    for (int i = 0; i < bargain_count; i++)
-    {
-        free_store(&bargains[i]);
-        free(options[i]);
-    }
-
-    free(bargains);
 }
 
 int bargain_find_bargain(store_s **stores)
 {
-
-    // int store_count = fetch_get_stores(stores);
     int store_count = fetch_get_stores(stores); // TODO: Make sure everything in store structs is initialised beyond this point.
     printf("Store count: %d\n", store_count);
     stores_populate_store_items(*stores, store_count);
@@ -277,6 +272,8 @@ void bargain_menu_print_bargain(store_s store)
 
     // char *bargain_string = bargain_get_print_bargain_string(store);
     // bargain_print_bargain_result(store);
+
+    // TODO: Make it so you cannot select option n + 1;
 
     int selected_option = 10;
     while (selected_option != -1)
