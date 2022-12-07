@@ -77,4 +77,11 @@ found_item_s items_convert_to_found_item(store_item_s input_item, int item_count
  *
  * */
 int items_compare_item_names(char *name_to_find, char *name_to_search);
+
+int items_compare_item_units(item_unit_e requested_unit, item_unit_e store_unit);
+
+int items_compare_item_price_per_unit(item_price_t best_item_price, item_price_t store_price);
+
+int items_alternate_unit_match(item_unit_e requested_unit, item_unit_e best_item_unit, item_price_t store_price, item_price_t best_item_price);
+
 #endif
