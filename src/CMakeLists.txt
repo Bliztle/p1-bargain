@@ -14,8 +14,6 @@ add_subdirectory(api)
 configure_file(settings.conf settings.conf COPYONLY)
 configure_file(settings.conf api/settings.conf COPYONLY)
 
-add_executable(settings settings.c)
-
 # Testing
 add_executable(test_items test_items.c items.c)
 target_link_libraries(test_items m)
