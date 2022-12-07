@@ -37,19 +37,15 @@ int items_find_best_match(basket_item_s requested_item, store_s *store, found_it
             continue;
 
         // If the store_item unit is known.
-        if ((requested_item.unit != UNKNOWN) && (store->items[i].unit == requested_item.unit))
-        {
+        if (items_compare_item_units(requested_item.unit, store->items[i].unit)) {
 
             // If the store_item unit prise is better than the current best_item, or if it has not been set yet.
-            if (store->items[i].price_per_unit < best_item.price_per_unit || best_item.price_per_unit == 50000000)
-            {
+            if (items_compare_item_price_per_unit(best_item.price_per_unit, store->items[i].price_per_unit)) {
 
                 // Gets the amount of items needed to satisfy the requested size.
                 int count = items_is_in_variation(store->items[i].size, variance, requested_item.size);
 
-                if (count > 0)
-                {
-
+                if (count > 0) {
                     best_item = items_convert_to_found_item(store->items[i], count);
                     item_found = 1;
                 }
@@ -57,8 +53,7 @@ int items_find_best_match(basket_item_s requested_item, store_s *store, found_it
 
             // If the store_item unit is not known, then it should only be used if no other store item has a known unit that matches.
         }
-        else if ((requested_item.unit == UNKNOWN) || (best_item.unit == UNKNOWN && store->items[i].price < best_item.product_price))
-        {
+        else if (items_alternate_unit_match(requested_item.unit, best_item.unit, store->items[i].price, best_item.product_price)) {
             best_item = items_convert_to_found_item(store->items[i], 1);
             item_found = 1;
         }
@@ -86,6 +81,7 @@ int items_is_in_variation(double store_item_size, double variance, double reques
     double min_n = ceil((min_size / store_item_size));
 
     if (store_item_size * min_n < max_size)
+
         return min_n;
     return 0;
 }
@@ -169,4 +165,26 @@ int items_compare_item_names(char *name_to_find, char *name_to_search)
     snprintf(buffer, buffer_length, "(%s)", name_to_find);
 
     return parse_try_regex_group(name_to_search, buffer) != NULL;
+}
+
+
+int items_compare_item_units(item_unit_e requested_unit, item_unit_e store_unit){
+    if ((requested_unit != UNKNOWN) && (store_unit == requested_unit))
+        return 1;
+    else 
+        return 0;
+}
+
+int items_compare_item_price_per_unit(item_price_t best_item_price, item_price_t store_price){
+    if ((store_price < best_item_price || best_item_price == 50000000))
+        return 1;
+    else 
+        return 0;
+}
+
+int items_alternate_unit_match(item_unit_e requested_unit, item_unit_e best_item_unit, item_price_t store_price, item_price_t best_item_price){
+    if ((requested_unit == UNKNOWN) || (best_item_unit == UNKNOWN && store_price < best_item_price))
+        return 1;
+    else
+        return 0;
 }
