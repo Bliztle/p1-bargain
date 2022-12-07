@@ -25,6 +25,13 @@ typedef enum
     UNITS,
 } item_unit_e;
 
+static const char *UNIT_NAMES[] = {
+    "Unknown",
+    "Kg",
+    "L",
+    "Pcs",
+};
+
 typedef enum
 {
     SALLING,

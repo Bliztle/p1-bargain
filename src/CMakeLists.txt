@@ -1,6 +1,7 @@
 add_executable( main main.c
                 calc.c
                 menu.c
+                basket.c
                 api/fetch.c
                 api/parse.c
                 api/nxjson/nxjson.c 
@@ -34,4 +35,6 @@ add_test(NAME test_config COMMAND test_config)
 add_executable(calc_test calc_test.c calc.c)
 target_link_libraries(calc_test m)
 add_test(NAME calc_test COMMAND calc_test)
-
+add_executable(basket_test basket_test.c basket.c menu.c api/parse.c api/nxjson/nxjson.c)
+target_link_libraries(basket_test m)
+add_test(NAME basket_test COMMAND basket_test)
