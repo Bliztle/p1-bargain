@@ -43,7 +43,8 @@ add_executable( test_settings
                 api/nxjson/nxjson.c
                 menu.c
                 calc.c
-                config.c)
+                config.c
+                test_functions.c )
 target_link_libraries(test_settings libcurl m)
 add_test(NAME test_settings COMMAND test_settings)
 add_executable(basket_test basket_test.c basket.c menu.c api/parse.c api/nxjson/nxjson.c)
