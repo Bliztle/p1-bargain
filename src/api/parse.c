@@ -3,7 +3,6 @@ Look into NXJSON or cJSON for parsing api responses
 https://stackoverflow.com/a/16490394
 */
 #include "parse.h"
-#include "../items_types.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -304,4 +303,25 @@ int parse_read_file_to_end(char *file_name, char **content)
     fclose(fp);
 
     return 0;
+}
+
+int parse_coordinates(double *lat, double *lon, char *raw_coordinates) {
+    const nx_json* json = nx_json_parse_utf8(raw_coordinates);
+
+    const nx_json* results = nx_json_get(json, "results");
+
+    if (results->children.length == 0) return 0;
+
+    // Save the first result
+    const nx_json* result_first_child = results->children.first;
+
+    // Get value of lat and long and put them into the settings struct
+    *lat = nx_json_get(nx_json_get(nx_json_get(result_first_child, "geometry"), "location"), "lat")->num.dbl_value;
+    *lon = nx_json_get(nx_json_get(nx_json_get(result_first_child, "geometry"), "location"), "lng")->num.dbl_value;
+
+    // Cleanup
+    nx_json_free(json);
+    json = NULL; // No dangling pointer
+
+    return 1;
 }

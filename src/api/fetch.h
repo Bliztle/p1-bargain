@@ -170,4 +170,12 @@ void _fetch_write_coop_items(char *store_id, char *content);
 
 void fetch_get_salling_items(store_s *store);
 
+/**
+ * Get address coordinates from Google Maps
+ * @param input_address the address that the user inputs
+ * @param raw_coordinates the raw json as output parameter
+ * @return success status
+*/
+fetch_status_e fetch_coordinates(char* input_address, char** raw_coordinates); 
+
 #endif
