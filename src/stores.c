@@ -6,7 +6,7 @@
 #include "items.h"
 #include "api/fetch.h"
 #include "test_bargain.h"
-#include "test_functions.h"
+#include "mock_functions.h"
 
 void stores_populate_store_items(store_s *stores, int store_count)
 {
@@ -26,7 +26,7 @@ void stores_populate_store_items(store_s *stores, int store_count)
             break;
         default:
             // TODO make able to print any type after got enum.
-            printf("Store[%d].chain did not match any known case. Got enum: %d \n", n, stores[n].chain);
+            printf("Store[%d].group did not match any known case. Got enum: %d \n", n, stores[n].group);
             break;
         }
 

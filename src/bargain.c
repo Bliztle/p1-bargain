@@ -8,7 +8,7 @@
 #include "menu.h"
 #include "test_bargain.h"
 #include "api/fetch.h"
-#include "test_functions.h"
+#include "mock_functions.h"
 
 #define MAX_STORES_COUNT 3
 #define MAIN_MENU_ITEMS_COUNT 3
@@ -132,8 +132,9 @@ store_s *filter_stores(store_s *stores, int store_count, int *bargain_counter)
         if (stores[i].found_items_count > 0)
         {
 
-            bargains[i - skipped] = deep_copy_store(&stores[i]);
+            bargains[i - skipped] = stores[i - skipped];            // deep_copy_store(&stores[i]);
             (*bargain_counter)++;
+
         }
         else
         {
@@ -141,7 +142,6 @@ store_s *filter_stores(store_s *stores, int store_count, int *bargain_counter)
         }
     }
 
-    free(stores);
     return bargains;
 }
 
@@ -149,9 +149,11 @@ void bargain_menu_find_bargain()
 {
     store_s *stores = NULL;
     int store_count = bargain_find_bargain(&stores);
-
+    
     int bargain_count = 0;
     store_s *bargains = filter_stores(stores, store_count, &bargain_count);
+
+    free(stores);
 
     char *options[bargain_count];
 
@@ -238,17 +240,16 @@ char *bargain_get_print_bargain_string(store_s store)
 {
     // realloc on a something not allocated by malloc is undefined behaviour.
     // So we need to allocate a string with the size of the initial data, and then copy it to the malloced string.
-    char *bargain_string_start = "SHOPPING LIST\n--------------------------------------\n# | Product | count | price/unit | total price\0";
-    int bargain_string_start_length = strlen(bargain_string_start);
-    char *bargain_string = malloc(strlen(bargain_string_start) * sizeof(char));
-    strncat(bargain_string, bargain_string_start, bargain_string_start_length * sizeof(char));
+    // char *bargain_string_start = 
+    // int bargain_string_start_length = strlen(bargain_string_start);
+    char *bargain_string = "SHOPPING LIST\n--------------------------------------\n# | Product | count | price/unit | total price\0";
 
     int found_entry_size = 0;
     int missing_entry_size = 0;
 
     get_size_of_list_entries(store, &found_entry_size, &missing_entry_size);
 
-    bargain_string = realloc(bargain_string, bargain_string_start_length + found_entry_size);
+    bargain_string = realloc(bargain_string, strlen(bargain_string) * sizeof(char) + found_entry_size);
 
     create_found_entries(store, &bargain_string, (strlen(bargain_string) * sizeof(char)));
 
@@ -308,7 +309,7 @@ void create_missing_entries(store_s store, char **string_to_append_to, size_t si
 
     char *missing_intro = "--------------------------------------\nUNAVAILABLE ITEMS\n--------------------------------------\n# | Product\n\0";
 
-    int string_to_append_to_size = sizeof(char) * (strlen(*string_to_append_to) + strlen(*string_to_append_to) + strlen(missing_intro) + 1);
+    int string_to_append_to_size = sizeof(char) * (strlen(*string_to_append_to) + strlen(missing_intro) + 1);
     string_to_append_to = realloc(*string_to_append_to, string_to_append_to_size);
     strncat(*string_to_append_to, missing_intro, sizeof(char) * (strlen(*string_to_append_to) + strlen(missing_intro)));
 
@@ -354,39 +355,42 @@ void append_outro_to_string(store_s store, char **string_to_append_to, size_t si
 void get_size_of_list_entries(store_s store, int *found_list_size, int *missing_list_size)
 {
 
-    if (found_list_size != 0)
-        found_list_size = 0;
-    if (missing_list_size != 0)
-        missing_list_size = 0;
+    if (*found_list_size != 0)
+        *found_list_size = 0;
+    if (*missing_list_size != 0)
+        *missing_list_size = 0;
 
     for (int i = 0; i < store.found_items_count; i++)
     {
-        found_list_size += (strlen(store.found_items[i].name) + 10) * sizeof(char);
+        *found_list_size += (strlen(store.found_items[i].name) + 10) * sizeof(char);
     }
 
     for (int i = 0; i < store.missing_items_count; i++)
     {
-        missing_list_size += (strlen(store.missing_items[i].name) + 10) * sizeof(char);
+        *missing_list_size += (strlen(store.missing_items[i].name) + 10) * sizeof(char);
     }
 }
 
 char *bargain_get_unit(int n)
 { // TODO make this better.
-
     switch (n)
     {
-    case 0:
-    {
-        return "KILOGRAMS";
+        case 0:
+        {
+            return "UNKNOWN";
+        }
+        case 1:
+        {
+            return "KILOGRAMS";
+        }
+        case 2:
+        {
+            return "LITERS";
+        }
+        case 4:
+        {
+            return "UNITS";
+        }
     }
-    case 1:
-    {
-        return "LITERS";
-    }
-    case 2:
-    {
-        return "UNITS";
-    }
-    }
-    return "Error"; // lol
+    exit(EXIT_FAILURE);
 }

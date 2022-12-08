@@ -1,5 +1,5 @@
 
-#include "test_functions.h"
+#include "mock_functions.h"
 #include "items_types.h"
 #include "malloc.h"
 #include "string.h"
@@ -135,21 +135,21 @@ int test_get_items_one(store_s *store)
 {
 
     store_item_s item1 = {
-        .name = "Milk\0",
+        .name = "Milk",
         .price = 1,
         .size = 1,
         .unit = LITERS,
         .price_per_unit = 1};
 
     store_item_s item2 = {
-        .name = "Beef\0",
+        .name = "Beef",
         .price = 2,
         .size = 2,
         .unit = KILOGRAMS,
         .price_per_unit = 1};
 
     store_item_s item3 = {
-        .name = "Noodles\0",
+        .name = "Noodles",
         .price = 3,
         .size = 1,
         .unit = UNITS,
@@ -168,7 +168,7 @@ int test_get_items_two(store_s *store)
 {
 
     store_item_s item1 = {
-        .name = "Milk\0",
+        .name = "Milk",
         .price = 2,
         .size = 1,
         .unit = LITERS,
@@ -182,7 +182,7 @@ int test_get_items_two(store_s *store)
         .price_per_unit = 2};
 
     store_item_s item3 = {
-        .name = "Snickers\0",
+        .name = "Snickers",
         .price = 3,
         .size = 3,
         .unit = UNITS,
@@ -201,28 +201,28 @@ int test_get_items_three(store_s *store)
 {
 
     store_item_s item1 = {
-        .name = "Milk\0",
+        .name = "Milk",
         .price = 4,
         .size = 1,
         .unit = LITERS,
         .price_per_unit = 4};
 
     store_item_s item2 = {
-        .name = "Beef\0",
+        .name = "Beef",
         .price = 20,
         .size = 2,
         .unit = KILOGRAMS,
         .price_per_unit = 10};
 
     store_item_s item3 = {
-        .name = "Pudding\0",
+        .name = "Pudding",
         .price = 30,
         .size = 1,
         .unit = UNITS,
         .price_per_unit = 3};
 
     store_item_s item4 = {
-        .name = "Snickers\0",
+        .name = "Snickers",
         .price = 2,
         .size = 1,
         .unit = UNITS,
@@ -242,31 +242,31 @@ basket_item_s *test_get_basket(int *basket_item_count)
     basket_item_s *basket = malloc(5 * sizeof(basket_item_s));
 
     const basket_item_s item1 = {
-        .name = "Milk\0",
+        .name = "Milk",
         .size = 1,
         .unit = LITERS,
     };
 
     const basket_item_s item2 = {
-        .name = "Beef\0",
+        .name = "Beef",
         .size = 2,
         .unit = KILOGRAMS,
     };
 
     const basket_item_s item3 = {
-        .name = "Noodles\0",
+        .name = "Noodles",
         .size = 3,
         .unit = UNITS,
     };
 
     const basket_item_s item4 = {
-        .name = "Snickers\0",
+        .name = "Snickers",
         .size = 4,
         .unit = UNITS,
     };
 
     const basket_item_s item5 = {
-        .name = "Pudding\0",
+        .name = "Pudding",
         .size = 5,
         .unit = UNITS,
     };

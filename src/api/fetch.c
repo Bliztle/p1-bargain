@@ -4,7 +4,7 @@
 #include "../calc.h"
 #include "../items_types.h"
 #include "../config.h"
-#include "../test_functions.h"
+#include "../mock_functions.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -463,7 +463,6 @@ void fetch_get_salling_items(store_s *store)
 
         if (raw_items == NULL)
         {
-            free(raw_items);
             return;
         }
         store_item_s *temp_items = NULL;

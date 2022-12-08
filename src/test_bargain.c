@@ -1,11 +1,10 @@
 #include "test_bargain.h"
-#include "test_items.h"
 #include "bargain.h"
 #include "items_types.h"
 #include "malloc.h"
 #include <assert.h>
 #include <string.h>
-#include "test_functions.h"
+#include "mock_functions.h"
 
 const basket_item_s item1 = {
     .name = "Milk\0",
@@ -40,10 +39,8 @@ const basket_item_s item5 = {
 int main()
 {
     store_s *stores = malloc(sizeof(store_s) * 3);
-    int stores_count = bargain_find_bargain(stores);
+    int stores_count = bargain_find_bargain(&stores);
     test_bargain_make_assertions(stores, stores_count);
-    int test_items = (!test_items_filter_items());
-    assert(test_items);
 
     return 0;
 }
