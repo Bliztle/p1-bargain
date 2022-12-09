@@ -305,7 +305,22 @@ int get_size_of_found_line(item_name_t item_name) {
 
 void create_found_entries(store_s store, char **string_to_append_to, size_t size_of_string)
 {
-    
+        
+    char *found_intro = "SHOPPING LIST\n--------------------------------------\n# | Product | count | price/unit | total price\n";
+
+    int size_to_add = 0;
+
+    size_to_add += strlen(found_intro) * sizeof(char);
+
+    for (int i = 0; i < store.found_items_count; i++)
+    {
+        size_to_add += get_size_of_found_line(store.found_items[i].name);
+    }
+
+    char *temp = calloc(size_of_string + size_to_add, sizeof(char));
+    snprintf(temp, size_of_string + strlen(found_intro) * sizeof(char) + 1, "%s%s", *string_to_append_to, found_intro);
+
+    // "%s%d | %s | %d | %.2lf/%s | %.2lf dkk.\n"
     char *found_intro = "SHOPPING LIST\n--------------------------------------\n# | Product | count | price/unit | total price\n";
 
     int size_to_add = 0;
@@ -323,35 +338,17 @@ void create_found_entries(store_s store, char **string_to_append_to, size_t size
     // "%s%d | %s | %d | %.2lf/%s | %.2lf dkk.\n"
     for (int i = 0; i < store.found_items_count; i++)
     {
-        char *item = calloc(2048, sizeof(char));
+        int l = sizeof(char) * 45 + ITEM_NAME_SIZE + 1;
+        char *temp_string = malloc(l);
+        snprintf(temp_string, l, "# %d | %s | %d | %.2lf dkk./%s | %.2lf dkk.\n",
+                 i,
+                 store.found_items[i].name,
+                 store.found_items[i].count,
+                 store.found_items[i].price_per_unit,
+                 bargain_get_unit(store.found_items[i].unit),
+                 store.found_items[i].total_price);
 
-        char item_number[ASSUME_ITEMS_FOUND_DIGITS_MAX];
-        snprintf(item_number, ASSUME_ITEMS_FOUND_DIGITS_MAX, "%d", i + 1);
-
-        char item_count[ASSUME_ITEM_COUNT_DIGITS_MAX];
-        snprintf(item_count, ASSUME_ITEM_COUNT_DIGITS_MAX, "%d", store.found_items[i].count);
-
-        char item_price_per_unit[ASSUME_TOTAL_PRICE_DIGITS_MAX];
-        snprintf(item_price_per_unit, ASSUME_TOTAL_PRICE_DIGITS_MAX, "%.2lf", store.found_items[i].price_per_unit);
-
-        char item_total_price[ASSUME_TOTAL_PRICE_DIGITS_MAX];
-        snprintf(item_total_price, ASSUME_TOTAL_PRICE_DIGITS_MAX, "%.2lf", store.found_items[i].total_price);
-
-        strncat(item, item_number, strlen(item_number));
-        strncat(item, " | ", 4);
-        strncat(item, store.found_items[i].name, strlen(store.found_items[i].name));
-        strncat(item, " | ", 4);
-        strncat(item, item_count, strlen(item_count));
-        strncat(item, " | ", 4);
-        strncat(item, item_price_per_unit, strlen(item_price_per_unit));
-        strncat(item, " dkk./", 7);
-        strncat(item, bargain_get_unit(store.found_items[i].unit), strlen(bargain_get_unit(store.found_items[i].unit)));
-        strncat(item, " | ", 4);
-        strncat(item, item_total_price, strlen(item_total_price));
-        strncat(item, " dkk.\n", 7);
-        printf("item: '%s'\n", item);
-
-        strncat(temp, item, strlen(item) + 1);
+        strncpy(temp, item, (strlen(temp) + 5) * sizeof(char) + get_size_of_found_line(store.found_items[i].name));
         free(item);
     }
 
