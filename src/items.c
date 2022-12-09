@@ -29,7 +29,7 @@ int items_find_best_match(basket_item_s requested_item, store_s *store, found_it
         // The cheapest match is the item with the lowest price per unit, that is within the variance of the requested size.
 
         // If the itemname contains the requested item name.
-        if (!(items_compare_item_names(requested_item.name, store->items[i].name)))
+        if (!items_compare_item_names(requested_item.name, store->items[i].name))
             continue;
 
         // If the store_item unit is known.
@@ -146,7 +146,7 @@ found_item_s items_convert_to_found_item(store_item_s input_item, int item_count
     {
         tmp.count = item_count;
         tmp.total_price = input_item.price * item_count;
-        tmp.price_per_unit = tmp.size / tmp.product_price;
+        tmp.price_per_unit = tmp.product_price / tmp.size;
     }
 
     strcpy(tmp.name, input_item.name);
@@ -154,11 +154,29 @@ found_item_s items_convert_to_found_item(store_item_s input_item, int item_count
     return tmp;
 }
 
+/*int items_compare_item_names(char *name_to_find, char *name_to_search)
+{
+    if (strcmp("Snickers", name_to_find) == 0) {
+
+        int whatever = 10;
+    }
+
+
+    if (strstr(name_to_search, name_to_find) != NULL) {
+        return 1;
+    }
+    return 0;
+}*/
+
 int items_compare_item_names(char *name_to_find, char *name_to_search)
 {
-    return strstr(name_to_search, name_to_find) != NULL;
-}
+    int buffer_length = strlen(name_to_find) + 3;
+    char buffer[buffer_length];
 
+    snprintf(buffer, buffer_length, "(%s)", name_to_find);
+
+    return parse_try_regex_group(name_to_search, buffer) != NULL;
+}
 
 int items_compare_item_units(item_unit_e requested_unit, item_unit_e store_unit){
     return ((requested_unit != UNKNOWN) && (store_unit == requested_unit));

@@ -20,7 +20,8 @@ configure_file(settings.conf api/settings.conf COPYONLY)
 
 # Testing
 # TODO: Fix test_bargain dependencies, because this is ridiculous, but it builds.
-add_executable(test_items test_items.c items.c mock_functions.c)
+add_executable(test_items test_items.c items.c mock_functions.c api/parse.c 
+api/nxjson/nxjson.c )
 target_link_libraries(test_items m libcurl)
 add_test(NAME test_items COMMAND test_items)
 

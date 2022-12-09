@@ -142,7 +142,10 @@ fetch_status_e fetch_renew_stores()
 
 fetch_status_e fetch_renew_coop_stores(store_s **stores, int *count)
 {
+    // TODO: Remove hard coded coords
     conf_settings_s conf;
+    conf.address_lat = 57.0431;
+    conf.address_lon = 9.943;
     conf_read_settings(&conf);
 
     char *url = "https://api.cl.coop.dk/storeapi/v1/stores?page=1&size=5000";
@@ -181,8 +184,8 @@ fetch_status_e fetch_renew_salling_stores(store_s **stores, int *count)
 {
     // TODO: Fix hardcoded coords.
     conf_settings_s conf;
-    conf.address_lat = 57;
-    conf.address_lon = 10;
+    conf.address_lat = 57.0431;
+    conf.address_lon = 9.943;
     conf_read_settings(&conf);
 
     char url[255];
