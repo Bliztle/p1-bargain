@@ -305,7 +305,7 @@ int get_size_of_found_line(item_name_t item_name) {
 
 void create_found_entries(store_s store, char **string_to_append_to, size_t size_of_string)
 {
-        
+
     char *found_intro = "SHOPPING LIST\n--------------------------------------\n# | Product | count | price/unit | total price\n";
 
     int size_to_add = 0;
@@ -321,32 +321,19 @@ void create_found_entries(store_s store, char **string_to_append_to, size_t size
     snprintf(temp, size_of_string + strlen(found_intro) * sizeof(char) + 1, "%s%s", *string_to_append_to, found_intro);
 
     // "%s%d | %s | %d | %.2lf/%s | %.2lf dkk.\n"
-    char *found_intro = "SHOPPING LIST\n--------------------------------------\n# | Product | count | price/unit | total price\n";
-
-    int size_to_add = 0;
-
-    size_to_add += strlen(found_intro) * sizeof(char);
-
     for (int i = 0; i < store.found_items_count; i++)
     {
-        size_to_add += get_size_of_found_line(store.found_items[i].name);
-    }
 
-    char *temp = calloc(size_of_string + size_to_add, sizeof(char));
-    snprintf(temp, size_of_string + strlen(found_intro) * sizeof(char) + 1, "%s%s", *string_to_append_to, found_intro);
+        char *item = calloc(strlen(temp) + get_size_of_found_line(store.found_items[i].name) + 6, sizeof(char)); 
 
-    // "%s%d | %s | %d | %.2lf/%s | %.2lf dkk.\n"
-    for (int i = 0; i < store.found_items_count; i++)
-    {
-        int l = sizeof(char) * 45 + ITEM_NAME_SIZE + 1;
-        char *temp_string = malloc(l);
-        snprintf(temp_string, l, "# %d | %s | %d | %.2lf dkk./%s | %.2lf dkk.\n",
-                 i,
-                 store.found_items[i].name,
-                 store.found_items[i].count,
-                 store.found_items[i].price_per_unit,
-                 bargain_get_unit(store.found_items[i].unit),
-                 store.found_items[i].total_price);
+        snprintf(item, ((1 + strlen(temp)) * sizeof(char)) + get_size_of_found_line(store.found_items[i].name), "%s%d | %s | %d | %.2lf dkk./%s | %.2lf dkk.\n",
+        temp,
+        i + 1,
+        store.found_items[i].name,
+        store.found_items[i].count,
+        store.found_items[i].price_per_unit,
+        bargain_get_unit(store.found_items[i].unit),
+        store.found_items[i].total_price);
 
         strncpy(temp, item, (strlen(temp) + 5) * sizeof(char) + get_size_of_found_line(store.found_items[i].name));
         free(item);
