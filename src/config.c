@@ -42,18 +42,10 @@ int conf_write_settings(conf_settings_s *settings) {
     return 1;
 }
 
-int conf_setup() {
-    if (!conf_check_valid()) {
+void conf_setup() {
+    while (!conf_check_valid()) {
         conf_create();
-
-        if (!conf_check_valid()) {
-            printf("Error in creation of file");
-
-            return 0;
-        }
     }
-
-    return 1;
 }
 
 int conf_check_valid() {
@@ -106,7 +98,7 @@ int conf_check_valid() {
 
 void conf_create() {
     FILE *config_file = fopen(SETTINGS_PATH, "w");
-    settings_s settings;
+    conf_settings_s settings;
 
     char temp_s[100];
 

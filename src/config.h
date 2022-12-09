@@ -37,7 +37,7 @@ int conf_write_settings(conf_settings_s *settings);
  * Used on startup, checks whether the current settings are incorrect in any way
  * @returns true (1) if successful and false (0) in case of an error
  */
-int conf_setup();
+void conf_setup();
 
 /**
  * Validates each parameter in the config file
