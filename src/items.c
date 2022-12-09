@@ -3,7 +3,6 @@
 #include <math.h>
 #include <string.h>
 #include "malloc.h" // TODO remove when basket is read from file.
-#include "test_bargain.h"
 #include "bargain.h"
 #include "api/parse.h"
 #include "mock_functions.h" // TODO: Remove when basket read from file is implemented.

@@ -1,361 +1,210 @@
-#include "test_bargain.h"
-#include "bargain.h"
-#include "items_types.h"
-#include "malloc.h"
+#include <malloc.h>
 #include <assert.h>
 #include <string.h>
+
 #include "mock_functions.h"
+#include "bargain.h"
+#include "items_types.h"
 
-const basket_item_s item1 = {
-    .name = "Milk\0",
-    .size = 1,
-    .unit = LITERS,
-};
-
-const basket_item_s item2 = {
-    .name = "Beef\0",
-    .size = 2,
-    .unit = KILOGRAMS,
-};
-
-const basket_item_s item3 = {
-    .name = "Noodles\0",
-    .size = 3,
-    .unit = UNITS,
-};
-
-const basket_item_s item4 = {
-    .name = "Snickers\0",
-    .size = 4,
-    .unit = UNITS,
-};
-
-const basket_item_s item5 = {
-    .name = "Pudding\0",
-    .size = 5,
-    .unit = UNITS,
-};
-
-int main()
-{
-    store_s *stores = malloc(sizeof(store_s) * 3);
-    int stores_count = bargain_find_bargain(&stores);
-    test_bargain_make_assertions(stores, stores_count);
-
-    return 0;
+void test_bargain_get_unit() {
+    assert(strcmp(bargain_get_unit(0), "UNKNOWN") == 0);
+    assert(strcmp(bargain_get_unit(1), "KILOGRAMS") == 0);
+    assert(strcmp(bargain_get_unit(2), "LITERS") == 0);
+    assert(strcmp(bargain_get_unit(4), "UNITS") == 0);
 }
 
-store_s *get_expected_stores()
-{
-    store_s *stores = malloc(sizeof(store_s) * 3);
-    store_s store1 = {
-        .name = "Bilka",
-        .uid = "Xx_69_longasssallinguuid_420_xX",
-        .group = STORE_CHAIN_BILKA,
-        .chain = SALLING,
-        .address = "Testvænget 1 - 1337 Testby",
-        .lat = 1,
-        .lon = 1,
-        .distance = 1,
-        .items_count = 3,
-        .items = malloc(3 * sizeof(store_item_s)),
-        .found_items = malloc(3 * sizeof(found_item_s)),
-        .found_items_count = 3,
-        .missing_items = malloc(5 * sizeof(basket_item_s)),
-        .missing_items_count = 2,
-        .found_items_total_price = 12,
+void test_get_size_of_list_entries() {
+
+    // Create a store object with some found and missing items
+    store_s store;
+    store.found_items_count = 2;
+    store.missing_items_count = 3;
+    store.found_items = malloc(2 * sizeof(found_item_s));
+    store.missing_items = malloc(3 * sizeof(basket_item_s));
+
+    found_item_s found_item_one = {
+        .name = "apple",
+    };
+    found_item_s found_item_two = {
+        .name = "banana",
+    };
+    basket_item_s missing_item_one = {
+        .name = "orange",
+    };
+    basket_item_s missing_item_two = {
+        .name = "grapes",
+    };
+    basket_item_s missing_item_three = {
+        .name = "watermelon",
     };
 
-    stores[0] = store1;
+    store.found_items[0] = found_item_one;
+    store.found_items[1] = found_item_two;
+    store.missing_items[0] = missing_item_one;
+    store.missing_items[1] = missing_item_two;
+    store.missing_items[2] = missing_item_three;
 
-    test_get_items_one(&store1);
+    int found_item_size_sum = (strlen(found_item_one.name) + strlen(found_item_two.name)) * sizeof(char);
+    int missing_item_size_sum = (strlen(missing_item_one.name) + strlen(missing_item_two.name) + strlen(missing_item_three.name)) * sizeof(char);
 
-    found_item_s store_1_found_milk = {
-        .name = "Milk\0",
-        .size = 1,
-        .unit = LITERS,
-        .price_per_unit = 1,
-        .product_price = 1,
-        .total_price = 1,
-        .count = 1,
-    };
 
-    found_item_s store_1_found_beef = {
-        .name = "Beef\0",
-        .size = 2,
-        .unit = KILOGRAMS,
-        .price_per_unit = 1,
-        .product_price = 2,
-        .total_price = 2,
-        .count = 1,
-    };
+    // Initialize found_list_size and missing_list_size
+    int found_list_size = 0;
+    int missing_list_size = 0;
 
-    found_item_s store_1_found_noodles = {
-        .name = "Noodles\0",
-        .size = 1,
-        .unit = UNITS,
-        .price_per_unit = 3,
-        .product_price = 3,
-        .total_price = 9,
-        .count = 3,
-    };
+    // Call get_size_of_list_entries()
+    get_size_of_list_entries(store, &found_list_size, &missing_list_size);
 
-    store1.found_items[0] = store_1_found_milk;
-    store1.found_items[1] = store_1_found_beef;
-    store1.found_items[2] = store_1_found_noodles;
+    // Check that the correct values for found_list_size and missing_list_size are returned
+    assert(found_list_size == found_item_size_sum);
+    assert(missing_list_size == missing_item_size_sum);
 
-    store1.missing_items[0] = item4;
-    store1.missing_items[1] = item5;
+    // Free memory
+    free(store.found_items);
+    free(store.missing_items);
 
-    store_s store2 = {
+}
+
+void test_append_outro_to_string() {
+
+    store_s store = (store_s){
         .name = "Fakta",
-        .uid = "1234",
-        .group = STORE_GROUP_FAKTA,
-        .chain = COOP,
-        .address = "Testvænget 2 - 1337 Testby",
-        .lat = 2,
-        .lon = 2,
-        .distance = 2,
-        .items_count = 3,
-        .items = malloc(3 * sizeof(store_item_s)),
-        .found_items = malloc(3 * sizeof(found_item_s)),
+        .address = "Testvej 01 7000 Fredericia",
+        .distance = 6500,
+        .found_items_count = 10,
+        .missing_items_count = 5,
+        .found_items_total_price = 42.42,
+    };
+
+
+    size_t size_of_test_string = strlen("TEST APPEND STRING:") * sizeof(char);
+    char* test_string_to_append_to = malloc(size_of_test_string);
+    strcpy(test_string_to_append_to, "TEST APPEND STRING:");
+
+    append_outro_to_string(store, &test_string_to_append_to, size_of_test_string);
+
+    char* expected_string = "TEST APPEND STRING:--------------------------------------\nStore | Address | Distance | Items found | Total price\nFakta | Testvej 01 7000 Fredericia | 6500 | 10/15 | 42.42dkk\n";
+    int expected_length = strlen(expected_string);
+    int expected_size = sizeof(char) * expected_length;
+
+    int recieved_length = strlen(test_string_to_append_to);
+    int recieved_size = sizeof(char) * recieved_length;
+
+    assert(!strcmp(test_string_to_append_to, expected_string));
+    assert(expected_length == recieved_length);
+    assert(expected_size == recieved_size);
+
+    free(test_string_to_append_to);
+}
+
+void test_create_missing_entries() {
+    store_s store = (store_s){
+        .missing_items_count = 2,
+        .missing_items = malloc(2 * sizeof(basket_item_s)),
+    };
+
+    basket_item_s missing_item_one = (basket_item_s) {
+        .name = "Potatoes"
+    };
+    basket_item_s missing_item_two = (basket_item_s) {
+        .name = "Boil em'"
+    };
+
+    store.missing_items[0] = missing_item_one;
+    store.missing_items[1] = missing_item_two;
+
+
+    size_t size_of_test_string = strlen("TEST APPEND STRING:") * sizeof(char);
+    char* test_string_to_append_to = malloc(size_of_test_string);
+    strcpy(test_string_to_append_to, "TEST APPEND STRING:");
+
+    create_missing_entries(store, &test_string_to_append_to, size_of_test_string);
+
+    char* expected_string = "TEST APPEND STRING:--------------------------------------\nUNAVAILABLE ITEMS\n--------------------------------------\n# | Product\n1 | Potatoes\n2 | Boil em'\n";
+    int expected_length = strlen(expected_string);
+    int expected_size = sizeof(char) * expected_length;
+
+    int recieved_length = strlen(test_string_to_append_to);
+    int recieved_size = sizeof(char) * recieved_length;
+
+    assert(!strcmp(test_string_to_append_to, expected_string));
+    assert(expected_length == recieved_length);
+    assert(expected_size == recieved_size);
+
+    free(test_string_to_append_to);
+}
+
+void test_create_found_entries() {
+    store_s store = (store_s){
         .found_items_count = 2,
-        .missing_items = malloc(5 * sizeof(basket_item_s)),
-        .missing_items_count = 3,
-        .found_items_total_price = 3,
+        .found_items = malloc(2 * sizeof(found_item_s)),
     };
 
-    stores[1] = store2;
-
-    found_item_s store_2_found_milk = {
-        .name = "Milk\0",
-        .size = 1,
-        .unit = LITERS,
-        .price_per_unit = 2,
-        .product_price = 2,
-        .total_price = 2,
-        .count = 1,
-    };
-
-    found_item_s store_2_found_beef = {
-        .name = "Beef\0",
-        .size = 2,
-        .unit = KILOGRAMS,
-        .price_per_unit = 2,
-        .product_price = 4,
-        .total_price = 4,
-        .count = 1,
-    };
-
-    store2.found_items[0] = store_2_found_milk;
-    store2.found_items[1] = store_2_found_beef;
-
-    store2.missing_items[0] = item3;
-    store2.missing_items[1] = item4;
-    store2.missing_items[2] = item5;
-
-    test_get_items_two(&store2);
-
-    store_s store3 = {
-        .name = "Dagli'Brugsen",
-        .uid = "5678",
-        .group = STORE_GROUP_DAGLI_BRUGSEN,
-        .chain = COOP,
-        .address = "Testvænget 3 - 1337 Testby",
-        .lat = 3,
-        .lon = 3,
-        .distance = 3,
-        .items_count = 4,
-        .items = malloc(3 * sizeof(store_item_s)),
-        .found_items = malloc(4 * sizeof(found_item_s)),
-        .found_items_count = 4,
-        .missing_items = malloc(5 * sizeof(basket_item_s)),
-        .missing_items_count = 1,
-        .found_items_total_price = 182,
-    };
-
-    stores[2] = store3;
-
-    found_item_s store_3_found_milk = {
-        .name = "Milk\0",
-        .size = 1,
-        .unit = LITERS,
-        .price_per_unit = 4,
-        .product_price = 4,
-        .total_price = 4,
-        .count = 1,
-    };
-    found_item_s store_3_found_beef = {
-        .name = "Beef\0",
-        .size = 2,
-        .unit = KILOGRAMS,
-        .price_per_unit = 10,
-        .product_price = 20,
-        .total_price = 20,
-        .count = 1,
-    };
-    found_item_s store_3_found_pudding = {
-        .name = "Pudding\0",
-        .size = 1,
-        .unit = UNITS,
-        .price_per_unit = 30,
-        .product_price = 30,
-        .total_price = 150,
+    found_item_s found_item_one = (found_item_s) {
+        .name = "Potatoes",
         .count = 5,
-    };
-    found_item_s store_3_found_snickers = {
-        .name = "Snickers\0",
-        .size = 1,
         .unit = UNITS,
-        .price_per_unit = 2,
-        .product_price = 2,
-        .total_price = 8,
-        .count = 4,
+        .total_price = 20,
+        .price_per_unit = 4,
+    };
+    found_item_s found_item_two = (found_item_s) {
+        .name = "Boil em'",
+        .count = 1,
+        .unit = LITERS,
+        .total_price = 1,
+        .price_per_unit = 1
     };
 
-    store3.found_items[0] = store_3_found_milk;
-    store3.found_items[1] = store_3_found_beef;
-    store3.found_items[2] = store_3_found_snickers;
-    store3.found_items[3] = store_3_found_pudding;
+    store.found_items[0] = found_item_one;
+    store.found_items[1] = found_item_two;
 
-    store3.missing_items[0] = item3;
 
-    test_get_items_three(&stores[2]);
+    size_t size_of_test_string = strlen("TEST APPEND STRING:") * sizeof(char);
+    char* test_string_to_append_to = malloc(size_of_test_string);
+    strcpy(test_string_to_append_to, "TEST APPEND STRING:");
+    
+    char* expected_string = "SHOPPING LIST\n--------------------------------------\n# | Product | count | price/unit | total price\n1 | Potatoes | 5 | 4/UNITS | 20 dkk.\n2 | Boil em' | 1 | 1/LITERS | 1 dkk.\n";
+    int expected_length = strlen(expected_string);
+    int expected_size = sizeof(char) * expected_length;   
 
-    return stores;
+
+    create_found_entries(store, &test_string_to_append_to, size_of_test_string);
+
+
+    printf("TEST DEBUG INFO\n");
+    printf("Expected: '%s'\n", expected_string);
+    printf("Recieved: '%s'\n", test_string_to_append_to);
+    printf("TEST DEBUG INFO END\n");
+    
+    int recieved_length = strlen(test_string_to_append_to);
+    int recieved_size = sizeof(char) * recieved_length;
+
+
+
+    assert(!strcmp(test_string_to_append_to, expected_string));
+    assert(expected_length == recieved_length);
+    assert(expected_size == recieved_size);
+
+    free(test_string_to_append_to);
+    
 }
 
-int compare_found_items(found_item_s x, found_item_s y)
-{
-    if (strcmp(x.name, y.name) == 0 && x.product_price == y.product_price && x.price_per_unit == y.price_per_unit && x.size == y.size && x.unit == y.unit && x.count == y.count && x.total_price == y.total_price)
-    {
-        return 1;
-    }
+
+
+
+int main() {
+    printf("Testing Bargain\n");
+    printf("Bargain Test 1: test_bargain_get_unit()\n");
+    test_bargain_get_unit();
+    printf("Bargain Test 2: test_get_size_of_list_entries()\n");
+    test_get_size_of_list_entries();
+    printf("Bargain Test 3: test_append_outro_to_string()\n");
+    test_append_outro_to_string();
+    printf("Bargain Test 4: test_create_missing_entries()\n");
+    test_create_missing_entries();
+    printf("Bargain Test 5: test_create_found_entries()\n");
+    test_create_found_entries();
+    printf("Testing Bargain Done\n");
+
     return 0;
-}
-
-int compare_basket_items(basket_item_s x, basket_item_s y)
-{
-    if (strcmp(x.name, y.name) == 0 && x.size == y.size && x.unit == y.unit)
-    {
-        return 1;
-    }
-    return 0;
-}
-
-int compare_store_items(store_item_s x, store_item_s y)
-{
-    if (strcmp(x.name, y.name) == 0 && x.price == y.price && x.price_per_unit == y.price_per_unit && x.size == y.size && x.unit == y.unit)
-    {
-        return 1;
-    }
-    return 0;
-}
-
-int compare_stores_structs(store_s x, store_s y)
-{
-
-    if (x.items_count != y.items_count)
-    {
-        return 0;
-    }
-
-    if (x.found_items_count != y.found_items_count)
-    {
-        return 0;
-    }
-
-    if (x.missing_items_count != y.missing_items_count)
-    {
-        return 0;
-    }
-
-    for (int i = 0; i < x.items_count; i++)
-    {
-
-        if (!compare_store_items(x.items[i], y.items[i]))
-        {
-            return 0;
-        }
-    }
-
-    for (int i = 0; i < x.found_items_count; i++)
-    {
-
-        if (!compare_found_items(x.found_items[i], y.found_items[i]))
-        {
-            return 0;
-        }
-    }
-
-    for (int i = 0; i < x.missing_items_count; i++)
-    {
-        if (!compare_basket_items(x.missing_items[i], y.missing_items[i]))
-        {
-            return 0;
-        }
-    }
-    return 1;
-}
-
-// int test_stores(store_s *stores, int store_count)
-// {
-//     int expected_stores_count = 3;
-//     store_s *expected_stores = get_expected_stores();
-//     int store_counts_match = (expected_stores_count == store_count);
-//     printf("Store count matches: %d == %d?\n", expected_stores_count, store_count);
-//     assert(store_counts_match);
-//     for (int i = 0; i < 3; i++)
-//     {
-//         int test_store_result_match_expectation = (!compare_stores_structs(stores[i], expected_stores[i]));
-//         assert(test_store_result_match_expectation);
-//     }
-//     return 1;
-// }
-
-int test_bargain_make_assertions(store_s *stores, int store_count)
-{
-    // test_stores(stores, store_count);
-    return 0;
-}
-
-int test_bargain_get_basket(basket_item_s *basket)
-{
-    // basket_item_s item1 = {
-    //     .name = "Milk",
-    //     .size = 1,
-    //     .unit = LITERS,
-    // };
-
-    // basket_item_s item2 = {
-    //     .name = "Beef",
-    //     .size = 2,
-    //     .unit = KILOGRAMS,
-    // };
-
-    // basket_item_s item3 = {
-    //     .name = "Noodles",
-    //     .size = 3,
-    //     .unit = UNITS,
-    // };
-
-    // basket_item_s item4 = {
-    //     .name = "Snickers",
-    //     .size = 4,
-    //     .unit = UNITS,
-    // };
-
-    // basket_item_s item5 = {
-    //     .name = "Pudding",
-    //     .size = 5,
-    //     .unit = UNITS,
-    // };
-
-    basket[0] = item1;
-    basket[1] = item2;
-    basket[2] = item3;
-    basket[3] = item4;
-    basket[4] = item5;
-
-    return 5;
 }
