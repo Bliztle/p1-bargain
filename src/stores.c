@@ -5,7 +5,6 @@
 #include "items_types.h"
 #include "items.h"
 #include "api/fetch.h"
-#include "test_bargain.h"
 #include "mock_functions.h"
 
 void stores_populate_store_items(store_s *stores, int store_count)

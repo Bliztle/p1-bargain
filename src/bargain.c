@@ -6,12 +6,17 @@
 #include "stores.h"
 #include "items_types.h"
 #include "menu.h"
-#include "test_bargain.h"
 #include "api/fetch.h"
 #include "mock_functions.h"
 
 #define MAX_STORES_COUNT 3
 #define MAIN_MENU_ITEMS_COUNT 3
+#define ASSUME_DISTANCE_DIGITS_MAX 10
+#define ASSUME_ITEM_COUNT_DIGITS_MAX 4
+#define ASSUME_ITEMS_FOUND_DIGITS_MAX 4
+#define ASSUME_ITEMS_MISSING_DIGITS_MAX 4
+#define ASSUME_TOTAL_PRICE_DIGITS_MAX 10
+
 
 typedef int (*compfn)(const void *, const void *);
 
@@ -242,7 +247,7 @@ char *bargain_get_print_bargain_string(store_s store)
     // So we need to allocate a string with the size of the initial data, and then copy it to the malloced string.
     // char *bargain_string_start = 
     // int bargain_string_start_length = strlen(bargain_string_start);
-    char *bargain_string = "SHOPPING LIST\n--------------------------------------\n# | Product | count | price/unit | total price\0";
+    char *bargain_string = "";
 
     int found_entry_size = 0;
     int missing_entry_size = 0;
@@ -268,8 +273,7 @@ char *bargain_get_print_bargain_string(store_s store)
 
 void bargain_menu_print_bargain(store_s store)
 {
-
-    char *options = "save shopping list: !s";
+    char *options = "[1]: save shopping list";
 
     // char *bargain_string = bargain_get_print_bargain_string(store);
     // bargain_print_bargain_result(store);
@@ -279,64 +283,141 @@ void bargain_menu_print_bargain(store_s store)
     int selected_option = 10;
     while (selected_option != -1)
     {
-        bargain_print_bargain_result(store);
-        selected_option = display_menu(&options, "", "!s saves the shopping list as a text file to the localtion specified in user settings.\n");
+            bargain_print_bargain_result(store);
+            selected_option = display_menu(&options, "", "[1]: saves the shopping list as a text file to the localtion specified in user settings.\n");
+        if (selected_option != 1 || selected_option != -1) {
+            printf("Please enter a number corresponding to a listed option.\n");
+        }
     }
+}
+
+int get_size_of_found_line(item_name_t item_name) {
+
+    return sizeof(char) * (
+        30
+        + ASSUME_ITEMS_FOUND_DIGITS_MAX
+        + strlen(item_name)
+        + ASSUME_ITEM_COUNT_DIGITS_MAX
+        + ASSUME_TOTAL_PRICE_DIGITS_MAX
+        + ASSUME_TOTAL_PRICE_DIGITS_MAX);
+
 }
 
 void create_found_entries(store_s store, char **string_to_append_to, size_t size_of_string)
 {
+    
+    char *found_intro = "SHOPPING LIST\n--------------------------------------\n# | Product | count | price/unit | total price\n";
+
+    int size_to_add = 0;
+
+    size_to_add += strlen(found_intro) * sizeof(char);
 
     for (int i = 0; i < store.found_items_count; i++)
     {
-        int l = sizeof(char) * 45 + ITEM_NAME_SIZE + 1;
-        char *temp_string = malloc(l);
-        snprintf(temp_string, l, "# %d | %s | %d | %.2lf/%s | %.2lf dkk.\n",
-                 i,
-                 store.found_items[i].name,
-                 store.found_items[i].count,
-                 store.found_items[i].price_per_unit,
-                 bargain_get_unit(store.found_items[i].unit),
-                 store.found_items[i].total_price);
-
-        strncat(*string_to_append_to, temp_string, size_of_string + l - sizeof(char));
-        free(temp_string);
+        size_to_add += get_size_of_found_line(store.found_items[i].name);
     }
+
+    char *temp = calloc(size_of_string + size_to_add, sizeof(char));
+    snprintf(temp, size_of_string + strlen(found_intro) * sizeof(char) + 1, "%s%s", *string_to_append_to, found_intro);
+
+    // "%s%d | %s | %d | %.2lf/%s | %.2lf dkk.\n"
+    for (int i = 0; i < store.found_items_count; i++)
+    {
+        char *item = calloc(2048, sizeof(char));
+
+        char item_number[ASSUME_ITEMS_FOUND_DIGITS_MAX];
+        snprintf(item_number, ASSUME_ITEMS_FOUND_DIGITS_MAX, "%d", i + 1);
+
+        char item_count[ASSUME_ITEM_COUNT_DIGITS_MAX];
+        snprintf(item_count, ASSUME_ITEM_COUNT_DIGITS_MAX, "%d", store.found_items[i].count);
+
+        char item_price_per_unit[ASSUME_TOTAL_PRICE_DIGITS_MAX];
+        snprintf(item_price_per_unit, ASSUME_TOTAL_PRICE_DIGITS_MAX, "%.2lf", store.found_items[i].price_per_unit);
+
+        char item_total_price[ASSUME_TOTAL_PRICE_DIGITS_MAX];
+        snprintf(item_total_price, ASSUME_TOTAL_PRICE_DIGITS_MAX, "%.2lf", store.found_items[i].total_price);
+
+        strncat(item, item_number, strlen(item_number));
+        strncat(item, " | ", 4);
+        strncat(item, store.found_items[i].name, strlen(store.found_items[i].name));
+        strncat(item, " | ", 4);
+        strncat(item, item_count, strlen(item_count));
+        strncat(item, " | ", 4);
+        strncat(item, item_price_per_unit, strlen(item_price_per_unit));
+        strncat(item, " dkk./", 7);
+        strncat(item, bargain_get_unit(store.found_items[i].unit), strlen(bargain_get_unit(store.found_items[i].unit)));
+        strncat(item, " | ", 4);
+        strncat(item, item_total_price, strlen(item_total_price));
+        strncat(item, " dkk.\n", 7);
+        printf("item: '%s'\n", item);
+
+        strncat(temp, item, strlen(item) + 1);
+        free(item);
+    }
+
+    strncpy(*string_to_append_to, temp, size_of_string + size_to_add);
+
+    free(temp);
 }
 
 void create_missing_entries(store_s store, char **string_to_append_to, size_t size_of_string)
 {
+    char *missing_intro = "--------------------------------------\nUNAVAILABLE ITEMS\n--------------------------------------\n# | Product\n\n";
 
-    char *missing_intro = "--------------------------------------\nUNAVAILABLE ITEMS\n--------------------------------------\n# | Product\n\0";
+    int size_to_add = 0;
 
-    int string_to_append_to_size = sizeof(char) * (strlen(*string_to_append_to) + strlen(missing_intro) + 1);
-    string_to_append_to = realloc(*string_to_append_to, string_to_append_to_size);
-    strncat(*string_to_append_to, missing_intro, sizeof(char) * (strlen(*string_to_append_to) + strlen(missing_intro)));
+    size_to_add += strlen(missing_intro) * sizeof(char);
 
     for (int i = 0; i < store.missing_items_count; i++)
     {
-
-        int size_of_name = (strlen(store.missing_items[i].name) + 256) * sizeof(char);
-        char *temp_string = malloc(size_of_name);
-        snprintf(temp_string, size_of_name, "#%d | %s\n",
-                 i,
-                 store.missing_items[i].name);
-
-        strncat(*string_to_append_to, temp_string, string_to_append_to_size + size_of_name);
-        free(temp_string);
+        size_to_add += sizeof(char) * (
+        5 
+        + strlen(store.missing_items[i].name)
+        + ASSUME_ITEMS_MISSING_DIGITS_MAX);
     }
+    
+    char *temp = calloc(size_of_string + size_to_add, sizeof(char));
+    snprintf(temp, size_of_string + strlen(missing_intro) * sizeof(char), "%s%s", *string_to_append_to, missing_intro);
+
+    for (int i = 0; i < store.missing_items_count; i++)
+    {
+        char *item = calloc(strlen(temp) + strlen(store.missing_items[i].name) + 5, sizeof(char)); 
+
+        snprintf(item, (strlen(temp) + 5 + strlen(store.missing_items[i].name) + ASSUME_ITEMS_MISSING_DIGITS_MAX) * sizeof(char),"%s%d | %s\n",
+        temp,
+        i + 1,
+        store.missing_items[i].name);
+
+        strncpy(temp, item, (strlen(temp) + strlen(store.missing_items[i].name) + 5) * sizeof(char));
+        free(item);
+    }
+
+    strncpy(*string_to_append_to, temp, size_of_string + size_to_add);
+
+    free(temp);
+    
 }
 
 void append_outro_to_string(store_s store, char **string_to_append_to, size_t size_of_string)
 {
-
     char *items_outro = "--------------------------------------\nStore | Address | Distance | Items found | Total price\n\0";
-    *string_to_append_to = realloc(*string_to_append_to, size_of_string + sizeof(char) * strlen(items_outro));
 
-    int l = 35 + strlen(items_outro) * sizeof(char);
-    char *temp_string = malloc(l);
+    // Add the total size of the finished string.
+    int size_to_add = sizeof(char) * (
+        20 
+        + strlen(items_outro)
+        + strlen(store.name) 
+        + strlen(store.name)
+        + strlen(store.name)
+        + ASSUME_DISTANCE_DIGITS_MAX
+        + ASSUME_ITEMS_FOUND_DIGITS_MAX 
+        + (ASSUME_ITEMS_FOUND_DIGITS_MAX + ASSUME_ITEMS_MISSING_DIGITS_MAX) 
+        + ASSUME_TOTAL_PRICE_DIGITS_MAX);
 
-    snprintf(temp_string, l, "%s%s | %s | %d | %d/%d | %.2lf\n",
+    // Make room for final string in destination.
+    char *temp = calloc(size_of_string + size_to_add, sizeof(char));
+    snprintf(temp, size_of_string + size_to_add, "%s%s%s | %s | %d | %d/%d | %.2lfdkk\n",
+             *string_to_append_to,
              items_outro,
              store.name,
              store.address,
@@ -345,11 +426,11 @@ void append_outro_to_string(store_s store, char **string_to_append_to, size_t si
              store.found_items_count + store.missing_items_count,
              store.found_items_total_price);
 
-    *string_to_append_to = realloc(temp_string, size_of_string + strlen(temp_string) * sizeof(char));
+    *string_to_append_to = realloc(*string_to_append_to, size_of_string + size_to_add);
+    strncpy(*string_to_append_to, temp, (size_of_string + size_to_add));
 
-    strncat(*string_to_append_to, temp_string, strlen(*string_to_append_to) * sizeof(char) + size_of_string);
-
-    free(temp_string);
+    free(temp);
+    //printf(string_to_append_to);
 }
 
 void get_size_of_list_entries(store_s store, int *found_list_size, int *missing_list_size)
@@ -362,12 +443,12 @@ void get_size_of_list_entries(store_s store, int *found_list_size, int *missing_
 
     for (int i = 0; i < store.found_items_count; i++)
     {
-        *found_list_size += (strlen(store.found_items[i].name) + 10) * sizeof(char);
+        *found_list_size += (strlen(store.found_items[i].name)) * sizeof(char);
     }
 
     for (int i = 0; i < store.missing_items_count; i++)
     {
-        *missing_list_size += (strlen(store.missing_items[i].name) + 10) * sizeof(char);
+        *missing_list_size += (strlen(store.missing_items[i].name)) * sizeof(char);
     }
 }
 
@@ -387,10 +468,11 @@ char *bargain_get_unit(int n)
         {
             return "LITERS";
         }
-        case 4:
+        case 3:
         {
             return "UNITS";
         }
     }
+    printf("ERROR IN UNIT ENUM, GOT '%d', EXPECTED '0' OR '1' OR '2' OR '3'.\n");
     exit(EXIT_FAILURE);
 }
