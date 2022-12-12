@@ -7,8 +7,12 @@
 
 int conf_read_settings(conf_settings_s *settings) {
     FILE *config_file = fopen(SETTINGS_PATH, "r");
+int conf_read_settings(conf_settings_s *settings) {
+    FILE *config_file = fopen(SETTINGS_PATH, "r");
 
     if (config_file == NULL) {
+        perror("Error");
+
         perror("Error");
 
         return 0;
@@ -18,11 +22,19 @@ int conf_read_settings(conf_settings_s *settings) {
     fscanf(config_file, "%*s %[^\n]s", settings->address);
     fscanf(config_file, "%*s %d", &settings->max_distance);
     fscanf(config_file, "%*s %d", &settings->deviance);
+    fscanf(config_file, "%*s %s", settings->shopping_list_save_path);
+    fscanf(config_file, "%*s %[^\n]s", settings->address);
+    fscanf(config_file, "%*s %d", &settings->max_distance);
+    fscanf(config_file, "%*s %d", &settings->deviance);
 
     fclose(config_file);
 
+
     return 1;
 }
+
+int conf_write_settings(conf_settings_s *settings) {
+    FILE *config_file = fopen(SETTINGS_PATH, "w");
 
 int conf_write_settings(conf_settings_s *settings) {
     FILE *config_file = fopen(SETTINGS_PATH, "w");
@@ -36,8 +48,13 @@ int conf_write_settings(conf_settings_s *settings) {
     fprintf(config_file, "address %s\n", settings->address);
     fprintf(config_file, "distance %d\n", settings->max_distance);
     fprintf(config_file, "deviance %d\n", settings->deviance);
+    fprintf(config_file, "path %s\n", settings->shopping_list_save_path);
+    fprintf(config_file, "address %s\n", settings->address);
+    fprintf(config_file, "distance %d\n", settings->max_distance);
+    fprintf(config_file, "deviance %d\n", settings->deviance);
 
     fclose(config_file);
+
 
     return 1;
 }

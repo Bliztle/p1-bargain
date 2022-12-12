@@ -3,10 +3,14 @@
 #include "nxjson/nxjson.h"
 #include "../calc.h"
 #include "../items_types.h"
+#include "../config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <curl/curl.h>
+
+#define COOP_TOKEN "8042a78a1c91463e80140b0cb11b8b47"
+#define SALLING_TOKEN "ed1b7976-ca43-4bde-a930-ba3d92935464"
 
 static const char const *token_type_map[] = {
     [FETCH_AUTH_BEARER] = "Authorization: Bearer",
@@ -45,6 +49,11 @@ fetch_status_e fetch_get(char *url, fetch_auth_e token_type, char *token, char *
 
     res_code = curl_easy_perform(curl);
 
+    // Cleanup
+    curl_easy_cleanup(curl);
+    curl_slist_free_all(headers);
+    free(_url);
+
     // Check for errors
     switch (res_code)
     {
@@ -55,11 +64,6 @@ fetch_status_e fetch_get(char *url, fetch_auth_e token_type, char *token, char *
     default:
         return FETCH_STATUS_UNKNOWN_ERROR;
     }
-
-    // Cleanup
-    curl_easy_cleanup(curl);
-    curl_slist_free_all(headers);
-    free(_url);
 
     *result = res.response;
 
@@ -85,32 +89,39 @@ size_t fetch_write_callback(char *buffer, size_t size, size_t buffer_length, voi
     return realsize;
 }
 
-char *encode_danish(char* url) {
-    char* buff = malloc(strlen(url) + 1);
+char *encode_danish(char *url)
+{
+    char *buff = malloc(strlen(url) + 1);
     strcpy(buff, url);
 
-    char* ptr;
-    while((ptr = strstr(buff, "æ")) != NULL) {
+    char *ptr;
+    while ((ptr = strstr(buff, "æ")) != NULL)
+    {
         ptr[0] = 'a';
         ptr[1] = 'e';
     }
-    while((ptr = strstr(buff, "ø")) != NULL) {
+    while ((ptr = strstr(buff, "ø")) != NULL)
+    {
         ptr[0] = 'o';
         ptr[1] = 'e';
     }
-    while((ptr = strstr(buff, "å")) != NULL) {
+    while ((ptr = strstr(buff, "å")) != NULL)
+    {
         ptr[0] = 'a';
         ptr[1] = 'a';
     }
-    while((ptr = strstr(buff, "Æ")) != NULL) {
+    while ((ptr = strstr(buff, "Æ")) != NULL)
+    {
         ptr[0] = 'A';
         ptr[1] = 'E';
     }
-    while((ptr = strstr(buff, "Ø")) != NULL) {
+    while ((ptr = strstr(buff, "Ø")) != NULL)
+    {
         ptr[0] = 'O';
         ptr[1] = 'E';
     }
-    while((ptr = strstr(buff, "Å")) != NULL) {
+    while ((ptr = strstr(buff, "Å")) != NULL)
+    {
         ptr[0] = 'A';
         ptr[1] = 'A';
     }
@@ -130,27 +141,32 @@ fetch_status_e fetch_renew_stores()
 
 fetch_status_e fetch_renew_coop_stores(store_s **stores, int *count)
 {
-    // TODO: Read from config
-    double lat = 57.025760, lon = 9.958440;
-    int distance = 6000;
-    char *token = "8042a78a1c91463e80140b0cb11b8b47";
+    conf_settings_s conf;
+    conf_read_settings(&conf);
 
     char *url = "https://api.cl.coop.dk/storeapi/v1/stores?page=1&size=5000";
 
     char *raw_stores = NULL;
-    fetch_status_e status = fetch_get(url, FETCH_AUTH_OCP_APIM, token, &raw_stores);
+    fetch_status_e status = fetch_get(url, FETCH_AUTH_OCP_APIM, COOP_TOKEN, &raw_stores);
 
     if (status != FETCH_STATUS_SUCCESS)
+    {
+        if (status != FETCH_STATUS_CURL_ERROR)
+            free(raw_stores);
         return status;
+    }
 
     store_s *parsed_stores = NULL;
     int new_count = parse_coop_stores(raw_stores, &parsed_stores);
 
     for (int i = 0; i < new_count; i++)
     {
-        if (calc_coordinate_distance(lat, lon, parsed_stores[i].lat, parsed_stores[i].lon) * 1000 < distance)
+        double distance = calc_coordinate_distance(conf.address_lat, conf.address_lon, parsed_stores[i].lat, parsed_stores[i].lon) * 1000;
+        if (distance < conf.max_distance)
         {
             *stores = realloc(*stores, (++(*count)) * sizeof(store_s));
+            parsed_stores[i].distance = distance;
+            (*stores)[(*count) - 1] = parsed_stores[i];
             (*stores)[*count - 1] = parsed_stores[i];
         }
     }
@@ -162,21 +178,23 @@ fetch_status_e fetch_renew_coop_stores(store_s **stores, int *count)
 
 fetch_status_e fetch_renew_salling_stores(store_s **stores, int *count)
 {
-    // TODO: Read from config
-    double lat = 57.025760, lon = 9.958440;
-    int distance = 6000; // Closest store is 6 km away
-    char *token = "ed1b7976-ca43-4bde-a930-ba3d92935464";
+    conf_settings_s conf;
+    conf_read_settings(&conf);
 
     char url[255];
     snprintf(url, 255,
              "https://api.sallinggroup.com/v2/stores?brand=bilka&fields=address%%2Cbrand%%2Ccoordinates%%2Cdistance_km%%2Cname%%2Cid&geo=%.4f%%2C%.4f&page=1&per_page=100&radius=%.2f",
-             lat, lon, (double)distance / 1000);
+             conf.address_lat, conf.address_lon, (double)conf.max_distance / 1000);
 
     char *raw_stores = NULL;
-    fetch_status_e status = fetch_get(url, FETCH_AUTH_BEARER, token, &raw_stores);
+    fetch_status_e status = fetch_get(url, FETCH_AUTH_BEARER, SALLING_TOKEN, &raw_stores);
 
     if (status != FETCH_STATUS_SUCCESS)
+    {
+        if (status != FETCH_STATUS_CURL_ERROR)
+            free(raw_stores);
         return status;
+    }
 
     store_s *parsed_stores = NULL;
     int new_count = parse_salling_stores(raw_stores, &parsed_stores);
@@ -286,12 +304,14 @@ void fetch_print_store(store_s *store)
 void fetch_get_coop_items(store_s *store)
 {
 
-    // Populate nx_json. If evereything fails return zero items
+    // Populate nx_json. If everything fails return zero items
     const nx_json *json = fetch_get_cached_coop_items(store->uid);
     if (json == NULL)
     {
         fetch_status_e status = fetch_renew_coop_items(store->uid, &json);
-        if (status != FETCH_STATUS_SUCCESS || json == NULL)
+        if (status == FETCH_STATUS_SUCCESS && json != NULL)
+            return fetch_get_coop_items(store); // Successful fetch, data was cached. Last minute weird errors are occurring when continuing with *json, but never when reading cache. Posibly memory things above my head.
+        else
         {
             store->items_count = 0;
             store->items = NULL;
@@ -304,24 +324,22 @@ void fetch_get_coop_items(store_s *store)
 
 fetch_status_e fetch_renew_coop_items(char *store_id, const nx_json **json)
 {
-    // TODO: Read from config
-    char *token = "8042a78a1c91463e80140b0cb11b8b47";
     char url[100];
     snprintf(url, 100, "https://api.cl.coop.dk/productapi/v1/product/%s", store_id);
 
     char *response = NULL;
-    fetch_status_e status = fetch_get(url, FETCH_AUTH_OCP_APIM, token, &response);
+    fetch_status_e status = fetch_get(url, FETCH_AUTH_OCP_APIM, COOP_TOKEN, &response);
 
     if (status != FETCH_STATUS_SUCCESS)
     {
-        response = realloc(response, 3);
-        strcpy(response, "[]");
-        response[2] = '\0';
+        if (status != FETCH_STATUS_CURL_ERROR) // Memory was likely allocated
+            free(response);
         return status;
     }
 
     _fetch_write_coop_items(store_id, response);
     *json = nx_json_parse_utf8(response);
+    free(response);
     return FETCH_STATUS_SUCCESS;
 }
 
@@ -417,9 +435,6 @@ basket_item_s *__fetch_mock_basket()
 
 void fetch_get_salling_items(store_s *store)
 {
-    // TODO: Read from config
-    char *token = "ed1b7976-ca43-4bde-a930-ba3d92935464";
-
     // TODO: Read from basket
     basket_item_s *basket_items = __fetch_mock_basket();
 
@@ -434,14 +449,19 @@ void fetch_get_salling_items(store_s *store)
         snprintf(url, 255, "https://api.sallinggroup.com/v1-beta/product-suggestions/relevant-products?query=%s", basket_items[i].name);
 
         char *raw_items = NULL;
-        fetch_status_e status = fetch_get(url, FETCH_AUTH_BEARER, token, &raw_items);
+        fetch_status_e status = fetch_get(url, FETCH_AUTH_BEARER, SALLING_TOKEN, &raw_items);
 
         if (status != FETCH_STATUS_SUCCESS)
+        {
+            if (status != FETCH_STATUS_CURL_ERROR)
+                free(raw_items);
             continue;
+        }
 
         store_item_s *temp_items = NULL;
         int temp_count = parse_salling_items(raw_items, &temp_items);
 
+        free(raw_items);
         items = realloc(items, (count + temp_count) * sizeof(store_item_s));
         memcpy(&(items[count]), temp_items, temp_count * sizeof(store_item_s));
         count += temp_count;
@@ -449,4 +469,75 @@ void fetch_get_salling_items(store_s *store)
 
     store->items = items;
     store->items_count = count;
+}
+
+fetch_status_e fetch_coordinates(char* input_address, char** raw_coordinates) {
+    char* url_start = "https://maps.googleapis.com/maps/api/geocode/json?address=";
+    char* token = "&key=AIzaSyCwIirwXs-zd2_TZU6uLll6BOHdaIQVDeM";
+
+    int address_len = strlen(input_address); // Get length of the address
+
+    // Assume every character is 2 bytes so it works with 'æ', 'ø' and 'å'
+    char* address = malloc(2 * address_len * (char)sizeof(int));
+
+    // If no memory available print error and exit
+    if (address == NULL) {
+        perror("Exit");
+        exit(EXIT_FAILURE);
+    }
+
+    strncpy(address, input_address, address_len);
+
+    int url_len = strlen(url_start);
+    int token_len = strlen(token);
+
+    // Loop over address and checks if there is a space. A space needs to be replaced with "%20" for the url to work
+    for (int i = 0; i < address_len; ++i) {
+        if (address[i] == ' ') {    
+
+            address_len += 2; // Address need to grow with two spaces for the '2' and the '0'. '%' replaces ' '.
+
+            // Using tmp variable so we dont get a memory leak if there is not enough room to reallocate
+            char* tmp = realloc(address, 2 * address_len * sizeof(char)); 
+
+            if (tmp == NULL) { // If not enough memory
+                perror("Error");
+
+                free(address); 
+                address = NULL; // No dangling pointer
+
+                exit(EXIT_FAILURE);
+            }
+            else if (address != tmp) {
+                address = tmp;
+            }
+
+            tmp = NULL; 
+
+            // Moves the memory so there is space for "20"
+            memmove(address + i + 3, address + i + 1, address_len - i - 1);
+
+            // Replace ' ' with '%'
+            address[i] = '%';
+
+            // Fills in the "20" on empty spaces
+            address[i + 1] = '2';
+            address[i + 2] = '0';
+        }
+    }
+
+    int len = address_len + url_len + token_len; // Total len of the sub-strings
+
+    char url[len];
+
+    strncpy(url, url_start, len); // Copy first part since we dont want to append it to the empty string
+    strncat(url, address, len); // Concat the two other parts
+    strncat(url, token, len);
+
+    free(address);
+    address = NULL;
+
+    fetch_status_e status = fetch_get_no_auth(url, raw_coordinates); // Call api
+
+    return status;
 }

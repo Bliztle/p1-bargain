@@ -6,7 +6,8 @@ add_executable( fetch_test fetch_test.c
                 fetch.c
                 parse.c
                 nxjson/nxjson.c
-                ../calc.c )
+                ../calc.c
+                ../config.c )
 target_link_libraries(fetch_test libcurl m)
 add_test(NAME fetch_test COMMAND fetch_test)
 

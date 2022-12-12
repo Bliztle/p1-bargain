@@ -1,46 +1,73 @@
+#ifndef P1_BARGAIN_SETTINGS_H
+#define P1_BARGAIN_SETTINGS_H
+
 /// INCLUDES
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include "config.h"
+#include "menu.h"
+#include "api/fetch.h"
+#include "api/parse.h"
+
+/// DEFINES
+#define MAX_INPUT_SIZE 256
+#define FILE_TYPE ".txt"
 
 /// TYPEDEFS
-typedef struct {
-    // TODO: add settings
-} basket_item_s;
+typedef enum {
+    PATH = 1, // 1
+    ADDRESS, // 2
+    DISTANCE, // 3
+    DEVIATION // 4
+} settings_e;
 
 /// FUNCTION PROTOTYPES
 /**
- * Returns if user inputs !q, otherwise redirects to other settings
+ * @brief Runs the settings menu
  */
-void menu_settings();
+void menu_settings(conf_settings_s *settings);
 
 /**
- * Prints the current value of deviation, then changes it based on user input, and updates the deviation in settings.conf
+ * @brief Edit the given setting
+ * @param setting the setting to change
  */
-void menu_edit_deviation();
+void settings_edit(conf_settings_s *settings, int setting);
 
 /**
- * Prints the current value of distance, then changes it based on user input, and updates the distance in settings.conf
+ * @brief Validates settings
+ * @param input user input
+ * @param setting the setting to validate
+ * @return true or false
  */
-void menu_edit_distance();
+int settings_validate(char *input, int setting);
 
 /**
- * Prints the current value of address, then changes it based on user input, and updates the coordinates in settings.conf
- */
-void menu_edit_address();
-
-/**
- * Prints the current export path, then changes it based on user input, and updates the path in settings.conf
- */
-void menu_edit_path();
-
-/**
- * Removes an item from the basket
- * @param items
- */
-void menu_basket_remove(basket_item_s items);
-
-/**
- * Adds an item to the basket
- * @param items
+ * @brief Validates the path
+ * @param input user input
+ * @return true or false
 */
-void menu_basket_add(basket_item_s items);
+int settings_validate_path(char *input);
+
+/**
+ * @brief Validates the address
+ * @param input 
+ * @return true or false 
+ */
+int settings_validate_address(char *input);
+
+/**
+ * @brief Validates distance
+ * @param input user input
+ * @return true or false
+ */
+int settings_validate_distance(char *input);
+
+/**
+ * @brief Validates the deviation
+ * @param input user input
+ * @return true or false
+*/
+int settings_validate_deviation(char *input);
+
+#endif
