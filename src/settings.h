@@ -5,10 +5,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "config.h"
 #include "menu.h"
 #include "api/fetch.h"
 #include "api/parse.h"
+#include "config.h"
 
 /// DEFINES
 #define MAX_INPUT_SIZE 256
