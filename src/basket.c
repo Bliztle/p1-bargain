@@ -71,12 +71,15 @@ int basket_to_array(basket_s *basket, basket_item_s **items) {
         element = element->next;
     }
 
-    *items = malloc(length * sizeof(basket_item_s));
+    basket_item_s *new_basket = malloc(length * sizeof(basket_item_s));
     element = basket;
     for (int i = 0; i < length; i++) {
-        *items[i] = element->item;
+        new_basket[i] = element->item;
         element = element->next;
     }
+
+    *items = new_basket;
+
     return length;
 }
 
@@ -150,13 +153,13 @@ void menu_basket_edit() {
 
     while ((option = display_menu(options, menu_text, help_text)) != -1) {
         switch (option) {
-            case 1:
+            case 0:
                 menu_basket_add();
                 break;
-            case 2:
+            case 1:
                 menu_basket_remove();
                 break;
-            case 3: {
+            case 2: {
                 basket_s *basket = basket_read();
                 basket_print(basket);
                 basket_free(basket);

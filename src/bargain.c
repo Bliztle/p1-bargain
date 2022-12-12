@@ -11,6 +11,8 @@
 #include "api/fetch.h"
 #include "mock_functions.h"
 #include "config.h"
+#include "basket.h"
+#include "settings.h"
 
 #define MAX_STORES_COUNT 3
 #define MAIN_MENU_ITEMS_COUNT 3
@@ -44,10 +46,10 @@ void bargain_run_bargain()
             bargain_menu_find_bargain();
             break;
         case 1:
-            // TODO: Implement Basket Editor
+            menu_basket_edit();
             break;
         case 2:
-            // TODO: Implement Settings
+            //menu_settings();
             break;
         }
 
@@ -149,7 +151,7 @@ void bargain_menu_find_bargain()
 
 int bargain_find_bargain(store_s **stores)
 {
-    int store_count = fetch_get_stores(stores); // TODO: Make sure everything in store structs is initialised beyond this point.
+    int store_count = fetch_get_stores(stores);
     printf("Store count: %d\n", store_count);
     stores_populate_store_items(*stores, store_count);
 
@@ -164,21 +166,21 @@ void bargain_print_bargain_result(store_s store)
     printf("|===========================================================================================================|\n");
     printf("|                                               SHOPPING LIST                                               |\n");
     printf("|===========================================================================================================|\n");
-    printf("| # | Product                                            |   count   |       price/unit       | total price |\n");
+    printf("|  # | Product                                           |   count   |       price/unit       | total price |\n");
     printf("|-----------------------------------------------------------------------------------------------------------|\n");
     for (int i = 0; i < store.found_items_count; i++)
     {
-        printf("| %d | %-*s | %*d pcs. | %*.2lf dkk./%-*s | %*.2lf dkk.|\n", i + 1, 50, store.found_items[i].name, 4, store.found_items[i].count, 6, store.found_items[i].price_per_unit, 10, bargain_get_unit(store.found_items[i].unit), 7, store.found_items[i].total_price);
+        printf("| %*d | %-*s | %*d pcs. | %*.2lf dkk./%-*s | %*.2lf dkk.|\n", 3, i + 1, 49, store.found_items[i].name, 4, store.found_items[i].count, 6, store.found_items[i].price_per_unit, 10, bargain_get_unit(store.found_items[i].unit), 7, store.found_items[i].total_price);
     }
     printf("|===========================================================================================================|\n");
     printf("|                                               Missing Items                                               |\n");
     printf("|===========================================================================================================|\n");
-    printf("| # | Product                                                                                               |\n");
+    printf("|  # | Product                                                                                              |\n");
     printf("|-----------------------------------------------------------------------------------------------------------|\n");
 
     for (int i = 0; i < store.missing_items_count; i++)
     {
-        printf("| %d | %-*s |\n", i + 1, 101, store.missing_items[i].name);
+        printf("| %*d | %-*s |\n", 3, i + 1, 100, store.missing_items[i].name);
     }
 
     printf("|===========================================================================================================|\n");
@@ -538,7 +540,7 @@ void get_size_of_list_entries(store_s store, int *found_list_size, int *missing_
 */
 
 char *bargain_get_unit(int n)
-{ // TODO make this better.
+{
     switch (n)
     {
         case 0:

@@ -1,16 +1,21 @@
-#include "items.h"
 #include <stddef.h>
 #include <math.h>
 #include <string.h>
-#include "malloc.h" // TODO remove when basket is read from file.
+
+#include "items.h"
+#include "malloc.h"
 #include "bargain.h"
 #include "api/parse.h"
-#include "mock_functions.h" // TODO: Remove when basket read from file is implemented.
+#include "basket.h"
 
 int items_find_best_match(basket_item_s requested_item, store_s *store, found_item_s *found_destination, basket_item_s *missing_destination)
 {
 
-    double variance = 0.10; // TODO read from conf file
+    conf_settings_s settings;
+    conf_read_settings(&settings);
+
+
+    double variance = settings.deviance;
 
     // Initialising the fields that will be compared against in the  search loop, in order to prevent garbage memory
     // creating unexpected results.
@@ -67,11 +72,11 @@ int items_find_best_match(basket_item_s requested_item, store_s *store, found_it
 
 void items_filter_items(store_s *store)
 {
-    // basket_item_s *basket = __fetch_mock_basket(); // test_get_basket(&basket_size);
 
-    // TODO Change to read basket from file
-    int basket_size = 0;
-    basket_item_s *basket = test_get_basket(&basket_size);
+    basket_s *basket_linked_list = basket_read();
+    basket_item_s **basket;
+    int basket_size = basket_to_array(basket_linked_list, basket);
+    basket_item_s *real_basket = *basket;
 
     store->found_items = malloc(sizeof(found_item_s) * store->items_count);
     store->missing_items = malloc(sizeof(basket_item_s) * store->items_count);
@@ -82,7 +87,7 @@ void items_filter_items(store_s *store)
         found_item_s found_item;
         basket_item_s missing_item;
 
-        if (items_find_best_match(basket[i], store, &found_item, &missing_item))
+        if (items_find_best_match(real_basket[i], store, &found_item, &missing_item))
         {
 
             items_add_item_to_found(found_item, store);
@@ -153,20 +158,6 @@ found_item_s items_convert_to_found_item(store_item_s input_item, int item_count
 
     return tmp;
 }
-
-/*int items_compare_item_names(char *name_to_find, char *name_to_search)
-{
-    if (strcmp("Snickers", name_to_find) == 0) {
-
-        int whatever = 10;
-    }
-
-
-    if (strstr(name_to_search, name_to_find) != NULL) {
-        return 1;
-    }
-    return 0;
-}*/
 
 int items_compare_item_names(char *name_to_find, char *name_to_search)
 {
