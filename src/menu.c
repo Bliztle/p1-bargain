@@ -10,12 +10,12 @@ int _display_menu(char **options, int options_len, char *menu_text, char *help_t
     while (1)
     {
         printf("%s\n", menu_text);
-        printf("Enter !q to quit, or !h to get help\n");
         // Print the menu options
         for (int i = 0; i < options_len; i++)
         {
             printf("[%d] %s\n", i + 1, options[i]);
         }
+        printf("Enter !q to quit, or !h to get help\n");
         printf("> ");
         // We need to read the input into a string first, because we need to check whether it's a number, a command, or something invalid
         // The {'\0'} initializes the array to be filled with the '\0' character
@@ -50,7 +50,7 @@ int _display_menu(char **options, int options_len, char *menu_text, char *help_t
             continue;
         }
         option--; // We subtract 1 from the option, because the user sees the options starting at 1, but we store them in an array starting at 0.
-        if (option > options_len)
+        if (option > options_len - 1)
         {
             printf("%s", INVALID_OPTION_TEXT);
             continue;

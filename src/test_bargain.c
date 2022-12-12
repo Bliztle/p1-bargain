@@ -13,6 +13,7 @@ void test_bargain_get_unit() {
     assert(strcmp(bargain_get_unit(3), "UNITS") == 0);
 }
 
+/*
 void test_get_size_of_list_entries() {
 
     // Create a store object with some found and missing items
@@ -188,22 +189,19 @@ void test_create_found_entries() {
     
 }
 
-
+*/
 
 
 int main() {
-    printf("Testing Bargain\n");
-    printf("Bargain Test 1: test_bargain_get_unit()\n");
+    
     test_bargain_get_unit();
-    printf("Bargain Test 2: test_get_size_of_list_entries()\n");
+
+    /*
     test_get_size_of_list_entries();
-    printf("Bargain Test 3: test_append_outro_to_string()\n");
     test_append_outro_to_string();
-    printf("Bargain Test 4: test_create_missing_entries()\n");
     test_create_missing_entries();
-    printf("Bargain Test 5: test_create_found_entries()\n");
     test_create_found_entries();
-    printf("Testing Bargain Done\n");
+    */
 
     return 0;
 }
