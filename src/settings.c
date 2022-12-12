@@ -43,7 +43,7 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
 
     switch (setting) {
         case PATH:
-            strcpy(str3, "\nMake sure that the given path ends in a '\\' and is an existing folder");
+            strcpy(str3, "\nMake sure that the given path ends in a '/' and is an existing folder");
             sprintf(str2, "%s", settings->shopping_list_save_path);
             break;
         
