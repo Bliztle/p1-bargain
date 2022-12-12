@@ -113,15 +113,14 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
 
                     settings->address_lat = lat;
                     settings->address_lon = lon;
-
                     break;
 
                 case DISTANCE:
-                    settings->max_distance = strtol(input, &input, 10);
+                    settings->max_distance = strtol(input, NULL, 10);
                     break;
 
                 case DEVIATION:
-                    settings->deviance = strtol(input, &input, 10);
+                    settings->deviance = strtol(input, NULL, 10);
                     break;
              }
 
