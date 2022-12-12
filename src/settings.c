@@ -149,7 +149,7 @@ int settings_validate(char *input, int setting) {
 }
 
 int settings_validate_path(char *input) {
-    // Make sure the path leads to a file by looking for a \ at the end of the string
+    // Make sure the path leads to a file by looking for a / at the end of the string
     int len = strlen(input);
 
     if (input[len-1] != '/') {
