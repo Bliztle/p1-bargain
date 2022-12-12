@@ -109,7 +109,7 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
                     double lat;
                     double lon;
 
-                    parse_coordinates(&lat, &lon, &raw_coordinates);
+                    parse_coordinates(&lat, &lon, raw_coordinates);
 
                     settings->address_lat = lat;
                     settings->address_lon = lon;
