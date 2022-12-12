@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "config.h"
-
-#define SETTINGS_PATH "settings.conf"
 
 int conf_read_settings(conf_settings_s *settings) {
     FILE *config_file = fopen(SETTINGS_PATH, "r");
