@@ -39,8 +39,11 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
     
     char str2[MAX_INPUT_SIZE];
 
+    char str3[100] = "\nEnter new setting";
+
     switch (setting) {
         case PATH:
+            strcpy(str3, "\nMake sure that the given path ends in a '\\' and is an existing folder");
             sprintf(str2, "%s", settings->shopping_list_save_path);
             break;
         
@@ -56,8 +59,6 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
             sprintf(str2, "%d", settings->deviance);
             break;
     }
-
-    char* str3 = "\nEnter new setting";
 
     int len = strlen(str1) + strlen(str2) + strlen(str3);
 
@@ -148,30 +149,16 @@ int settings_validate(char *input, int setting) {
 }
 
 int settings_validate_path(char *input) {
-    // Make sure the file type is right
-    char* substring = strstr(input, FILE_TYPE);
-
-    // If there is no substring
-    if (substring == NULL) {
-        printf("Error: Unsupported file name\n");
-        return 0;
+    // Make sure the path leads to a file by looking for a \ at the end of the string
+    int len = strlen(input);
+    for (int i = 0; i < len; ++i) {
+        if (input[i] == '\0') {
+            if (input[i-1] != '\\') {
+                printf("Error: Path does not lead to folder\n");
+                return 0;
+            }
+        }
     }
-
-    // If there exists a substring but its not equivalent to the file type
-    if (strcmp(substring, FILE_TYPE)) {
-        printf("Error: Invalid file type\n");
-        return 0;
-    }
-
-    // Since it technically still could be a folder ending on .txt, we open the file
-    FILE *file = fopen(input, "r");
-
-    if (file == NULL) { // A folder cannot be opened by fopen()
-        perror("Error");
-        return 0;
-    }
-
-    fclose(file);
 
     return 1;
 }
