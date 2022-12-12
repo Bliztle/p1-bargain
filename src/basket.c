@@ -72,6 +72,8 @@ int basket_to_array(basket_s *basket, basket_item_s **items) {
     }
 
     basket_item_s *new_basket = malloc(length * sizeof(basket_item_s));
+    //*items = malloc(length * sizeof(basket_item_s));
+    
     element = basket;
     for (int i = 0; i < length; i++) {
         new_basket[i] = element->item;

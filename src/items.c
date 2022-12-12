@@ -75,6 +75,8 @@ void items_filter_items(store_s *store, int testing)
 
     int basket_size = 0;
     basket_item_s *real_basket;
+    basket_item_s *actual_basket;
+    basket_item_s **basket = &actual_basket;
     if (testing) {
 
         real_basket = test_get_basket(&basket_size);
@@ -82,9 +84,8 @@ void items_filter_items(store_s *store, int testing)
     } else {
         
         basket_s *basket_linked_list = basket_read();
-        basket_item_s **basket;
-        int basket_size = basket_to_array(basket_linked_list, basket);
-        real_basket = *basket;
+        basket_size = basket_to_array(basket_linked_list, basket);
+        real_basket = actual_basket;
 
     }
 

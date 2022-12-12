@@ -23,12 +23,14 @@ configure_file(settings.conf api/settings.conf COPYONLY)
 add_executable(test_items 
                test_items.c 
                items.c 
-               api/parse.c 
+               api/parse.c
+               api/fetch.c 
                api/nxjson/nxjson.c
                config.c
                mock_functions.c 
                basket.c
-               menu.c )
+               menu.c
+               calc.c )
 target_link_libraries(test_items m libcurl)
 add_test(NAME test_items COMMAND test_items)
 
@@ -58,8 +60,8 @@ add_executable( test_settings
 target_link_libraries(test_settings libcurl m)
 add_test(NAME test_settings COMMAND test_settings)
 
-add_executable(basket_test basket_test.c basket.c menu.c api/parse.c api/nxjson/nxjson.c)
-target_link_libraries(basket_test m)
+add_executable(basket_test basket_test.c basket.c menu.c api/parse.c api/nxjson/nxjson.c api/fetch.c config.c calc.c)
+target_link_libraries(basket_test m libcurl)
 add_test(NAME basket_test COMMAND basket_test)
 
 add_executable( fetch_test 
@@ -82,6 +84,8 @@ add_executable( parse_test
                 calc.c
                 config.c 
                 api/nxjson/nxjson.c
-                mock_functions.c)
+                mock_functions.c
+                basket.c
+                menu.c)
 target_link_libraries(parse_test libcurl m)
 add_test(NAME parse_test COMMAND parse_test)
