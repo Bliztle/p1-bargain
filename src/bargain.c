@@ -246,13 +246,13 @@ int bargain_export(store_s store, conf_settings_s settings) {
 
     time[strlen(time) - 1] = 0;
 
-    
-
-    // TODO: Make it possible to export more than one, by just taking a folder as a path, and not a file name.
     snprintf(filename, 100, "%s%s-%s%s", settings.shopping_list_save_path, store.name, time, ".txt");
-    // snprintf(filename, 50, "%s", settings.shopping_list_save_path);
 
     FILE *export_file = fopen(filename, "w");
+
+    if (export_file == NULL) {
+        return 0;
+    }
 
     fprintf(export_file, "|===========================================================================================================|\n");
     fprintf(export_file, "|                                               SHOPPING LIST                                               |\n");
