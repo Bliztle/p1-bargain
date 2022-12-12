@@ -29,7 +29,6 @@ int conf_read_settings(conf_settings_s *settings) {
 
     fclose(config_file);
 
-
     return 1;
 }
 

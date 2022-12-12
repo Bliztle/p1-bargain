@@ -101,6 +101,8 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
                 
                 case ADDRESS:
                     sprintf(settings->address, "%s", input);
+                    settings->address_lat = strtod(input, &input);
+                    settings->address_lon = strtod(input, &input);
                     break;
 
                 case DISTANCE:
