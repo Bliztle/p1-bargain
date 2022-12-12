@@ -156,7 +156,7 @@ void test_items_convert_to_found_item()
         .unit = LITERS,
     };
     
-    expected.price_per_unit = (expected.size / expected.product_price);
+    expected.price_per_unit = (expected.product_price / expected.size);
     result = items_convert_to_found_item(input_item, item_count);
 
     assert(strcmp(result.name, expected.name) == 0);
@@ -187,7 +187,7 @@ void test_items_convert_to_found_item()
         .unit = LITERS,
         .price_per_unit = 1
     };
-    expected.price_per_unit = (expected.size / expected.product_price);
+    expected.price_per_unit = (expected.product_price / expected.size);
     result = items_convert_to_found_item(input_item, item_count);
 
     assert(strcmp(result.name, expected.name) == 0);
@@ -277,7 +277,7 @@ void test_items_find_best_match()
                 .price_per_unit = 0
             };
     
-    store.items[0].price_per_unit = store.items[0].size / store.items[0].price;
+    store.items[0].price_per_unit = store.items[0].price / store.items[0].size;
 
     found_item_s found_destination;
     basket_item_s missing_destination;
@@ -292,7 +292,7 @@ void test_items_find_best_match()
     assert(found_destination.count == 1);
     assert(found_destination.size == 5);
     assert(found_destination.unit == UNITS);
-    assert(found_destination.price_per_unit == (store.items[0].size / store.items[0].price));
+    assert(found_destination.price_per_unit == (store.items[0].price / store.items[0].size));
 
     free(store.items);
 
@@ -366,7 +366,7 @@ void test_items_find_best_match()
     assert(found_destination.count == 1);
     assert(found_destination.size == 5);
     assert(found_destination.unit == UNITS);
-    assert(found_destination.price_per_unit == (store.items[0].size / store.items[0].price));
+    assert(found_destination.price_per_unit == (store.items[0].price / store.items[0].size));
 
     
     free(store.items);

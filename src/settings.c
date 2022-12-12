@@ -8,7 +8,11 @@
 
 #include "settings.h"
 
-void menu_settings(conf_settings_s *settings) {
+void menu_settings() {
+
+    conf_settings_s *settings;
+    conf_read_settings(settings);
+
     char *options[4];
 
     options[0] = "Change the export path";

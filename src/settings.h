@@ -26,7 +26,7 @@ typedef enum {
 /**
  * @brief Runs the settings menu
  */
-void menu_settings(conf_settings_s *settings);
+void menu_settings();
 
 /**
  * @brief Edit the given setting
