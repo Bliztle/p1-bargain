@@ -100,37 +100,14 @@ void conf_create() {
     char temp_s[100];
 
     printf("Please enter the save-path for your shopping list\n >");
-
     while (1) {
         scanf(" %s", temp_s);
 
-        if (!strstr(temp_s, ".txt")) {
-            printf("Please enter the path of a .txt file\n >");
+        if (!settings_validate_path(temp_s)) {
             continue;
-        }
-        else {
-            FILE *save_path = fopen(temp_s, "r");
-            if (save_path == NULL) {
-                printf("path is invalid, please enter a different path\n >");
-                continue;
-            }
         }
 
         strcpy(settings.shopping_list_save_path, temp_s);
-        break;
-    }
-
-    int temp_d;
-    printf("please enter the distance\n >");
-    while (1) {
-        scanf(" %d", &temp_d);
-
-        if (temp_d < 0) {
-            printf("distance cannot be negative\n >");
-            continue;
-        }
-
-        settings.max_distance = temp_d;
         break;
     }
 
@@ -138,24 +115,41 @@ void conf_create() {
     while (1) {
         scanf(" %[0-9a-zA-Z ]", temp_s);
 
-        // TODO function to get coords
+        if (!settings_validate_address(temp_s)) {
+            continue;
+        }
+        strcpy(settings.address, temp_s);
 
+        char *raw_coordinates;
+        fetch_coordinates(temp_s, &raw_coordinates);
+        parse_coordinates(&settings.address_lat, &settings.address_lon, raw_coordinates);
         break;
     }
 
-    double temp_lf;
-    printf("please enter the deviance\n >");
+    printf("please enter the distance\n >");
     while (1) {
-        scanf(" %lf", &temp_lf);
+        scanf(" %s", temp_s);
 
-        if (temp_lf < 0) {
-            printf("deviance cannot be negative\n >");
+        if (!settings_validate_distance(temp_s)) {
             continue;
         }
 
-        settings.deviance = temp_lf;
+        settings.max_distance = strtol(temp_s, NULL, 10);
         break;
     }
+
+    printf("please enter the deviance\n >");
+    while (1) {
+        scanf(" %s", temp_s);
+
+        if (!settings_validate_deviation(temp_s)) {
+            continue;
+        }
+
+        settings.deviance = strtol(temp_s, NULL, 10);
+        break;
+    }
+
     conf_write_settings(&settings);
 
     fclose(config_file);

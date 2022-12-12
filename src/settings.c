@@ -201,7 +201,7 @@ int settings_validate_address(char *input) { // Checks if it was able to fetch a
 
 int settings_validate_deviation(char *input) {
     // Converts string to double and checks if it's valid as a deviation
-    int deviation = strtol(input, &input, 10);
+    int deviation = strtol(input, NULL, 10);
 
     if (deviation <= 0) {
         printf("Error: Invalid deviation\n");
@@ -214,7 +214,7 @@ int settings_validate_deviation(char *input) {
 
 int settings_validate_distance(char *input) {
     // Converts string to double and checks if it's valid as a distance
-    int distance = strtol(input, &input, 10);
+    int distance = strtol(input, NULL, 10);
 
     if (distance <= 0) {
         printf("Error: Invalid distance\n");
