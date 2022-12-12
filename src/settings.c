@@ -151,15 +151,12 @@ int settings_validate(char *input, int setting) {
 int settings_validate_path(char *input) {
     // Make sure the path leads to a file by looking for a \ at the end of the string
     int len = strlen(input);
-    for (int i = 0; i < len; ++i) {
-        if (input[i] == '\0') {
-            if (input[i-1] != '\\') {
-                printf("Error: Path does not lead to folder\n");
-                return 0;
-            }
-        }
-    }
 
+    if (input[len-1] != '/') {
+        printf("Error: Path does not lead to folder\n");
+        return 0;
+    }
+    
     return 1;
 }
 
