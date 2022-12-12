@@ -168,10 +168,12 @@ void bargain_print_bargain_result(store_s store)
     printf("|============================================================================================================|\n");
     printf("|   # | Product                                           |   count   |       price/unit       | total price |\n");
     printf("|------------------------------------------------------------------------------------------------------------|\n");
+
     for (int i = 0; i < store.found_items_count; i++)
     {
         printf("| %*d | %-*s  | %*d pcs. | %*.2lf dkk./%-*s | %*.2lf dkk.|\n", 3, i + 1, 48, store.found_items[i].name, 4, store.found_items[i].count, 6, store.found_items[i].price_per_unit, 10, bargain_get_unit(store.found_items[i].unit), 7, store.found_items[i].total_price);
     }
+    
     printf("|============================================================================================================|\n");
     printf("|                                                Missing Items                                               |\n");
     printf("|============================================================================================================|\n");
