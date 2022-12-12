@@ -2,6 +2,7 @@
 #define P1_BARGAIN_CONFIG_H
 
 #include "api/parse.h"
+#include "settings.h"
 
 typedef char conf_save_path_t[256];
 typedef char conf_address_t[256];

@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "config.h"
-#include "settings.h"
 
 #define SETTINGS_PATH "settings.conf"
 
