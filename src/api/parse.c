@@ -3,6 +3,7 @@ Look into NXJSON or cJSON for parsing api responses
 https://stackoverflow.com/a/16490394
 */
 #include "parse.h"
+#include "fetch.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -238,14 +239,20 @@ char *parse_try_regex_group(char *source, char *regex)
     regex_t regexCompiled;
     regmatch_t groupArray[maxGroups];
 
+    // Match on encoded strings, as REG_ICASE doesn't work on UTF-8
+    char *_source = encode_danish(source);
+    char *_regex = encode_danish(regex);
+
     char *group = NULL;
 
-    if (regcomp(&regexCompiled, regex, REG_EXTENDED | REG_ICASE))
+    if (regcomp(&regexCompiled, _regex, REG_EXTENDED | REG_ICASE))
     {
+        free(_source);
+        free(_regex);
         return NULL;
     };
 
-    if (regexec(&regexCompiled, source, maxGroups, groupArray, 0) == 0 && // Successfull regex execution
+    if (regexec(&regexCompiled, _source, maxGroups, groupArray, 0) == 0 && // Successfull regex execution
         groupArray[1].rm_so != (size_t)-1)                                // Matched on group
     {
         // Extract match using start / end indexes
