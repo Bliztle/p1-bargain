@@ -39,7 +39,18 @@ add_executable(test_bargain
 target_link_libraries(test_bargain m libcurl)
 add_test(test_bargain test_bargain)
 
-add_executable(test_config test_config.c config.c)
+add_executable( test_config test_config.c
+                calc.c
+                menu.c
+                basket.c
+                api/fetch.c
+                api/parse.c
+                api/nxjson/nxjson.c
+                settings.c
+                menu.c
+                config.c
+)
+target_link_libraries(test_config libcurl m)
 add_test(NAME test_config COMMAND test_config)
 
 add_executable(calc_test calc_test.c calc.c)

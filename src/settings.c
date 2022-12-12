@@ -43,8 +43,11 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
     
     char str2[MAX_INPUT_SIZE];
 
+    char str3[100] = "\nEnter new setting";
+
     switch (setting) {
         case PATH:
+            strcpy(str3, "\nMake sure that the given path ends in a '/' and is an existing folder");
             sprintf(str2, "%s", settings->shopping_list_save_path);
             break;
         
@@ -60,8 +63,6 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
             sprintf(str2, "%d", settings->deviance);
             break;
     }
-
-    char* str3 = "\nEnter new setting";
 
     int len = strlen(str1) + strlen(str2) + strlen(str3);
 
@@ -105,14 +106,26 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
                 
                 case ADDRESS:
                     sprintf(settings->address, "%s", input);
+
+                    char* raw_coordinates;
+
+                    fetch_coordinates(input, &raw_coordinates);
+
+                    double lat;
+                    double lon;
+
+                    parse_coordinates(&lat, &lon, raw_coordinates);
+
+                    settings->address_lat = lat;
+                    settings->address_lon = lon;
                     break;
 
                 case DISTANCE:
-                    settings->max_distance = strtol(input, &input, 10);
+                    settings->max_distance = strtol(input, NULL, 10);
                     break;
 
                 case DEVIATION:
-                    settings->deviance = strtol(input, &input, 10);
+                    settings->deviance = strtol(input, NULL, 10);
                     break;
              }
 
@@ -140,31 +153,14 @@ int settings_validate(char *input, int setting) {
 }
 
 int settings_validate_path(char *input) {
-    // Make sure the file type is right
-    char* substring = strstr(input, FILE_TYPE);
+    // Make sure the path leads to a file by looking for a / at the end of the string
+    int len = strlen(input);
 
-    // If there is no substring
-    if (substring == NULL) {
-        printf("Error: Unsupported file name\n");
+    if (input[len-1] != '/') {
+        printf("Error: Path does not lead to folder\n");
         return 0;
     }
-
-    // If there exists a substring but its not equivalent to the file type
-    if (strcmp(substring, FILE_TYPE)) {
-        printf("Error: Invalid file type\n");
-        return 0;
-    }
-
-    // Since it technically still could be a folder ending on .txt, we open the file
-    FILE *file = fopen(input, "r");
-
-    if (file == NULL) { // A folder cannot be opened by fopen()
-        perror("Error");
-        return 0;
-    }
-
-    fclose(file);
-
+    
     return 1;
 }
 
@@ -193,7 +189,7 @@ int settings_validate_address(char *input) { // Checks if it was able to fetch a
 
 int settings_validate_deviation(char *input) {
     // Converts string to double and checks if it's valid as a deviation
-    int deviation = strtol(input, &input, 10);
+    int deviation = strtol(input, NULL, 10);
 
     if (deviation <= 0) {
         printf("Error: Invalid deviation\n");
@@ -206,7 +202,7 @@ int settings_validate_deviation(char *input) {
 
 int settings_validate_distance(char *input) {
     // Converts string to double and checks if it's valid as a distance
-    int distance = strtol(input, &input, 10);
+    int distance = strtol(input, NULL, 10);
 
     if (distance <= 0) {
         printf("Error: Invalid distance\n");
