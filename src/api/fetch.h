@@ -62,6 +62,8 @@ fetch_status_e fetch_get(char *url, fetch_auth_e token_type, char *token, char *
  */
 fetch_status_e fetch_get_no_auth(char *url, char **result);
 
+basket_item_s *__fetch_mock_basket();
+
 /**
  * Callback function for curl to write output to.
  * collects data in chunks from buffer and writes to the prelimenary response

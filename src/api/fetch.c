@@ -4,6 +4,7 @@
 #include "../calc.h"
 #include "../items_types.h"
 #include "../config.h"
+#include "../basket.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -141,7 +142,10 @@ fetch_status_e fetch_renew_stores()
 
 fetch_status_e fetch_renew_coop_stores(store_s **stores, int *count)
 {
+    // TODO: Remove hard coded coords
     conf_settings_s conf;
+    conf.address_lat = 57.0431;
+    conf.address_lon = 9.943;
     conf_read_settings(&conf);
 
     char *url = "https://api.cl.coop.dk/storeapi/v1/stores?page=1&size=5000";
@@ -178,7 +182,10 @@ fetch_status_e fetch_renew_coop_stores(store_s **stores, int *count)
 
 fetch_status_e fetch_renew_salling_stores(store_s **stores, int *count)
 {
+    // TODO: Fix hardcoded coords.
     conf_settings_s conf;
+    conf.address_lat = 57.0431;
+    conf.address_lon = 9.943;
     conf_read_settings(&conf);
 
     char url[255];
@@ -334,6 +341,7 @@ fetch_status_e fetch_renew_coop_items(char *store_id, const nx_json **json)
     {
         if (status != FETCH_STATUS_CURL_ERROR) // Memory was likely allocated
             free(response);
+        printf("Coop failed");
         return status;
     }
 
@@ -435,9 +443,11 @@ basket_item_s *__fetch_mock_basket()
 
 void fetch_get_salling_items(store_s *store)
 {
-    // TODO: Read from basket
-    basket_item_s *basket_items = __fetch_mock_basket();
-
+    basket_s *basket_linked_list = basket_read();
+    basket_item_s **basket;
+    int basket_size = basket_to_array(basket_linked_list, basket);
+    basket_item_s *real_basket = *basket;
+    
     int count = 0;
     store_item_s *items = NULL;
 
@@ -446,7 +456,7 @@ void fetch_get_salling_items(store_s *store)
     for (int i = 0; i < MOCK_BASKET_SIZE; i++)
     {
         char url[255];
-        snprintf(url, 255, "https://api.sallinggroup.com/v1-beta/product-suggestions/relevant-products?query=%s", basket_items[i].name);
+        snprintf(url, 255, "https://api.sallinggroup.com/v1-beta/product-suggestions/relevant-products?query=%s", real_basket[i].name);
 
         char *raw_items = NULL;
         fetch_status_e status = fetch_get(url, FETCH_AUTH_BEARER, SALLING_TOKEN, &raw_items);
@@ -458,9 +468,12 @@ void fetch_get_salling_items(store_s *store)
             continue;
         }
 
+        if (raw_items == NULL)
+        {
+            return;
+        }
         store_item_s *temp_items = NULL;
         int temp_count = parse_salling_items(raw_items, &temp_items);
-
         free(raw_items);
         items = realloc(items, (count + temp_count) * sizeof(store_item_s));
         memcpy(&(items[count]), temp_items, temp_count * sizeof(store_item_s));

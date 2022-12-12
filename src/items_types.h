@@ -4,7 +4,7 @@
 #define ITEM_NAME_SIZE 100
 #define STORE_NAME_SIZE 50
 #define STORE_ADDRESS_SIZE 50 // Denmarks longest street name is 27 characters, so this is plenty https://stiften.dk/artikel/aarhus-har-landets-l%C3%A6ngste-vejnavne
-#define STORE_UID_SIZE 37 // Exact size of a UUID, as used by salling. Coop just uses 3-digit ints which we cast to strings
+#define STORE_UID_SIZE 37     // Exact size of a UUID, as used by salling. Coop just uses 3-digit ints which we cast to strings
 
 typedef double coord_lat_t;
 typedef double coord_lon_t;
@@ -22,7 +22,7 @@ typedef enum
     UNKNOWN = 0,
     KILOGRAMS,
     LITERS,
-    UNITS
+    UNITS,
 } item_unit_e;
 
 static const char *UNIT_NAMES[] = {
@@ -37,22 +37,6 @@ typedef enum
     SALLING,
     COOP
 } store_group_e;
-
-typedef enum
-{
-    STORE_GROUP_BILKA,
-
-    STORE_GROUP_SUPER_BRUGSEN,
-    STORE_GROUP_KVICKLY,
-    STORE_GROUP_DAGLI_BRUGSEN,
-    STORE_GROUP_FAKTA, // COOP 365 falls in this category, due to the out-facing of Fakta
-    STORE_GROUP_FAKTA_GERMANY,
-    STORE_GROUP_IRMA,
-    STORE_GROUP_GROENLAND,
-    STORE_GROUP_COOP_DK, // coop.dk
-    STORE_GROUP_FK,
-    STORE_GROUP_COOP_MAD
-} store_chain_e;
 
 typedef struct
 {
@@ -74,24 +58,40 @@ typedef struct
     item_price_t price_per_unit;
 } found_item_s;
 
-typedef struct {
+typedef struct
+{
     item_name_t name;
     item_size_t size;
     item_unit_e unit;
 } basket_item_s;
 
+typedef enum
+{
+    STORE_CHAIN_BILKA,
+    STORE_GROUP_SUPER_BRUGSEN,
+    STORE_GROUP_KVICKLY,
+    STORE_GROUP_DAGLI_BRUGSEN,
+    STORE_GROUP_FAKTA, // COOP 365 falls in this category, due to the out-phasing of Fakta
+    STORE_GROUP_FAKTA_GERMANY,
+    STORE_GROUP_IRMA,
+    STORE_GROUP_GROENLAND,
+    STORE_GROUP_COOP_DK, // coop.dk
+    STORE_GROUP_FK,
+    STORE_GROUP_COOP_MAD
+} store_chain_e;
 
 typedef struct
 {
-    store_uid_t uid; 
+    store_uid_t uid;
     store_name_t name;
-    store_address_t address; 
+    store_address_t address;
     coord_lat_t lat;
     coord_lon_t lon;
     store_chain_e chain;
     store_group_e group;
     store_item_s *items;
     int items_count;
+
     int distance; // in meters
 
     store_price_t total_price;
@@ -99,9 +99,8 @@ typedef struct
     found_item_s *found_items;
     int missing_items_count;
     int found_items_count;
+    double found_items_total_price;
 
 } store_s;
 
-
-
-#endif //P1_BARGAIN_ITEMS_TYPES_H
+#endif // P1_BARGAIN_ITEMS_TYPES_H

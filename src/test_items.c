@@ -1,369 +1,441 @@
 #include <assert.h>
-#include "api/parse.h"
-#include "stdio.h"
-#include "stdlib.h"
-#include "test_items.h"
+#include <string.h>
+#include <malloc.h>
+#include <math.h>
+
 #include "items.h"
-#include "time.h"
+#include "items_types.h"
+#include "mock_functions.h"
 
-int main() {
-    int test_items = (!test_items_filter_items());
-    assert(test_items);
-    return 0;
+// Test items_compare_item_names()
+void test_items_compare_item_names()
+{
+    // Test with matching strings
+    assert(items_compare_item_names("apple", "red apple") == 1);
+    assert(items_compare_item_names("banana", "banana bread") == 1);
+
+    // Test with non-matching strings
+    assert(items_compare_item_names("grape", "red apple") == 0);
+    assert(items_compare_item_names("cake", "banana bread") == 0);
 }
 
-int test_items_filter_items() {
+// Test items_compare_item_units()
+void test_items_compare_item_units()
+{
+    // Test with matching units
+    assert(items_compare_item_units(KILOGRAMS, KILOGRAMS) == 1);
+    assert(items_compare_item_units(LITERS, LITERS) == 1);
 
-    time_t tmp = 0;
-    srand((unsigned) time((&tmp)));
+    // Test with non-matching units
+    assert(items_compare_item_units(KILOGRAMS, LITERS) == 0);
+    assert(items_compare_item_units(LITERS, KILOGRAMS) == 0);
+}
 
-    char *names[16];
+// Test items_compare_item_price_per_unit()
+void test_items_compare_item_price_per_unit()
+{
+    // Test with lower prices
+    assert(items_compare_item_price_per_unit(10, 5) == 1);
+    assert(items_compare_item_price_per_unit(5, 1) == 1);
 
-    names[0] = "Almond jelly";
-    names[1] = "Ashure";
-    names[2] = "Asida";
-    names[3] = "Pudim Abade de Priscos";
-    names[4] = "Banana pudding";
-    names[5] = "Banh chuoi";
-    names[6] = "Bebinca";
-    names[7] = "Blancmange";
-    names[8] = "Bread and butter pudding";
-    names[9] = "Brown Betty";
-    names[10] = "Cabinet pudding";
-    names[11] = "Che";
-    names[12] = "Chocolate Biscuit pudding";
-    names[13] = "Christmas pudding";
-    names[14] = "Clootie dumpling";
-    names[15] = "Coconut pudding";
+    // Test with equal prices
+    assert(items_compare_item_price_per_unit(5, 5) == 0);
+    assert(items_compare_item_price_per_unit(10, 10) == 0);
 
-    char *not_in_store_names[200];
+    // Test with higher prices
+    assert(items_compare_item_price_per_unit(1, 5) == 0);
+    assert(items_compare_item_price_per_unit(5, 10) == 0);
+}
 
-    not_in_store_names[0] = "banana";
-    not_in_store_names[1] = "fish";
-    not_in_store_names[2] = "eggs";
-    not_in_store_names[3] = "pudding";
-    not_in_store_names[4] = "gamble";
+// Test items_alternate_unit_match() (continued)
+void test_items_alternate_unit_match()
+{
+    // Test with matching units and equal prices
+    assert(items_alternate_unit_match(KILOGRAMS, KILOGRAMS, 5, 5) == 0);
+    assert(items_alternate_unit_match(LITERS, LITERS, 1, 1) == 0);
 
+    // Test with non-matching units and equal prices
+    assert(items_alternate_unit_match(KILOGRAMS, LITERS, 5, 5) == 0);
+    assert(items_alternate_unit_match(LITERS, KILOGRAMS, 1, 1) == 0);
+
+    // Test with unknown units
+    assert(items_alternate_unit_match(UNKNOWN, LITERS, 5, 10) == 1);
+    assert(items_alternate_unit_match(LITERS, UNKNOWN, 10, 5) == 0);
+}
+
+// Test items_is_in_variation()
+void test_items_is_in_variation()
+{
+    // Test with store item size of 5, variance of 0.5, and requested size of 10
+    double store_item_size = 5;
+    double variance = 0.5;
+    double requested_size = 10;
+
+    int expected = 2;
+    int result = items_is_in_variation(store_item_size, variance, requested_size);
+
+    assert(result == expected);
+
+    // Test with store item size of 10, variance of 0.5, and requested size of 5
+    store_item_size = 10;
+    variance = 0.5;
+    requested_size = 5;
+
+    expected = 0;
+    result = items_is_in_variation(store_item_size, variance, requested_size);
+
+    assert(result == expected);
+
+    // Test with store item size of 10, variance of 0.1, and requested size of 11
+    store_item_size = 11;
+    variance = 0.1;
+    requested_size = 10;
+
+    expected = 1;
+    result = items_is_in_variation(store_item_size, variance, requested_size);
+
+    assert(result == expected);
+
+    // Test with store item size of 10, variance of 0.1, and requested size of 8
+    store_item_size = 10;
+    variance = 0.1;
+    requested_size = 8;
+
+    expected = 0;
+    result = items_is_in_variation(store_item_size, variance, requested_size);
+
+    assert(result == expected);
+}
+
+// Test items_convert_to_found_item()
+void test_items_convert_to_found_item()
+{
+    // Test with UNKNOWN unit and item count of 1
+    store_item_s input_item = {
+        .name = "apple",
+        .price = 1,
+        .size = 5,
+        .unit = UNKNOWN,
+    };
+    int item_count = 1;
+
+    found_item_s expected = {
+        .name = "apple",
+        .total_price = 1,
+        .product_price = 1,
+        .count = 1,
+        .size = 5,
+        .unit = UNKNOWN,
+    };
+    found_item_s result = items_convert_to_found_item(input_item, item_count);
+
+    assert(strcmp(result.name, expected.name) == 0);
+    assert(result.total_price == expected.total_price);
+    assert(result.product_price == expected.product_price);
+    assert(result.count == expected.count);
+    assert(result.size == expected.size);
+    assert(result.unit == expected.unit);
+
+        // Test with LITERS unit and item count of 1
+    input_item = (store_item_s){
+        .name = "apple",
+        .price = 1,
+        .size = 5,
+        .unit = LITERS,
+    };
+    
+    input_item.price_per_unit = (input_item.size / input_item.price);
+    item_count = 1;
+
+    expected = (found_item_s){
+        .name = "apple",
+        .total_price = 1,
+        .product_price = 1,
+        .count = 1,
+        .size = 5,
+        .unit = LITERS,
+    };
+    
+    expected.price_per_unit = (expected.product_price / expected.size);
+    result = items_convert_to_found_item(input_item, item_count);
+
+    assert(strcmp(result.name, expected.name) == 0);
+    assert(result.total_price == expected.total_price);
+    assert(result.product_price == expected.product_price);
+    assert(result.count == expected.count);
+    assert(result.size == expected.size);
+    assert(result.unit == expected.unit);
+    assert(result.price_per_unit == expected.price_per_unit);
+
+    // Test with non-UNKNOWN unit and item count of 2
+    input_item = (store_item_s){
+        .name = "banana",
+        .price = 5,
+        .size = 10,
+        .unit = LITERS,
+        .price_per_unit = 1
+    };
+    item_count = 2;
+    input_item.price_per_unit = (input_item.size / input_item.price);
+
+    expected = (found_item_s){
+        .name = "banana",
+        .total_price = 10,
+        .product_price = 5,
+        .count = 2,
+        .size = 10,
+        .unit = LITERS,
+        .price_per_unit = 1
+    };
+    expected.price_per_unit = (expected.product_price / expected.size);
+    result = items_convert_to_found_item(input_item, item_count);
+
+    assert(strcmp(result.name, expected.name) == 0);
+    assert(result.total_price == expected.total_price);
+    assert(result.product_price == expected.product_price);
+    assert(result.count == expected.count);
+    assert(result.size == expected.size);
+    assert(result.unit == expected.unit);
+    assert(result.price_per_unit == expected.price_per_unit);
+}
+
+// Test items_add_item_to_found() and items_add_item_to_missing()
+void test_items_add_item_to_found_and_missing()
+{
+    // Test with found item
+    found_item_s item = {
+        .name = "apple",
+        .total_price = 5,
+        .product_price = 2,
+        .count = 2,
+        .size = 5,
+        .unit = UNKNOWN,
+        .price_per_unit = 0
+    };
     store_s store = {
-        .found_items = malloc(100 * sizeof(store_item_s)),
-        .items = malloc(100 * sizeof(store_item_s)),
-        .missing_items = malloc(100 * sizeof(store_item_s))
+        .found_items_count = 0,
+        .found_items_total_price = 0
+    };
+    store.found_items = malloc(sizeof(found_item_s));
+
+    items_add_item_to_found(item, &store);
+
+    assert(store.found_items_count == 1);
+    assert(!strcmp(store.found_items[0].name, item.name));
+    assert(store.found_items[0].total_price == item.total_price);
+    assert(store.found_items[0].product_price == item.product_price);
+    assert(store.found_items[0].count == item.count);
+    assert(store.found_items[0].size == item.size);
+    assert(store.found_items[0].unit == item.unit);
+    assert(store.found_items[0].price_per_unit == item.price_per_unit);
+    assert(store.found_items_total_price == 5);
+
+    free(store.found_items);
+
+    // Test with missing item
+    basket_item_s missing_item = {
+        .name = "banana",
+        .size = 5,
+        .unit = UNKNOWN
+    };
+    store = (store_s){
+        .missing_items_count = 0
     };
 
-    store_item_s item1 = {
-        .name = "Almond jelly",
-        .price = rand_price(),
+    store.missing_items = malloc(sizeof(basket_item_s));
+
+    items_add_item_to_missing(missing_item, &store);
+
+    assert(store.missing_items_count == 1);
+    assert(!strcmp(store.missing_items[0].name, missing_item.name));
+    assert(store.missing_items[0].size == missing_item.size);
+    assert(store.missing_items[0].unit == missing_item.unit);
+
+    free(store.missing_items);
+
+}
+
+// Test items_find_best_match()
+void test_items_find_best_match()
+{
+    // Test with matching item
+    basket_item_s requested_item = {
+        .name = "apple",
+        .size = 5,
+        .unit = UNITS
+    };
+    store_s store = {
+        .items_count = 1,
+        };
+
+    store.items = malloc(sizeof(store_item_s));
+    store.items[0] = (store_item_s){
+                .name = "apple",
+                .price = 20,
+                .size = 5,
+                .unit = UNITS,
+                .price_per_unit = 0
+            };
+    
+    store.items[0].price_per_unit = store.items[0].price / store.items[0].size;
+
+    found_item_s found_destination;
+    basket_item_s missing_destination;
+
+    int expected = 1;
+    int result = items_find_best_match(requested_item, &store, &found_destination, &missing_destination);
+
+    assert(result == expected);
+    assert(!strcmp(found_destination.name, "apple"));
+    assert(found_destination.total_price == 20);
+    assert(found_destination.product_price == 20);
+    assert(found_destination.count == 1);
+    assert(found_destination.size == 5);
+    assert(found_destination.unit == UNITS);
+    assert(found_destination.price_per_unit == (store.items[0].price / store.items[0].size));
+
+    free(store.items);
+
+    // Test with missing item
+    requested_item = (basket_item_s){
+        .name = "banana",
+        .size = 5,
+        .unit = KILOGRAMS
+    };
+    store = (store_s){
+        .items_count = 1,
+        };
+
+    store.items = malloc(sizeof(store_item_s));
+    store.items[0] = (store_item_s){
+                .name = "apple",
+                .price = 20,
+                .size = 5,
+                .unit = UNITS,
+                .price_per_unit = 0
+            };
+
+    store.items[0].price_per_unit = store.items[0].size / store.items[0].price;
+
+    expected = 0;
+    result = items_find_best_match(requested_item, &store, &found_destination, &missing_destination);
+
+    assert(result == expected);
+    assert(!strcmp(missing_destination.name, "banana"));
+    assert(missing_destination.size == 5);
+    assert(missing_destination.unit == KILOGRAMS);
+
+    
+    free(store.items);
+
+    // Test with unknow unit type.
+    requested_item = (basket_item_s){
+        .name = "banana",
+        .size = 20,
+        .unit = UNKNOWN
+    };
+    store = (store_s){
+        .items_count = 1,
+        };
+
+    store.items = malloc(sizeof(store_item_s) * 2);
+    store.items[0] = (store_item_s){
+                .name = "banana",
+                .price = 20,
+                .size = 5,
+                .unit = UNITS,
+                .price_per_unit = 0
+            };    
+    store.items[1] = (store_item_s){
+                .name = "banana",
+                .price = 30,
+                .size = 20,
+                .unit = UNITS,
+                .price_per_unit = 0
+            };
+
+    store.items[0].price_per_unit = store.items[0].size / store.items[0].price;
+
+    expected = 1;
+    result = items_find_best_match(requested_item, &store, &found_destination, &missing_destination);
+
+    assert(result == expected);
+    assert(!strcmp(found_destination.name, "banana"));
+    assert(found_destination.total_price == 20);
+    assert(found_destination.product_price == 20);
+    assert(found_destination.count == 1);
+    assert(found_destination.size == 5);
+    assert(found_destination.unit == UNITS);
+    assert(found_destination.price_per_unit == (store.items[0].price / store.items[0].size));
+
+    
+    free(store.items);
+}
+
+void test_items_filter_items() {
+
+    // Test variables
+    int basket_item_count;
+    basket_item_s *basket = test_get_basket(&basket_item_count);
+
+    // Create a mock store with 3 items, where the first and third items match the first and fifth items in the basket
+    store_s store = {
+        .items = malloc(3 * sizeof(store_item_s)),
+        .found_items = malloc(2 * sizeof(found_item_s)),
+        .missing_items = malloc(3 * sizeof(basket_item_s)),
+        .items_count = 3
+    };
+
+    store.items[0] = (store_item_s){
+        .name = "Milk",
         .size = 1,
-        .unit = 1,
-    };
-    store_item_s item2 = {
-        .name = "Ashure",
-        .price = rand_price(),
-        .size = rand_size(),
-        .unit = rand_unit(),
-    };
-    store_item_s item3 = {
-        .name = "Asida",
-        .price = rand_price(),
-        .size = rand_size(),
-        .unit = rand_unit(),
-    };
-    store_item_s item4 = {
-        .name = "Pudim Abade de Priscos",
-        .price = rand_price(),
-        .size = rand_size(),
-        .unit = rand_unit(),
-    };
-    store_item_s item5 = {
-        .name = "Banana pudding",
-        .price = rand_price(),
-        .size = rand_size(),
-        .unit = rand_unit(),
-    };
-    store_item_s item6 = {
-        .name = "Banh chuoi",
-        .price = rand_price(),
-        .size = rand_size(),
-        .unit = rand_unit(),
-    };
-    store_item_s item7 = {
-        .name = "Bebinca",
-        .price = rand_price(),
-        .size = rand_size(),
-        .unit = rand_unit(),
-    };
-    store_item_s item8 = {
-        .name = "Blancmange",
-        .price = rand_price(),
-        .size = rand_size(),
-        .unit = rand_unit(),
-    };
-    store_item_s item9 = {
-        .name = "Bread and butter pudding",
-        .price = rand_price(),
-        .size = rand_size(),
-        .unit = rand_unit(),
-    };
-    store_item_s item10 = {
-        .name = "Brown Betty",
-        .price = rand_price(),
-        .size = rand_size(),
-        .unit = rand_unit(),
-    };
-    store_item_s item11 = {
-        .name = "Cabinet pudding",
-        .price = rand_price(),
-        .size = rand_size(),
-        .unit = rand_unit(),
-    };
-    store_item_s item12 = {
-        .name = "Che",
-        .price = rand_price(),
-        .size = rand_size(),
-        .unit = rand_unit(),
-    };
-    store_item_s item13 = {
-        .name = "Chocolate Biscuit pudding",
-        .price = rand_price(),
-        .size = rand_size(),
-        .unit = rand_unit(),
-    };
-    store_item_s item14 = {
-        .name = "Christmas pudding",
-        .price = rand_price(),
-        .size = rand_size(),
-        .unit = rand_unit(),
-    };
-    store_item_s item15 = {
-        .name = "Clootie dumpling",
-        .price = rand_price(),
-        .size = rand_size(),
-        .unit = rand_unit(),
-    };
-    store_item_s item16 = {
-        .name = "Coconut pudding",
-        .price = rand_price(),
-        .size = rand_size(),
-        .unit = rand_unit(),
+        .unit = LITERS,
     };
 
-    item1.price_per_unit = item1.price / item1.size;
-    item2.price_per_unit = item2.price / item2.size;
-    item3.price_per_unit = item3.price / item3.size;
-    item4.price_per_unit = item4.price / item4.size;
-    item5.price_per_unit = item5.price / item5.size;
-    item6.price_per_unit = item6.price / item6.size;
-    item7.price_per_unit = item7.price / item7.size;
-    item8.price_per_unit = item8.price / item8.size;
-    item9.price_per_unit = item9.price / item9.size;
-    item10.price_per_unit = item10.price / item10.size;
-    item11.price_per_unit = item11.price / item11.size;
-    item12.price_per_unit = item12.price / item12.size;
-    item13.price_per_unit = item13.price / item13.size;
-    item14.price_per_unit = item14.price / item14.size;
-    item15.price_per_unit = item15.price / item15.size;
-    item16.price_per_unit = item16.price / item16.size;
-
-    store.items[0] = item1;
-    store.items[1] = item2;
-    store.items[2] = item3;
-    store.items[3] = item4;
-    store.items[4] = item5;
-    store.items[5] = item6;
-    store.items[6] = item7;
-    store.items[7] = item8;
-    store.items[8] = item9;
-    store.items[9] = item10;
-    store.items[10] = item11;
-    store.items[11] = item12;
-    store.items[12] = item13;
-    store.items[13] = item14;
-    store.items[14] = item15;
-    store.items[15] = item16;
-
-    store.items_count = 16;
-
-    basket_item_s basket[20];
-
-    basket_item_s basket_item1 = {
-        .name = "Almond jelly",
-        .unit = 1,
-        .size = rand_size()
-    };
-    basket_item_s basket_item2 = {
-        .name = "Coconut pudding",
-        .unit = rand_unit(),
-        .size = rand_size()
-    };
-    basket_item_s basket_item3 = {
-        .name = "Clootie dumpling",
-        .unit = rand_unit(),
-        .size = rand_size()
-    };
-    basket_item_s basket_item4 = {
-        .name = "Chocolate Biscuit pudding",
-        .unit = rand_unit(),
-        .size = rand_size()
-    };
-    basket_item_s basket_item5 = {
-        .name = "Che",
-        .unit = rand_unit(),
-        .size = rand_size()
-    };
-    basket_item_s basket_item6 = {
-        .name = "Cabinet pudding",
-        .unit = rand_unit(),
-        .size = rand_size()
-    };
-    basket_item_s basket_item7 = {
-        .name = "Brown Betty",
-        .unit = rand_unit(),
-        .size = rand_size()
-    };
-    basket_item_s basket_item8 = {
-        .name = "Bread and butter pudding",
-        .unit = rand_unit(),
-        .size = rand_size()
-    };
-    basket_item_s basket_item9 = {
-        .name = "Blancmange",
-        .unit = rand_unit(),
-        .size = rand_size()
-    };
-    basket_item_s basket_item10 = {
-        .name = "Banh chuoi",
-        .unit = rand_unit(),
-        .size = rand_size()
-    };
-    basket_item_s basket_item11 = {
-        .name = "rope",
-        .unit = rand_unit(),
-        .size = rand_size()
-    };
-    basket_item_s basket_item12 = {
-        .name = "milk",
-        .unit = rand_unit(),
-        .size = rand_size()
-    };
-    basket_item_s basket_item13 = {
-        .name = "genius",
-        .unit = rand_unit(),
-        .size = rand_size()
-    };
-    basket_item_s basket_item14 = {
-        .name = "pudding",
-        .unit = rand_unit(),
-        .size = rand_size()
+    store.items[1] = (store_item_s){
+        .name = "Not in basket",
+        .size = 5,
+        .unit = UNITS,
     };
 
-    basket[0] = basket_item1;
-    basket[1] = basket_item2;
-    basket[2] = basket_item3;
-    basket[3] = basket_item4;
-    basket[4] = basket_item5;
-    basket[5] = basket_item6;
-    basket[6] = basket_item7;
-    basket[7] = basket_item8;
-    basket[8] = basket_item9;
-    basket[9] = basket_item10;
-    basket[10] = basket_item11;
-    basket[11] = basket_item12;
-    basket[12] = basket_item13;
-    basket[13] = basket_item14;
+    store.items[2] = (store_item_s){
+        .name = "Pudding",
+        .size = 5,
+        .unit = UNITS,
+    };
 
-    printf("Basket Items\n--------------------------------\n");
-    for (int i = 0; i < 14; i++)
-    {
-        printf("Item %d:\n", i);
-        printf("name: %s\n size: %lf\n unit: %s\n\n",
-               basket[i].name,
-               basket[i].size,
-               get_unit(basket[i].unit));
-    }
-    printf("Basket Items End\n--------------------------------\n");
+    // Call the function being tested
+    items_filter_items(&store, 1);
 
-    store.found_items_count = 0;
-    store.missing_items_count = 0;
+    // Verify the item counts
+    assert(store.found_items_count == 2);
+    assert(store.missing_items_count == 3);
 
-    items_filter_items(basket, 14, &store);
+    // Verify the individual items
+    assert(strcmp(store.found_items[0].name, "Milk") == 0);
+    assert(strcmp(store.found_items[1].name, "Pudding") == 0);
 
-    printf("Store Items\n--------------------------------\n");
-    for (int i = 0; i < store.items_count; ++i) {
+    assert(strcmp(store.missing_items[0].name, "Beef") == 0);
+    assert(strcmp(store.missing_items[1].name, "Noodles") == 0);
+    assert(strcmp(store.missing_items[2].name, "Snickers") == 0);
 
-        printf("Item %d:\n", i);
-        printf("name: %s\n"
-               " product_price: %lf\n"
-               " price_per_unit: %lf\n"
-               " size: %lf\n"
-               " unit: %s\n\n",
-               store.items[i].name,
-               store.items[i].price,
-               store.items[i].price_per_unit,
-               store.items[i].size,
-               get_unit(store.items[i].unit));
-    }
+    free(store.items);
+    free(store.found_items);
 
+}
 
-    printf("Found Items\n--------------------------------\n");
-    for (int i = 0; i < store.found_items_count; i++)
-    {
-        printf("Item %d:\n", i);
-        printf("name: %s\n "
-               "product_price: %lf\n"
-               " price_per_unit: %lf\n"
-               " size: %lf\n unit: %s\n"
-               " count: %d\n"
-               " total_price: %lf\n\n",
-               store.found_items[i].name,
-               store.found_items[i].product_price,
-               store.found_items[i].price_per_unit,
-               store.found_items[i].size,
-               get_unit(store.found_items[i].unit),
-               store.found_items[i].count,
-               store.found_items[i].product_price * store.found_items[i].count);
-    }
+// Run all tests
+int main()
+{
+    test_items_compare_item_names();
+    test_items_compare_item_units();
+    test_items_compare_item_price_per_unit();
+    test_items_alternate_unit_match();
+    test_items_convert_to_found_item();
+    test_items_add_item_to_found_and_missing();
+    test_items_is_in_variation();
+    test_items_find_best_match();
+    test_items_filter_items();
 
-
-    printf("Missing Items\n--------------------------------\n");
-    for (int i = 0; i < store.missing_items_count; i++)
-    {
-        printf("Item %d:\n", i);
-        printf("name: %s\n", store.missing_items[i].name);
-        printf("size: %lf\n", store.missing_items[i].size);
-        printf("unit: %s\n\n", get_unit(store.missing_items[i].unit));
-    }
-
-   free(store.items);
-   free(store.found_items);
-   free(store.missing_items);
-   
     return 0;
-}
-
-int rand_size() {
-    // rand() % (max_number + 1 - minimum_number) + minimum_number
-    return rand() % (5 + 1 - 1) + 1;
-}
-
-int rand_unit() {
-    return rand() % (2 + 1);
-}
-
-double rand_price() {
-    return rand() % (500 + 1 - 1) + 1;
-}
-
-char* get_unit(int n) {
-
-    switch (n) {
-        case 0: {
-            return "KILOGRAMS";
-        }
-        case 1: {
-            return "LITERS";
-        }
-        case 2: {
-            return "UNITS";
-        }
-    }
 }
