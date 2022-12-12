@@ -17,7 +17,7 @@ int main() {
     new_settings.deviance = 10;
     assert(conf_write_settings(&new_settings));
 
-    conf_write_settings(&settings);
+    assert(conf_read_settings(&settings));
 
     assert(strcmp(settings.shopping_list_save_path, new_settings.shopping_list_save_path) == 0);
     assert(settings.max_distance == new_settings.max_distance);
