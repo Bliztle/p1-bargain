@@ -4,7 +4,7 @@
 #include "../calc.h"
 #include "../items_types.h"
 #include "../config.h"
-#include "../mock_functions.h"
+#include "../basket.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -443,10 +443,11 @@ basket_item_s *__fetch_mock_basket()
 
 void fetch_get_salling_items(store_s *store)
 {
-    // TODO: Read from basket
-    int basket_size = 0;
-    basket_item_s *basket_items = test_get_basket(&basket_size);
-
+    basket_s *basket_linked_list = basket_read();
+    basket_item_s **basket;
+    int basket_size = basket_to_array(basket_linked_list, basket);
+    basket_item_s *real_basket = *basket;
+    
     int count = 0;
     store_item_s *items = NULL;
 
@@ -455,7 +456,7 @@ void fetch_get_salling_items(store_s *store)
     for (int i = 0; i < MOCK_BASKET_SIZE; i++)
     {
         char url[255];
-        snprintf(url, 255, "https://api.sallinggroup.com/v1-beta/product-suggestions/relevant-products?query=%s", basket_items[i].name);
+        snprintf(url, 255, "https://api.sallinggroup.com/v1-beta/product-suggestions/relevant-products?query=%s", real_basket[i].name);
 
         char *raw_items = NULL;
         fetch_status_e status = fetch_get(url, FETCH_AUTH_BEARER, SALLING_TOKEN, &raw_items);

@@ -18,14 +18,14 @@ void stores_populate_store_items(store_s *stores, int store_count)
             fetch_get_coop_items(&stores[n]);
             break;
         case SALLING:
-            // fetch_get_salling_items(&(stores[n])); // TODO: Implement when function get_salling_items has been implemented.
+            fetch_get_salling_items(&(stores[n])); // TODO: Implement when function get_salling_items has been implemented.
             break;
         default:
             printf("Store %d - Store[%d].group did not match any known case.\n", stores[n].uid, n);
             break;
         }
 
-        items_filter_items(&stores[n]);
+        items_filter_items(&stores[n], 0);
     }
 }
 

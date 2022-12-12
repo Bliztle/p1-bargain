@@ -405,7 +405,7 @@ void test_items_filter_items() {
     };
 
     // Call the function being tested
-    items_filter_items(&store);
+    items_filter_items(&store, 1);
 
     // Verify the item counts
     assert(store.found_items_count == 2);

@@ -20,9 +20,10 @@ int items_find_best_match(basket_item_s requested_item, store_s *store, found_it
  * @returns nothing
  *
  * @param store the store to look for items in
+ * @param testing defines whether to use mock basket or basket file.
  *
  */
-void items_filter_items(store_s *store);
+void items_filter_items(store_s *store, int testing);
 
 /**
  * calculates the amount of items necesary to make up the requested total size within a given variance

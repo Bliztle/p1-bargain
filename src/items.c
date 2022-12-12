@@ -7,13 +7,13 @@
 #include "bargain.h"
 #include "api/parse.h"
 #include "basket.h"
+#include "mock_functions.h"
 
 int items_find_best_match(basket_item_s requested_item, store_s *store, found_item_s *found_destination, basket_item_s *missing_destination)
 {
 
     conf_settings_s settings;
     conf_read_settings(&settings);
-
 
     double variance = settings.deviance;
 
@@ -70,13 +70,23 @@ int items_find_best_match(basket_item_s requested_item, store_s *store, found_it
     return item_found;
 }
 
-void items_filter_items(store_s *store)
+void items_filter_items(store_s *store, int testing)
 {
 
-    basket_s *basket_linked_list = basket_read();
-    basket_item_s **basket;
-    int basket_size = basket_to_array(basket_linked_list, basket);
-    basket_item_s *real_basket = *basket;
+    int basket_size = 0;
+    basket_item_s *real_basket;
+    if (testing) {
+
+        real_basket = test_get_basket(&basket_size);
+
+    } else {
+        
+        basket_s *basket_linked_list = basket_read();
+        basket_item_s **basket;
+        int basket_size = basket_to_array(basket_linked_list, basket);
+        real_basket = *basket;
+
+    }
 
     store->found_items = malloc(sizeof(found_item_s) * store->items_count);
     store->missing_items = malloc(sizeof(basket_item_s) * store->items_count);
