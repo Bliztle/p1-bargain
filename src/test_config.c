@@ -11,7 +11,7 @@ int main() {
     conf_settings_s settings;
 
     conf_settings_s new_settings;
-    strcpy(new_settings.shopping_list_save_path, "shopping.txt");
+    strcpy(new_settings.shopping_list_save_path, "shopping/");
     strcpy(new_settings.address, "korruptionsgade 5 100 christiansborg");
     new_settings.max_distance = 2000;
     new_settings.deviance = 10;
