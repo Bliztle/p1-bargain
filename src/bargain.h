@@ -2,6 +2,7 @@
 #define BARGAIN_H
 #include "items_types.h"
 #include "stddef.h"
+#include "config.h"
 
 void bargain_run_bargain();
 
@@ -111,4 +112,7 @@ void get_size_of_list_entries(store_s store, int *found_list_size, int *missing_
  * @param n, the number of the enum.
  */
 char *bargain_get_unit(int n);
+
+int bargain_export(store_s store, conf_settings_s settings);
+
 #endif /* BARGAIN_H */

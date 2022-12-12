@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <time.h>
+#include <errno.h>
 
 #include "bargain.h"
 #include "stores.h"
@@ -8,6 +10,7 @@
 #include "menu.h"
 #include "api/fetch.h"
 #include "mock_functions.h"
+#include "config.h"
 
 #define MAX_STORES_COUNT 3
 #define MAIN_MENU_ITEMS_COUNT 3
@@ -197,7 +200,7 @@ void bargain_print_bargain_result(store_s store)
            17, store.found_items_total_price);
 
     
-    printf("|-----------------------------------------------------------------------------------------------------------|\n");
+    printf("|===========================================================================================================|\n");
 
 }
 
@@ -208,12 +211,96 @@ void bargain_menu_print_bargain(store_s store)
     int selected_option = 10;
     while (selected_option != -1)
     {
-            bargain_print_bargain_result(store);
-            selected_option = display_menu(&options, "", "[1]: saves the shopping list as a text file to the localtion specified in user settings.\n");
-        if (selected_option != 1 || selected_option != -1) {
-            printf("Please enter a number corresponding to a listed option.\n");
+        bargain_print_bargain_result(store);
+        selected_option = display_menu(&options, "", "[1]: saves the shopping list as a text file to the localtion specified in user settings.\n");
+        if (selected_option == 0) {
+            printf("Exporting...\n");
+            conf_settings_s settings;
+
+            conf_read_settings(&settings);
+            if (bargain_export(store, settings)) {
+
+                printf("File exported to %s\n", settings.shopping_list_save_path);
+                printf("Have a nice day!\n");
+                exit(EXIT_SUCCESS);
+
+            } else {
+
+                printf("Failed exporting to %s\n", settings.shopping_list_save_path);
+                perror("error: ");
+                exit(EXIT_FAILURE);
+            }
         }
     }
+}
+
+int bargain_export(store_s store, conf_settings_s settings) {
+
+    char filename[100];
+
+    time_t curtime;
+
+    time(&curtime);
+
+    char *time = ctime(&curtime);
+
+    time[strlen(time) - 1] = 0;
+
+    
+
+    // TODO: Make it possible to export more than one, by just taking a folder as a path, and not a file name.
+    snprintf(filename, 100, "%s%s-%s%s", settings.shopping_list_save_path, store.name, time, ".txt");
+    // snprintf(filename, 50, "%s", settings.shopping_list_save_path);
+
+    FILE *export_file = fopen(filename, "w");
+
+    fprintf(export_file, "|===========================================================================================================|\n");
+    fprintf(export_file, "|                                               SHOPPING LIST                                               |\n");
+    fprintf(export_file, "|===========================================================================================================|\n");
+    fprintf(export_file, "| # | Product                                            |   count   |       price/unit       | total price |\n");
+    fprintf(export_file, "|-----------------------------------------------------------------------------------------------------------|\n");
+
+    for (int i = 0; i < store.found_items_count; i++)
+    {
+        fprintf(export_file, "| %d | %-*s | %*d pcs. | %*.2lf dkk./%-*s | %*.2lf dkk.|\n", i + 1, 50, store.found_items[i].name, 4, store.found_items[i].count, 6, store.found_items[i].price_per_unit, 10, bargain_get_unit(store.found_items[i].unit), 7, store.found_items[i].total_price);
+    }
+
+    fprintf(export_file, "|===========================================================================================================|\n");
+    fprintf(export_file, "|                                               Missing Items                                               |\n");
+    fprintf(export_file, "|===========================================================================================================|\n");
+    fprintf(export_file, "| # | Product                                                                                               |\n");
+    fprintf(export_file, "|-----------------------------------------------------------------------------------------------------------|\n");
+
+    for (int i = 0; i < store.missing_items_count; i++)
+    {
+        fprintf(export_file, "| %d | %-*s |\n", i + 1, 101, store.missing_items[i].name);
+    }
+
+    fprintf(export_file, "|===========================================================================================================|\n");
+    fprintf(export_file, "|                                                   STORE                                                   |\n");
+    fprintf(export_file, "|===========================================================================================================|\n");
+    fprintf(export_file, "| Name                                                | Address                                             |\n");
+
+    fprintf(export_file, "| %-*s | %-*s |\n",
+            51, store.name,
+            51, store.address);
+
+    fprintf(export_file, "|-----------------------------------------------------------------------------------------------------------|\n");
+    fprintf(export_file, "|              Distance             |            Items Found            |            Total Price            |\n");
+
+    fprintf(export_file, "| %*d m.             | %*d/%-*d | %*.2lf dkk.            |\n",
+           18, store.distance,
+           16, store.found_items_count,
+           16, store.missing_items_count + store.found_items_count,
+           17, store.found_items_total_price);
+
+    
+    fprintf(export_file, "|===========================================================================================================|\n");
+
+    fclose(export_file);
+
+    return 1;
+
 }
 
 /* 
