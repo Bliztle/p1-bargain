@@ -65,6 +65,10 @@ add_test(NAME fetch_test COMMAND fetch_test)
 add_executable( parse_test 
                 api/parse_test.c 
                 api/parse.c
-                api/nxjson/nxjson.c)
+                api/fetch.c
+                calc.c
+                config.c 
+                api/nxjson/nxjson.c
+                mock_functions.c)
 target_link_libraries(parse_test libcurl m)
 add_test(NAME parse_test COMMAND parse_test)
