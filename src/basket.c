@@ -30,8 +30,8 @@ void basket_remove(basket_s **basket, size_t index) {
     basket_s *prev = NULL;
     for (int i = 0; i < index; i++) {
         prev = element;
-        if (basket != NULL) {
-            element = (*basket)->next;
+        if (element != NULL) {
+            element = element->next;
         }
     }
     prev->next = element->next;
