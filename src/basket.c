@@ -132,6 +132,7 @@ void basket_write(basket_s *basket) {
 }
 
 void basket_print(basket_s *basket) {
+    printf("\n");
     if (basket == NULL) {
         printf("The basket is empty\n\n");
         return;
@@ -139,6 +140,7 @@ void basket_print(basket_s *basket) {
     for (basket_s *element = basket; element != NULL; element = element->next) {
         printf("%s - %.2lf %s\n", element->item.name, element->item.size, UNIT_NAMES[element->item.unit]);
     }
+    printf("\n");
 }
 
 void menu_basket_edit() {
@@ -247,10 +249,12 @@ void menu_basket_remove() {
 
     while (basket != NULL) {
         int item_count = 1;
+        printf("\n");
         for (basket_s *element = basket; element != NULL; element = element->next) {
             printf("[%d] %s - %.2lf %s\n", item_count, element->item.name, element->item.size, UNIT_NAMES[element->item.unit]);
             item_count++;
         }
+        printf("\n");
 
         char input[16] = "";
 
