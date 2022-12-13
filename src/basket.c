@@ -225,6 +225,7 @@ void menu_basket_add() {
             parse_populate_item_unit(&store_item);
             if (store_item.unit == UNKNOWN) {
                 printf("Please enter a valid amount (A number followed by a unit. Enter !h for more information)\n");
+                continue;
             }
             item.size = store_item.size;
             item.unit = store_item.unit;
