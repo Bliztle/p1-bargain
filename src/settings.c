@@ -43,24 +43,27 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
     
     char str2[MAX_INPUT_SIZE];
 
-    char str3[100] = "\nEnter new setting";
+    char str3[MAX_INPUT_SIZE] = "\nEnter new setting";
 
     switch (setting) {
         case PATH:
-            strcpy(str3, "\nMake sure that the given path ends in a '/' and is an existing folder");
             sprintf(str2, "%s", settings->shopping_list_save_path);
+            strcpy(str3, "\nMake sure that the given path ends in a '/' and is an existing folder");
             break;
         
         case ADDRESS:
             sprintf(str2, "%s", settings->address);
+            strcpy(str3, "\nPlease enter the full address for the best results");
             break;
 
         case DISTANCE:
             sprintf(str2, "%d", settings->max_distance);
+            strcpy(str3, "\nPlease enter a distance in meters");
             break;
 
         case DEVIATION:
             sprintf(str2, "%lf", settings->deviance);
+            strcpy(str3, "\nPlease enter a deviance between zero and one. Ex. 0.15");
             break;
     }
 
