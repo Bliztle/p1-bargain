@@ -105,7 +105,7 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
                 }
             }*/
 
-            switch (setting) {
+            switch (setting) { // Prints current setting value
                 case PATH:
                     sprintf(settings->shopping_list_save_path, "%s", input);
                     break;
@@ -134,7 +134,7 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
                     break;
              }
 
-            conf_write_settings(settings);
+            conf_write_settings(settings); // Write to config
 
             return;
         }
