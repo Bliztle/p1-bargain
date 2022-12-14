@@ -30,8 +30,8 @@ void basket_remove(basket_s **basket, size_t index) {
     basket_s *prev = NULL;
     for (int i = 0; i < index; i++) {
         prev = element;
-        if (basket != NULL) {
-            element = (*basket)->next;
+        if (element != NULL) {
+            element = element->next;
         }
     }
     prev->next = element->next;
@@ -71,12 +71,17 @@ int basket_to_array(basket_s *basket, basket_item_s **items) {
         element = element->next;
     }
 
-    *items = malloc(length * sizeof(basket_item_s));
+    basket_item_s *new_basket = malloc(length * sizeof(basket_item_s));
+    //*items = malloc(length * sizeof(basket_item_s));
+    
     element = basket;
     for (int i = 0; i < length; i++) {
-        *items[i] = element->item;
+        new_basket[i] = element->item;
         element = element->next;
     }
+
+    *items = new_basket;
+
     return length;
 }
 
@@ -127,6 +132,7 @@ void basket_write(basket_s *basket) {
 }
 
 void basket_print(basket_s *basket) {
+    printf("\n");
     if (basket == NULL) {
         printf("The basket is empty\n\n");
         return;
@@ -134,6 +140,7 @@ void basket_print(basket_s *basket) {
     for (basket_s *element = basket; element != NULL; element = element->next) {
         printf("%s - %.2lf %s\n", element->item.name, element->item.size, UNIT_NAMES[element->item.unit]);
     }
+    printf("\n");
 }
 
 void menu_basket_edit() {
@@ -150,13 +157,13 @@ void menu_basket_edit() {
 
     while ((option = display_menu(options, menu_text, help_text)) != -1) {
         switch (option) {
-            case 1:
+            case 0:
                 menu_basket_add();
                 break;
-            case 2:
+            case 1:
                 menu_basket_remove();
                 break;
-            case 3: {
+            case 2: {
                 basket_s *basket = basket_read();
                 basket_print(basket);
                 basket_free(basket);
@@ -218,6 +225,7 @@ void menu_basket_add() {
             parse_populate_item_unit(&store_item);
             if (store_item.unit == UNKNOWN) {
                 printf("Please enter a valid amount (A number followed by a unit. Enter !h for more information)\n");
+                continue;
             }
             item.size = store_item.size;
             item.unit = store_item.unit;
@@ -242,10 +250,12 @@ void menu_basket_remove() {
 
     while (basket != NULL) {
         int item_count = 1;
+        printf("\n");
         for (basket_s *element = basket; element != NULL; element = element->next) {
             printf("[%d] %s - %.2lf %s\n", item_count, element->item.name, element->item.size, UNIT_NAMES[element->item.unit]);
             item_count++;
         }
+        printf("\n");
 
         char input[16] = "";
 

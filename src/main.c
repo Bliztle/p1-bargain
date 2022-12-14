@@ -1,20 +1,12 @@
-#include <stdio.h>
-#include <curl/curl.h>
-#include "api/fetch.h"
-#include "config.h"
-#include "settings.h"
-#include "api/parse.h"
-
+#include "bargain.h"
 
 char *CURRENT_DIRECTORY;
 
 int main(int argc, char **args)
 {
-    conf_settings_s settings;
-    
-    conf_setup();
-
-    //menu_settings(&settings);
+    CURRENT_DIRECTORY = args[0];
+    // TODO: Run conf_setup() to setup the config file.
+    bargain_run_bargain();
 
     return 0;
 }

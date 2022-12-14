@@ -3,6 +3,7 @@ Look into NXJSON or cJSON for parsing api responses
 https://stackoverflow.com/a/16490394
 */
 #include "parse.h"
+#include "fetch.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -11,7 +12,7 @@ https://stackoverflow.com/a/16490394
 #include <math.h>
 
 static const char *store_chain_map[] = {
-    [STORE_GROUP_BILKA] = "bilka",
+    [STORE_CHAIN_BILKA] = "bilka",
 
     [STORE_GROUP_SUPER_BRUGSEN] = "SuperBrugsen",
     [STORE_GROUP_KVICKLY] = "Kvickly",
@@ -37,7 +38,7 @@ int parse_salling_stores(char *raw_stores, store_s **stores)
         *stores = realloc(*stores, ++count * sizeof(store_s));
         store_s *store = &(*stores)[count - 1];
 
-        store->chain = STORE_GROUP_BILKA;
+        store->chain = STORE_CHAIN_BILKA;
         store->group = SALLING;
         store->distance = nx_json_get(json_store, "distance_km")->num.dbl_value;
         strncpy(store->uid, nx_json_get(json_store, "id")->text_value, STORE_UID_SIZE);
@@ -71,7 +72,7 @@ int parse_coop_stores(char *raw_stores, store_s **stores)
         *stores = realloc(*stores, ++count * sizeof(store_s));
         store_s *store = &(*stores)[count - 1];
 
-        store->group = SALLING;
+        store->group = COOP;
         store->distance = 0;
         snprintf(store->uid, STORE_UID_SIZE, "%d", (int)nx_json_get(json_store, "Kardex")->num.u_value);
         strncpy(store->name, nx_json_get(json_store, "Name")->text_value, STORE_NAME_SIZE);
@@ -108,6 +109,12 @@ int parse_coop_items(const nx_json *json, store_item_s **items)
          json_item = json_item->next)
     {
         *items = realloc(*items, ++count * sizeof(store_item_s));
+        if (*items == NULL)
+        {
+            printf("Failed to allocate memory for items");
+            // Handle the error by returning an error code or logging a message
+            return -1;
+        }
         store_item_s *item = (&(*items)[count - 1]);
 
         strncpy(item->name, nx_json_get(json_item, "Navn")->text_value, ITEM_NAME_SIZE);
@@ -142,11 +149,6 @@ int parse_salling_items(char *raw_items, store_item_s **items)
 
         strncpy(item->name, nx_json_get(json_item, "title")->text_value, ITEM_NAME_SIZE);
         item->price = nx_json_get(json_item, "price")->num.dbl_value;
-
-        if (strstr(item->name, "PAPTALLERKEN"))
-        {
-            int i = 0;
-        }
 
         parse_populate_item_unit(item);
     }
@@ -196,7 +198,7 @@ void parse_populate_item_unit(store_item_s *item)
 
     for (int i = 0; i < 4; i++)
     {
-        if ((size = parse_try_extract_size(item->name, l_unit_strs[i])))
+        if ((size = parse_try_extract_size(item->name, g_unit_strs[i])))
         {
             item->size = size / pow(10, i);
             item->unit = KILOGRAMS;
@@ -237,14 +239,20 @@ char *parse_try_regex_group(char *source, char *regex)
     regex_t regexCompiled;
     regmatch_t groupArray[maxGroups];
 
+    // Match on encoded strings, as REG_ICASE doesn't work on UTF-8
+    char *_source = encode_danish(source);
+    char *_regex = encode_danish(regex);
+
     char *group = NULL;
 
-    if (regcomp(&regexCompiled, regex, REG_EXTENDED | REG_ICASE))
+    if (regcomp(&regexCompiled, _regex, REG_EXTENDED | REG_ICASE))
     {
+        free(_source);
+        free(_regex);
         return NULL;
     };
 
-    if (regexec(&regexCompiled, source, maxGroups, groupArray, 0) == 0 && // Successfull regex execution
+    if (regexec(&regexCompiled, _source, maxGroups, groupArray, 0) == 0 && // Successfull regex execution
         groupArray[1].rm_so != (size_t)-1)                                // Matched on group
     {
         // Extract match using start / end indexes

@@ -23,6 +23,8 @@ cmake-build-debug/src/*
 # Ignore changes to token file
 src/api/salling-token.txt
 
+# Ignore debug log
+valgrind-out.txt
 ############################################# Below is default stuff #############################################
 
 # Prerequisites

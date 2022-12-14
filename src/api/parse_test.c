@@ -35,8 +35,22 @@ int main()
     // char* c_size = parse_try_regex_group("some text here and 10 STK with more", "/([0-9]+)[ ]?STK/i");
     char* c_size = parse_try_regex_group("some text here and 10 STK with more", "([0-9]+)[ ]?STK");
     assert(strcmp(c_size, "10") == 0);
-    double rexeg_size = parse_try_extract_size("some text here and 10 stk with more", "STK");
+
+    char* unicode_regex1 = parse_try_regex_group("some text here and æg STK with more", "(æg)");
+    assert(strcmp(unicode_regex1, "æg") == 0);
+    char* unicode_regex2 = parse_try_regex_group("some text here and ÆG STK with more", "(æg)");
+    assert(strcmp(unicode_regex2, "ÆG") == 0);
+    char* unicode_regex3 = parse_try_regex_group("some text here and æg STK with more", "(ÆG)");
+    assert(strcmp(unicode_regex3, "æg") == 0);
+    char* unicode_regex4 = parse_try_regex_group("some text here and ÆG STK with more", "(ÆG)");
+    assert(strcmp(unicode_regex4, "ÆG") == 0);
+
+    double rexeg_size = parse_try_extract_size("some teøxt here and 10 stk with more", "STK");
     assert(rexeg_size == 10);
+
+    double nut_size = parse_try_extract_size("VALNØDDER  |  900 G. NET", "G");
+    assert(nut_size == 900);
+
 
     return 0;
 }

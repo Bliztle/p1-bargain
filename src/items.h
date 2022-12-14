@@ -11,30 +11,29 @@
  * @param requested_item item to search for
  * @param all_items_in_store list of all items to search through
  * @param destination address of found item, if any.
-*/
+ */
 int items_find_best_match(basket_item_s requested_item, store_s *store, found_item_s *found_destination, basket_item_s *missing_destination);
 
 /**
- *  Modifies `store.items` and `store.missing` items to contain the cheapest items that match each item in `basket`
+ *  Modifies `store.items` and `store.missing` items to contain the cheapest items that match each item in `basket`, which it reads from disk.
  *
  * @returns nothing
  *
- * @param basket list of items to look for
- * @param basket_size amount of items to look for
  * @param store the store to look for items in
+ * @param testing defines whether to use mock basket or basket file.
  *
-*/
-void items_filter_items(basket_item_s *basket, int basket_size, store_s *store);
+ */
+void items_filter_items(store_s *store, int testing);
 
 /**
  * calculates the amount of items necesary to make up the requested total size within a given variance
  *
- * @retruns the amount of items, 0 if not possible
+ * @returns the amount of items, 0 if no number in variance of requested size is disivible by store item size.
  *
  * @param store_item_size the size of a given item
  * @param variance acceptable percentage variance given as a number between 0 and 1
  * @param requested_size the amount to match, within the variance
-*/
+ */
 int items_is_in_variation(double store_item_size, double variance, double requested_size);
 
 /**
@@ -78,5 +77,12 @@ found_item_s items_convert_to_found_item(store_item_s input_item, int item_count
  * @param name_to_search the string to search in.
  *
  * */
-int items_compare_item_names(char* name_to_find, char* name_to_search);
+int items_compare_item_names(char *name_to_find, char *name_to_search);
+
+int items_compare_item_units(item_unit_e requested_unit, item_unit_e store_unit);
+
+int items_compare_item_price_per_unit(item_price_t best_item_price, item_price_t store_price);
+
+int items_alternate_unit_match(item_unit_e requested_unit, item_unit_e best_item_unit, item_price_t store_price, item_price_t best_item_price);
+
 #endif
