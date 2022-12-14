@@ -16,7 +16,7 @@ int main() {
     strcpy(new_settings.shopping_list_save_path, "shopping/");
     strcpy(new_settings.address, "Selma Lagerløfs Vej 300");
     new_settings.max_distance = 2000;
-    new_settings.deviance = 10;
+    new_settings.deviance = 0.15;
     assert(conf_write_settings(&new_settings));
 
     conf_read_settings(&cmp_settings);

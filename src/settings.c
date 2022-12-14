@@ -89,7 +89,9 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
             printf("%s\n", help_text);
         }
         else if (settings_validate(input, setting)) { // If input is valid for the current setting
-            /*if (setting == ADDRESS) {
+            
+            //! Commented out because of limited calls 
+            /*if (setting == ADDRESS) { 
                 fetch_status_e status_code = fetch_renew_stores();
 
                 if (status_code != FETCH_STATUS_SUCCESS) {
