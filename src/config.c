@@ -6,8 +6,6 @@ int conf_read_settings(conf_settings_s *settings) {
     if (config_file == NULL) {
         perror("Error");
 
-        perror("Error");
-
         return 0;
     }
 
@@ -88,7 +86,6 @@ int conf_check_valid() {
 }
 
 void conf_create() {
-    FILE *config_file = fopen(SETTINGS_PATH, "w");
     conf_settings_s settings;
 
     char temp_s[100];
@@ -107,8 +104,7 @@ void conf_create() {
 
     printf("please enter the address\n >");
     while (1) {
-        scanf(" %[0-9a-zA-Z ]", temp_s);
-
+        scanf(" %[^\n]s", temp_s);
         if (!settings_validate_address(temp_s)) {
             continue;
         }
@@ -145,6 +141,4 @@ void conf_create() {
     }
 
     conf_write_settings(&settings);
-
-    fclose(config_file);
 }
