@@ -9,8 +9,6 @@
 #include "settings.h"
 
 void menu_settings(conf_settings_s *settings) {
-    conf_setup();
-
     char *options[4];
 
     options[0] = "Change the export path";
