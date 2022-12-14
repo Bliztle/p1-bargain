@@ -58,6 +58,7 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
 
         case DISTANCE:
             sprintf(str2, "%d", settings->max_distance);
+            strcat(str2, "m");
             strcpy(str3, "\nPlease enter a distance in meters");
             break;
 
