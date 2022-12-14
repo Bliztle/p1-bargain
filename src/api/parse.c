@@ -198,7 +198,7 @@ void parse_populate_item_unit(store_item_s *item)
 
     for (int i = 0; i < 4; i++)
     {
-        if ((size = parse_try_extract_size(item->name, l_unit_strs[i])))
+        if ((size = parse_try_extract_size(item->name, g_unit_strs[i])))
         {
             item->size = size / pow(10, i);
             item->unit = KILOGRAMS;
