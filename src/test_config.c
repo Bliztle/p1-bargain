@@ -26,7 +26,7 @@ int main() {
     assert(strcmp(cmp_settings.address, new_settings.address) == 0);
     assert(cmp_settings.deviance == new_settings.deviance);
 
-    conf_setup();
+    assert(conf_check_valid());
 
     conf_write_settings(&old_settings);
 }
