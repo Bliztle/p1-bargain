@@ -11,7 +11,10 @@ char *CURRENT_DIRECTORY;
 int main(int argc, char **args)
 {
     conf_settings_s settings;
-    menu_settings(&settings);
+    
+    conf_setup();
+
+    //menu_settings(&settings);
 
     return 0;
 }

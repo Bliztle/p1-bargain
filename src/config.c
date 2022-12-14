@@ -102,7 +102,7 @@ void conf_create() {
         break;
     }
 
-    printf("please enter the address\n >");
+    printf("Please enter the address\n >");
     while (1) {
         scanf(" %[^\n]s", temp_s);
         if (!settings_validate_address(temp_s)) {
@@ -116,7 +116,7 @@ void conf_create() {
         break;
     }
 
-    printf("please enter the distance\n >");
+    printf("Please enter the distance\n >");
     while (1) {
         scanf(" %s", temp_s);
 
@@ -128,7 +128,7 @@ void conf_create() {
         break;
     }
 
-    printf("please enter the deviance\n >");
+    printf("Please enter the deviance\n >");
     while (1) {
         scanf(" %s", temp_s);
 
