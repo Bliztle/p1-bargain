@@ -13,7 +13,7 @@ int conf_read_settings(conf_settings_s *settings) {
     fscanf(config_file, "%*s %[^\n]s", settings->address);
     fscanf(config_file, "%*s %lf %lf", &settings->address_lat, &settings->address_lon);
     fscanf(config_file, "%*s %d", &settings->max_distance);
-    fscanf(config_file, "%*s %d", &settings->deviance);
+    fscanf(config_file, "%*s %lf", &settings->deviance);
 
     fclose(config_file);
 
@@ -32,7 +32,7 @@ int conf_write_settings(conf_settings_s *settings) {
     fprintf(config_file, "address %s\n", settings->address);
     fprintf(config_file, "coords %lf %lf\n", settings->address_lat, settings->address_lon);
     fprintf(config_file, "distance %d\n", settings->max_distance);
-    fprintf(config_file, "deviance %d\n", settings->deviance);
+    fprintf(config_file, "deviance %lf\n", settings->deviance);
 
     fclose(config_file);
 
@@ -47,7 +47,7 @@ void conf_setup() {
 
 int conf_check_valid() {
     // Can it be opened?
-    FILE * config_file = fopen(SETTINGS_PATH, "r");
+    FILE *config_file = fopen(SETTINGS_PATH, "r");
 
     if (config_file == NULL) {
         perror("Error");
@@ -140,7 +140,7 @@ void conf_create() {
             continue;
         }
 
-        settings.deviance = strtol(temp_s, NULL, 10);
+        settings.deviance = strtod(temp_s, NULL);
         break;
     }
 

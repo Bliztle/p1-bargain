@@ -10,8 +10,8 @@
 
 void menu_settings() {
 
-    conf_settings_s *settings;
-    conf_read_settings(settings);
+    conf_settings_s settings;
+    conf_read_settings(&settings);
 
     char *options[4];
 
@@ -23,7 +23,7 @@ void menu_settings() {
     char *menu_text = "Choose the setting you want to edit";
     char *help_text = "!q to quit the program";
     
-    conf_read_settings(settings);
+    conf_read_settings(&settings);
 
     while (1) {
         int selected_option = display_menu(options, menu_text, help_text);
@@ -32,7 +32,7 @@ void menu_settings() {
             break;
         }
 
-        settings_edit(settings, selected_option);
+        settings_edit(&settings, selected_option);
     }
 }
 
@@ -60,7 +60,7 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
             break;
 
         case DEVIATION:
-            sprintf(str2, "%d", settings->deviance);
+            sprintf(str2, "%lf", settings->deviance);
             break;
     }
 
@@ -125,7 +125,7 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
                     break;
 
                 case DEVIATION:
-                    settings->deviance = strtol(input, NULL, 10);
+                    settings->deviance = strtod(input, NULL);
                     break;
              }
 
@@ -189,9 +189,9 @@ int settings_validate_address(char *input) { // Checks if it was able to fetch a
 
 int settings_validate_deviation(char *input) {
     // Converts string to double and checks if it's valid as a deviation
-    int deviation = strtol(input, NULL, 10);
+    double deviation = strtod(input, NULL);
 
-    if (deviation <= 0) {
+    if (deviation < 0) {
         printf("Error: Invalid deviation\n");
 
         return 0;

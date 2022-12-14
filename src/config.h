@@ -6,7 +6,7 @@
 typedef char conf_save_path_t[256];
 typedef char conf_address_t[256];
 typedef int conf_max_distance_t;
-typedef int conf_deviance_t;
+typedef double conf_deviance_t;
 
 typedef struct {
     conf_save_path_t shopping_list_save_path;
