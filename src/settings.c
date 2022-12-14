@@ -190,10 +190,12 @@ int settings_validate_address(char *input) { // Checks if it was able to fetch a
 }
 
 int settings_validate_deviation(char *input) {
+    parse_replace_char(input, ',', '.'); // Replace comma with '.'
+
     // Converts string to double and checks if it's valid as a deviation
     double deviation = strtod(input, NULL);
 
-    if (deviation < 0) {
+    if (deviation <= 0 || deviation >= 1) {
         printf("Error: Invalid deviation\n");
 
         return 0;
