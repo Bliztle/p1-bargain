@@ -90,7 +90,7 @@ void conf_create() {
 
     char temp_s[100];
 
-    printf("Please enter the save-path for your shopping list\n");
+    printf("Please enter the save path for your shopping list\n");
     while (1) {
         printf(">");
         scanf(" %s", temp_s);
