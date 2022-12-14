@@ -110,22 +110,21 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
                     sprintf(settings->shopping_list_save_path, "%s", input);
                     break;
                 
-                case ADDRESS:
-                    sprintf(settings->address, "%s", input);
-
+                case ADDRESS: {
                     char* raw_coordinates;
-
-                    fetch_coordinates(input, &raw_coordinates);
-
                     double lat;
                     double lon;
+
+                    sprintf(settings->address, "%s", input);
+
+                    fetch_coordinates(input, &raw_coordinates);
 
                     parse_coordinates(&lat, &lon, raw_coordinates);
 
                     settings->address_lat = lat;
                     settings->address_lon = lon;
                     break;
-
+                }
                 case DISTANCE:
                     settings->max_distance = strtol(input, NULL, 10);
                     break;
