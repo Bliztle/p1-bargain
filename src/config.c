@@ -62,7 +62,7 @@ int conf_check_valid() {
         return 0;
     }
 
-    fscanf(config_file, "%*s %%[^\n]s", temp_s);
+    fscanf(config_file, "%*s %[^\n]s", temp_s);
     if (!settings_validate_address(temp_s)) {
         return 0;
     }
