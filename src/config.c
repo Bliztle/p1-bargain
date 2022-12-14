@@ -90,8 +90,9 @@ void conf_create() {
 
     char temp_s[100];
 
-    printf("Please enter the save-path for your shopping list\n >");
+    printf("Please enter the save-path for your shopping list\n");
     while (1) {
+        printf(">");
         scanf(" %s", temp_s);
 
         if (!settings_validate_path(temp_s)) {
@@ -102,8 +103,9 @@ void conf_create() {
         break;
     }
 
-    printf("Please enter the address\n >");
+    printf("Please enter the address\n");
     while (1) {
+        printf(">");
         scanf(" %[^\n]s", temp_s);
         if (!settings_validate_address(temp_s)) {
             continue;
@@ -116,8 +118,9 @@ void conf_create() {
         break;
     }
 
-    printf("Please enter the distance\n >");
+    printf("Please enter the distance\n");
     while (1) {
+        printf(">");
         scanf(" %s", temp_s);
 
         if (!settings_validate_distance(temp_s)) {
@@ -128,8 +131,9 @@ void conf_create() {
         break;
     }
 
-    printf("Please enter the deviance\n >");
+    printf("Please enter the deviance\n");
     while (1) {
+        printf(">");
         scanf(" %s", temp_s);
 
         if (!settings_validate_deviation(temp_s)) {
