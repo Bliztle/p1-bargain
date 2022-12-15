@@ -127,8 +127,7 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
 
             conf_write_settings(settings); // Write to config
 
-            //! Commented out because of limited calls 
-            if (setting == ADDRESS) { 
+            if (setting == ADDRESS || setting == DISTANCE) { 
                 fetch_status_e status_code = fetch_renew_stores();
 
                 if (status_code != FETCH_STATUS_SUCCESS) {
