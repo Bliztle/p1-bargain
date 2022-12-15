@@ -132,9 +132,8 @@ void bargain_menu_find_bargain()
     char *options[bargain_count];
 
     char *menu_text = "\n|======================================================================================================================================================================|\n|                                                                            Found Bargains                                                                            |\n|======================================================================================================================================================================|\n| [##] : Store                                                   | Address                                                |    Total price    | Items Found | Distance |\n|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|";
-
-    int skipped = 0;         
-    for (int i = 0; i < bargain_count; i++)
+       
+    for (int i = bargain_count - 1; i >= 0; i--)
     {
         size_t option_length = 190;
         char *option = malloc(option_length);
@@ -147,7 +146,7 @@ void bargain_menu_find_bargain()
                  5, bargains[i].missing_items_count + bargains[i].found_items_count,
                  5, bargains[i].distance);
 
-        options[i - skipped] = option;
+        options[bargain_count - i - 1] = option;
     }
     int selected_bargain = 10;
 
@@ -263,6 +262,7 @@ void bargain_menu_print_bargain(store_s store)
     }
 }
 
+
 int bargain_export(store_s store, conf_settings_s settings) {
 
     char filename[100];
@@ -277,7 +277,9 @@ int bargain_export(store_s store, conf_settings_s settings) {
 
     snprintf(filename, 100, "%s%s-%s%s", settings.shopping_list_save_path, store.name, time, ".txt");
 
-    FILE *export_file = fopen(filename, "w");
+    char *new_filename = parse_replace_char(filename, ' ', '-');
+
+    FILE *export_file = fopen(new_filename, "w");
 
     if (export_file == NULL) {
         return 0;
@@ -336,7 +338,7 @@ int bargain_export(store_s store, conf_settings_s settings) {
 
     fclose(export_file);
     
-    printf("File exported to %s\n", filename);
+    printf("File exported to %s\n", new_filename);
 
     return 1;
 
