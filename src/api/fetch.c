@@ -273,9 +273,10 @@ int _fetch_read_stores(store_s **stores)
                          &store.distance))
     {
         // TODO: Find out why it fails if items in response is empty, which it is for all uid < 10k
-        if (strlen(store.uid) < 5) {
+        // These are already filtered out in the parse function when fetching, so this is just a temporary solution, while some users data might be stale
+        if (strlen(store.uid) < 5) 
             continue;
-        }
+            
         *stores = realloc(*stores, (++count) * sizeof(store_s));
         (*stores)[count - 1] = store;
     }
