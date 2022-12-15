@@ -49,7 +49,7 @@ void bargain_run_bargain()
             menu_basket_edit();
             break;
         case 2:
-            //menu_settings();
+            menu_settings();
             break;
         }
 
@@ -86,7 +86,7 @@ store_s *filter_stores(store_s *stores, int store_count, int *bargain_counter)
         if (stores[i].found_items_count > 0)
         {
 
-            bargains[i - skipped] = stores[i - skipped];            // deep_copy_store(&stores[i]);
+            bargains[i - skipped] = stores[i];            // deep_copy_store(&stores[i]);
             (*bargain_counter)++;
 
         }
@@ -112,10 +112,10 @@ void bargain_menu_find_bargain()
     char *options[bargain_count];
 
     char *menu_text = "============================================================================================================================\n                                                       Found Bargains                                                             \n============================================================================================================================\n[#] : Store                          | Address                                  | Distance | Total price  | Items found\n----------------------------------------------------------------------------------------------------------------------------";
-                       
+
+    int skipped = 0;         
     for (int i = 0; i < bargain_count; i++)
     {
-
         size_t option_length = (100 + strlen(bargains[i].name) + strlen(bargains[i].address)) * sizeof(char);
         char *option = malloc(option_length);
 
@@ -127,13 +127,13 @@ void bargain_menu_find_bargain()
                  4, bargains[i].found_items_count,
                  4, bargains[i].missing_items_count + bargains[i].found_items_count);
 
-        options[i] = option;
+        options[i - skipped] = option;
     }
     int selected_bargain = 10;
 
     while (1)
     {
-        selected_bargain = display_menu(options, menu_text, "Enter a number to select a bargain.");
+        selected_bargain = display_bargain_menu(options, menu_text, "Enter a number to select a bargain.");
         if (selected_bargain == -1)
         {   
             for (int i = 0; i < bargain_count; i++)
@@ -152,26 +152,50 @@ void bargain_menu_find_bargain()
 int bargain_find_bargain(store_s **stores)
 {
     int store_count = fetch_get_stores(stores);
-    printf("Store count: %d\n", store_count);
+    qsort(*stores, store_count, sizeof(store_s), (compfn)stores_compare_distance);
     stores_populate_store_items(*stores, store_count);
-
     qsort(*stores, store_count, sizeof(store_s), (compfn)stores_compare_stores);
 
     return store_count;
 }
 
-void bargain_print_bargain_result(store_s store)
-{
+int bargain_check_string_length(char *input, int target) {
+
+    char dest[100];
+    memset(dest, 0, sizeof(dest));
+    strcpy(dest, input);
+    
+    int amount = 0;
+
+    for (int i = 0; i < 100; i++)
+    {
+        if (((int) dest[i]) > 127) { // 127 is the largest ascii character included in the ASCII printable characters category - https://www.ascii-code.com/
+            amount++;
+        }
+    }
+    // 'æ' || (int) input[index] == 198 || (int) input[index] == 'ø' || (int) input[index] == 'Ø' || (int) input[index] == 'å' || (int) input[index] == 'Å'
+
+    return target + (amount / 2);
+
+}
+
+void bargain_print_bargain_result(store_s store) {
 
     printf("|============================================================================================================|\n");
     printf("|                                                SHOPPING LIST                                               |\n");
     printf("|============================================================================================================|\n");
-    printf("|   # | Product                                           |   count   |       price/unit       | total price |\n");
+    printf("|   # | Product                                           |   Count   |       Price/Unit       | Total Price |\n");
     printf("|------------------------------------------------------------------------------------------------------------|\n");
 
     for (int i = 0; i < store.found_items_count; i++)
     {
-        printf("| %*d | %-*s  | %*d pcs. | %*.2lf dkk./%-*s | %*.2lf dkk.|\n", 3, i + 1, 48, store.found_items[i].name, 4, store.found_items[i].count, 6, store.found_items[i].price_per_unit, 10, bargain_get_unit(store.found_items[i].unit), 7, store.found_items[i].total_price);
+        printf("| %*d | %-*s  | %*d pcs. | %*.2lf dkk./%-*s | %*.2lf dkk.|\n", 
+                3, i + 1, 
+                bargain_check_string_length(store.found_items[i].name, 48), store.found_items[i].name, 
+                4, store.found_items[i].count, 
+                6, store.found_items[i].price_per_unit, 
+                10, bargain_get_unit(store.found_items[i].unit), 
+                7, store.found_items[i].total_price);
     }
     
     printf("|============================================================================================================|\n");
@@ -182,7 +206,9 @@ void bargain_print_bargain_result(store_s store)
 
     for (int i = 0; i < store.missing_items_count; i++)
     {
-        printf("| %*d | %-*s |\n", 3, i + 1, 101, store.missing_items[i].name);
+        printf("| %*d | %-*s |\n", 
+                3, i + 1, 
+                bargain_check_string_length(store.missing_items[i].name, 100), store.missing_items[i].name);
     }
 
     printf("|============================================================================================================|\n");
@@ -191,8 +217,8 @@ void bargain_print_bargain_result(store_s store)
     printf("| Name                                                 | Address                                             |\n");
 
     printf("| %-*s | %-*s |\n",
-            52, store.name,
-            51, store.address);
+            bargain_check_string_length(store.name, 52), store.name,
+            bargain_check_string_length(store.address, 51), store.address);
 
     printf("|------------------------------------------------------------------------------------------------------------|\n");
     printf("|              Distance              |            Items Found            |            Total Price            |\n");

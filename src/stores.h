@@ -21,4 +21,6 @@ void stores_populate_store_items(store_s *stores, int store_count);
 
 int stores_compare_stores(store_s *a, store_s *b);
 
+int stores_compare_distance(store_s *a, store_s *b);
+
 #endif /* STORES_H */

@@ -42,6 +42,7 @@ int conf_write_settings(conf_settings_s *settings) {
 void conf_setup() {
     while (!conf_check_valid()) {
         conf_create();
+        fetch_renew_stores();
     }
 }
 

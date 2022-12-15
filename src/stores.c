@@ -1,14 +1,17 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include <stdlib.h>
+
 #include "stores.h"
 #include "items_types.h"
 #include "items.h"
 #include "api/fetch.h"
 
+typedef int (*compfn)(const void *, const void *);
+
 void stores_populate_store_items(store_s *stores, int store_count)
 {
-
     for (int n = 0; n < store_count; n++)
     {
         // switch in case we add more chains
@@ -39,4 +42,10 @@ int stores_compare_stores(store_s *a, store_s *b)
     }
 
     return (a->found_items_count - b->found_items_count);
+}
+
+int stores_compare_distance(store_s *a, store_s *b) {
+
+    return (a->distance - b->distance);
+
 }
