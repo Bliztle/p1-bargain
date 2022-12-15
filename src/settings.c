@@ -94,16 +94,6 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
         }
         else if (settings_validate(input, setting)) { // If input is valid for the current setting
             
-            //! Commented out because of limited calls 
-            /*if (setting == ADDRESS) { 
-                fetch_status_e status_code = fetch_renew_stores();
-
-                if (status_code != FETCH_STATUS_SUCCESS) {
-                    printf("Error: fetch code %d\n", status_code); 
-
-                    return;
-                }
-            }*/
 
             switch (setting) { // Prints current setting value
                 case PATH:
@@ -123,6 +113,7 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
 
                     settings->address_lat = lat;
                     settings->address_lon = lon;
+
                     break;
                 }
                 case DISTANCE:
@@ -136,6 +127,17 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
 
             conf_write_settings(settings); // Write to config
 
+            //! Commented out because of limited calls 
+            if (setting == ADDRESS) { 
+                fetch_status_e status_code = fetch_renew_stores();
+
+                if (status_code != FETCH_STATUS_SUCCESS) {
+                    printf("Error: fetch code %d\n", status_code); 
+
+                    return;
+                }
+            
+            }
             return;
         }
     }

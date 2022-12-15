@@ -134,7 +134,7 @@ fetch_status_e fetch_renew_stores()
     store_s *stores = NULL;
     int count = 0;
     fetch_renew_coop_stores(&stores, &count);
-    fetch_renew_salling_stores(&stores, &count);
+    // fetch_renew_salling_stores(&stores, &count);
     _fetch_write_stores(stores, count);
 
     return FETCH_STATUS_SUCCESS;
@@ -142,10 +142,7 @@ fetch_status_e fetch_renew_stores()
 
 fetch_status_e fetch_renew_coop_stores(store_s **stores, int *count)
 {
-    // TODO: Remove hard coded coords
     conf_settings_s conf;
-    conf.address_lat = 57.0431;
-    conf.address_lon = 9.943;
     conf_read_settings(&conf);
 
     char *url = "https://api.cl.coop.dk/storeapi/v1/stores?page=1&size=5000";
@@ -182,10 +179,7 @@ fetch_status_e fetch_renew_coop_stores(store_s **stores, int *count)
 
 fetch_status_e fetch_renew_salling_stores(store_s **stores, int *count)
 {
-    // TODO: Fix hardcoded coords.
     conf_settings_s conf;
-    conf.address_lat = 57.0431;
-    conf.address_lon = 9.943;
     conf_read_settings(&conf);
 
     char url[255];
@@ -261,6 +255,10 @@ int _fetch_read_stores(store_s **stores)
                          &store.chain,
                          &store.distance))
     {
+        // TODO: Find out why it fails if items in response is empty, which it is for all uid < 10k
+        if (strlen(store.uid) < 5) {
+            continue;
+        }
         *stores = realloc(*stores, (++count) * sizeof(store_s));
         (*stores)[count - 1] = store;
     }

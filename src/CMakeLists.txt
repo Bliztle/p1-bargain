@@ -18,8 +18,6 @@ add_subdirectory(api)
 configure_file(settings.conf settings.conf COPYONLY)
 configure_file(settings.conf api/settings.conf COPYONLY)
 
-# Testing
-# TODO: Fix test_bargain dependencies, because this is ridiculous, but it builds.
 add_executable(test_items 
                test_items.c 
                items.c 
