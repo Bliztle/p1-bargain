@@ -19,6 +19,7 @@ int main()
     char *milk = "M---æ---ø---å---Æ---Ø---Å---lk";
     char *encoded_milk = encode_danish(milk);
     assert(strcmp(encoded_milk, "M---%C3%A6---%C3%B8---%C3%A5---%C3%86---%C3%98---%C3%85---lk") == 0);
+    free(encoded_milk);
 
     int count = 0;
     store_s *stores = NULL;

@@ -90,7 +90,7 @@ size_t fetch_write_callback(char *buffer, size_t size, size_t buffer_length, voi
     return realsize;
 }
 
-char *_encode_danish(char *url)
+char *to_old_danish(char *url)
 {
     char *buff = malloc(strlen(url) + 1);
     strcpy(buff, url);
@@ -129,7 +129,7 @@ char *_encode_danish(char *url)
     return buff;
 }
 
-char *encode_danish(char *url)
+char *_encode_danish(char *url)
 {
     int buff_length = strlen(url) + 1;
     char *buff = malloc(buff_length);
@@ -144,6 +144,11 @@ char *encode_danish(char *url)
     parse_replace_all_str(&buff, "Å", "%C3%85");
     parse_replace_all_str(&buff, " ", "%20");
     return buff;
+}
+
+char *encode_danish(char *url) {
+    // return to_old_danish(url);
+    return _encode_danish(url);
 }
 
 fetch_status_e fetch_renew_stores()
@@ -274,9 +279,9 @@ int _fetch_read_stores(store_s **stores)
     {
         // TODO: Find out why it fails if items in response is empty, which it is for all uid < 10k
         // These are already filtered out in the parse function when fetching, so this is just a temporary solution, while some users data might be stale
-        if (strlen(store.uid) < 5) 
+        if (strlen(store.uid) < 5)
             continue;
-            
+
         *stores = realloc(*stores, (++count) * sizeof(store_s));
         (*stores)[count - 1] = store;
     }
@@ -462,7 +467,7 @@ void fetch_get_salling_items(store_s *store)
     basket_s *basket_linked_list = basket_read();
     basket_item_s *basket;
     int basket_size = basket_to_array(basket_linked_list, &basket);
-    
+
     int count = 0;
     store_item_s *items = NULL;
 
@@ -521,17 +526,17 @@ fetch_status_e fetch_coordinates(char* input_address, char** raw_coordinates) {
 
     // Loop over address and checks if there is a space. A space needs to be replaced with "%20" for the url to work
     for (int i = 0; i < address_len; ++i) {
-        if (address[i] == ' ') {    
+        if (address[i] == ' ') {
 
             address_len += 2; // Address need to grow with two spaces for the '2' and the '0'. '%' replaces ' '.
 
             // Using tmp variable so we dont get a memory leak if there is not enough room to reallocate
-            char* tmp = realloc(address, 2 * address_len * sizeof(char)); 
+            char* tmp = realloc(address, 2 * address_len * sizeof(char));
 
             if (tmp == NULL) { // If not enough memory
                 perror("Error");
 
-                free(address); 
+                free(address);
                 address = NULL; // No dangling pointer
 
                 exit(EXIT_FAILURE);
@@ -540,7 +545,7 @@ fetch_status_e fetch_coordinates(char* input_address, char** raw_coordinates) {
                 address = tmp;
             }
 
-            tmp = NULL; 
+            tmp = NULL;
 
             // Moves the memory so there is space for "20"
             memmove(address + i + 3, address + i + 1, address_len - i - 1);
