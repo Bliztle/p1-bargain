@@ -134,7 +134,7 @@ fetch_status_e fetch_renew_stores()
     store_s *stores = NULL;
     int count = 0;
     fetch_renew_coop_stores(&stores, &count);
-    // fetch_renew_salling_stores(&stores, &count);
+    fetch_renew_salling_stores(&stores, &count);
     _fetch_write_stores(stores, count);
 
     return FETCH_STATUS_SUCCESS;
@@ -442,19 +442,18 @@ basket_item_s *__fetch_mock_basket()
 void fetch_get_salling_items(store_s *store)
 {
     basket_s *basket_linked_list = basket_read();
-    basket_item_s **basket;
-    int basket_size = basket_to_array(basket_linked_list, basket);
-    basket_item_s *real_basket = *basket;
+    basket_item_s *basket;
+    int basket_size = basket_to_array(basket_linked_list, &basket);
     
     int count = 0;
     store_item_s *items = NULL;
 
     // Call is made for each store without cache, even though items are the same for every salling store
     // because we want the code to be modifiable if salling adds items from more than bilka to their api
-    for (int i = 0; i < MOCK_BASKET_SIZE; i++)
+    for (int i = 0; i < basket_size; i++)
     {
         char url[255];
-        snprintf(url, 255, "https://api.sallinggroup.com/v1-beta/product-suggestions/relevant-products?query=%s", real_basket[i].name);
+        snprintf(url, 255, "https://api.sallinggroup.com/v1-beta/product-suggestions/relevant-products?query=%s", basket[i].name);
 
         char *raw_items = NULL;
         fetch_status_e status = fetch_get(url, FETCH_AUTH_BEARER, SALLING_TOKEN, &raw_items);
