@@ -11,7 +11,7 @@ int _display_menu(char **options, int options_len, char *menu_text, char *help_t
     {
         printf("%s\n", menu_text);
         // Print the menu options
-        for (int i = options_len - 1; i > - 1; i--)
+        for (int i = 0; i < options_len; i++)
         {
             printf("[%d] %s\n", i + 1, options[i]);
         }
@@ -67,9 +67,13 @@ int _display_bargain_menu(char **options, int options_len, char *menu_text, char
         // Print the menu options
         for (int i = options_len - 1; i > - 1; i--)
         {
-            printf("[%d] %s\n", i + 1, options[i]);
+            printf("| [%02d] %s |\n",
+                    i + 1,
+                    options[i]);
         }
-        printf("Enter !q to quit, or !h to get help\n");
+        printf("|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|\n");
+        printf("|                                                                 Enter !q to quit, or !h to get help                                                                  |\n");
+        printf("|======================================================================================================================================================================|\n");
         printf("> ");
         // We need to read the input into a string first, because we need to check whether it's a number, a command, or something invalid
         // The {'\0'} initializes the array to be filled with the '\0' character
