@@ -69,12 +69,17 @@ int parse_coop_stores(char *raw_stores, store_s **stores)
          json_store != NULL;
          json_store = json_store->next)
     {
+        // Skip stores for which COOP doesn't return items
+        int store_uid = (int)nx_json_get(json_store, "Kardex")->num.u_value;
+        if (store_uid < 10000)
+            continue;
+
         *stores = realloc(*stores, ++count * sizeof(store_s));
         store_s *store = &(*stores)[count - 1];
 
         store->group = COOP;
         store->distance = 0;
-        snprintf(store->uid, STORE_UID_SIZE, "%d", (int)nx_json_get(json_store, "Kardex")->num.u_value);
+        snprintf(store->uid, STORE_UID_SIZE, "%d", store_uid);
         strncpy(store->name, nx_json_get(json_store, "Name")->text_value, STORE_NAME_SIZE);
 
         const nx_json *coordinates = nx_json_get(nx_json_get(json_store, "Location"), "coordinates");
