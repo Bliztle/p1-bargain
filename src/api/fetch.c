@@ -142,6 +142,7 @@ char *encode_danish(char *url)
     parse_replace_all_str(&buff, "Æ", "%C3%86");
     parse_replace_all_str(&buff, "Ø", "%C3%98");
     parse_replace_all_str(&buff, "Å", "%C3%85");
+    parse_replace_all_str(&buff, " ", "%20");
     return buff;
 }
 
