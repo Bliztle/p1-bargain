@@ -90,7 +90,7 @@ size_t fetch_write_callback(char *buffer, size_t size, size_t buffer_length, voi
     return realsize;
 }
 
-char *encode_danish(char *url)
+char *_encode_danish(char *url)
 {
     char *buff = malloc(strlen(url) + 1);
     strcpy(buff, url);
@@ -126,6 +126,22 @@ char *encode_danish(char *url)
         ptr[0] = 'A';
         ptr[1] = 'A';
     }
+    return buff;
+}
+
+char *encode_danish(char *url)
+{
+    int buff_length = strlen(url) + 1;
+    char *buff = malloc(buff_length);
+    strncpy(buff, url, buff_length);
+
+    char *buff_ptr;
+    parse_replace_all_str(&buff, "æ", "%C3%A6");
+    parse_replace_all_str(&buff, "ø", "%C3%B8");
+    parse_replace_all_str(&buff, "å", "%C3%A5");
+    parse_replace_all_str(&buff, "Æ", "%C3%86");
+    parse_replace_all_str(&buff, "Ø", "%C3%98");
+    parse_replace_all_str(&buff, "Å", "%C3%85");
     return buff;
 }
 
