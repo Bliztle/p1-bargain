@@ -6,8 +6,6 @@ int conf_read_settings(conf_settings_s *settings) {
     if (config_file == NULL) {
         perror("Error");
 
-        perror("Error");
-
         return 0;
     }
 
@@ -15,7 +13,7 @@ int conf_read_settings(conf_settings_s *settings) {
     fscanf(config_file, "%*s %[^\n]s", settings->address);
     fscanf(config_file, "%*s %lf %lf", &settings->address_lat, &settings->address_lon);
     fscanf(config_file, "%*s %d", &settings->max_distance);
-    fscanf(config_file, "%*s %d", &settings->deviance);
+    fscanf(config_file, "%*s %lf", &settings->deviance);
 
     fclose(config_file);
 
@@ -34,7 +32,7 @@ int conf_write_settings(conf_settings_s *settings) {
     fprintf(config_file, "address %s\n", settings->address);
     fprintf(config_file, "coords %lf %lf\n", settings->address_lat, settings->address_lon);
     fprintf(config_file, "distance %d\n", settings->max_distance);
-    fprintf(config_file, "deviance %d\n", settings->deviance);
+    fprintf(config_file, "deviance %lf\n", settings->deviance);
 
     fclose(config_file);
 
@@ -49,7 +47,7 @@ void conf_setup() {
 
 int conf_check_valid() {
     // Can it be opened?
-    FILE * config_file = fopen(SETTINGS_PATH, "r");
+    FILE *config_file = fopen(SETTINGS_PATH, "r");
 
     if (config_file == NULL) {
         perror("Error");
@@ -64,7 +62,7 @@ int conf_check_valid() {
         return 0;
     }
 
-    fscanf(config_file, "%*s %s", temp_s);
+    fscanf(config_file, "%*s %[^\n]s", temp_s);
     if (!settings_validate_address(temp_s)) {
         return 0;
     }
@@ -88,13 +86,13 @@ int conf_check_valid() {
 }
 
 void conf_create() {
-    FILE *config_file = fopen(SETTINGS_PATH, "w");
     conf_settings_s settings;
 
     char temp_s[100];
 
-    printf("Please enter the save-path for your shopping list\n >");
+    printf("Please enter the save path for your shopping list\n");
     while (1) {
+        printf(">");
         scanf(" %s", temp_s);
 
         if (!settings_validate_path(temp_s)) {
@@ -105,10 +103,10 @@ void conf_create() {
         break;
     }
 
-    printf("please enter the address\n >");
+    printf("Please enter the address\n");
     while (1) {
-        scanf(" %[0-9a-zA-Z ]", temp_s);
-
+        printf(">");
+        scanf(" %[^\n]s", temp_s);
         if (!settings_validate_address(temp_s)) {
             continue;
         }
@@ -120,8 +118,9 @@ void conf_create() {
         break;
     }
 
-    printf("please enter the distance\n >");
+    printf("Please enter the distance\n");
     while (1) {
+        printf(">");
         scanf(" %s", temp_s);
 
         if (!settings_validate_distance(temp_s)) {
@@ -132,19 +131,18 @@ void conf_create() {
         break;
     }
 
-    printf("please enter the deviance\n >");
+    printf("Please enter the deviance\n");
     while (1) {
+        printf(">");
         scanf(" %s", temp_s);
 
         if (!settings_validate_deviation(temp_s)) {
             continue;
         }
 
-        settings.deviance = strtol(temp_s, NULL, 10);
+        settings.deviance = strtod(temp_s, NULL);
         break;
     }
 
     conf_write_settings(&settings);
-
-    fclose(config_file);
 }

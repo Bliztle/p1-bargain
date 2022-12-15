@@ -4,15 +4,15 @@
 int main(void) {
     // Path test depends on the system it is tested on
 
-    //char* input1 = "C:\\User\\Desktop\\file.txt";
-    char* input2 = "Selma Lagerløfs Vej 300 Aalborg 9220";
-    char* input3 = "10";
-    char* input4 = "15";
+    char* path = "shopping/";
+    char* address = "Selma Lagerløfs Vej 300 Aalborg 9220";
+    char* distance = "10";
+    char* deviation = "0.2";
 
-    //assert(settings_validate(input1, PATH));
-    assert(settings_validate(input2, ADDRESS));
-    assert(settings_validate(input3, DISTANCE));
-    assert(settings_validate(input4, DEVIATION));
+    assert(settings_validate(path, PATH));
+    assert(settings_validate(address, ADDRESS));
+    assert(settings_validate(distance, DISTANCE));
+    assert(settings_validate(deviation, DEVIATION));
 
     return 0;
 }

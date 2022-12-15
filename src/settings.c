@@ -10,8 +10,8 @@
 
 void menu_settings() {
 
-    conf_settings_s *settings;
-    conf_read_settings(settings);
+    conf_settings_s settings;
+    conf_read_settings(&settings);
 
     char *options[4];
 
@@ -23,7 +23,7 @@ void menu_settings() {
     char *menu_text = "Choose the setting you want to edit";
     char *help_text = "!q to quit the program";
     
-    conf_read_settings(settings);
+    conf_read_settings(&settings);
 
     while (1) {
         int selected_option = display_menu(options, menu_text, help_text);
@@ -32,7 +32,7 @@ void menu_settings() {
             break;
         }
 
-        settings_edit(settings, selected_option);
+        settings_edit(&settings, selected_option);
     }
 }
 
@@ -43,24 +43,28 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
     
     char str2[MAX_INPUT_SIZE];
 
-    char str3[100] = "\nEnter new setting";
+    char str3[MAX_INPUT_SIZE] = "\nEnter new setting";
 
     switch (setting) {
         case PATH:
-            strcpy(str3, "\nMake sure that the given path ends in a '/' and is an existing folder");
             sprintf(str2, "%s", settings->shopping_list_save_path);
+            strcpy(str3, "\nMake sure that the given path ends in a '/' and is an existing folder");
             break;
         
         case ADDRESS:
             sprintf(str2, "%s", settings->address);
+            strcpy(str3, "\nPlease enter the full address for the best results");
             break;
 
         case DISTANCE:
             sprintf(str2, "%d", settings->max_distance);
+            strcat(str2, "m");
+            strcpy(str3, "\nPlease enter a distance in meters");
             break;
 
         case DEVIATION:
-            sprintf(str2, "%d", settings->deviance);
+            sprintf(str2, "%lf", settings->deviance);
+            strcpy(str3, "\nPlease enter a deviance between zero and one. Ex. 0.15");
             break;
     }
 
@@ -89,7 +93,9 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
             printf("%s\n", help_text);
         }
         else if (settings_validate(input, setting)) { // If input is valid for the current setting
-            /*if (setting == ADDRESS) {
+            
+            //! Commented out because of limited calls 
+            /*if (setting == ADDRESS) { 
                 fetch_status_e status_code = fetch_renew_stores();
 
                 if (status_code != FETCH_STATUS_SUCCESS) {
@@ -99,37 +105,36 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
                 }
             }*/
 
-            switch (setting) {
+            switch (setting) { // Prints current setting value
                 case PATH:
                     sprintf(settings->shopping_list_save_path, "%s", input);
                     break;
                 
-                case ADDRESS:
-                    sprintf(settings->address, "%s", input);
-
+                case ADDRESS: {
                     char* raw_coordinates;
-
-                    fetch_coordinates(input, &raw_coordinates);
-
                     double lat;
                     double lon;
+
+                    sprintf(settings->address, "%s", input);
+
+                    fetch_coordinates(input, &raw_coordinates);
 
                     parse_coordinates(&lat, &lon, raw_coordinates);
 
                     settings->address_lat = lat;
                     settings->address_lon = lon;
                     break;
-
+                }
                 case DISTANCE:
                     settings->max_distance = strtol(input, NULL, 10);
                     break;
 
                 case DEVIATION:
-                    settings->deviance = strtol(input, NULL, 10);
+                    settings->deviance = strtod(input, NULL);
                     break;
              }
 
-            conf_write_settings(settings);
+            conf_write_settings(settings); // Write to config
 
             return;
         }
@@ -188,10 +193,12 @@ int settings_validate_address(char *input) { // Checks if it was able to fetch a
 }
 
 int settings_validate_deviation(char *input) {
-    // Converts string to double and checks if it's valid as a deviation
-    int deviation = strtol(input, NULL, 10);
+    parse_replace_char(input, ',', '.'); // Replace comma with '.'
 
-    if (deviation <= 0) {
+    // Converts string to double and checks if it's valid as a deviation
+    double deviation = strtod(input, NULL);
+
+    if (deviation <= 0 || deviation >= 1) {
         printf("Error: Invalid deviation\n");
 
         return 0;
