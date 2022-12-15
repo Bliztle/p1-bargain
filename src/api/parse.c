@@ -232,6 +232,26 @@ char *parse_replace_char(char *source, char find, char replace)
     return source;
 }
 
+int parse_replace_all_str(char **haystack, char *find, char *replace) {
+
+    int count = 0;
+    int find_len = strlen(find),
+        replace_len = strlen(replace),
+        haystack_len = strlen(*haystack),
+        delta_len = replace_len - find_len;
+
+    char *ptr;
+    while ((ptr = strstr(*haystack, find)) != NULL)
+    {
+        *haystack = realloc(*haystack, haystack_len += delta_len);
+        memmove(ptr + replace_len, ptr + find_len, (haystack_len - delta_len) - (ptr - *haystack));
+        memcpy(ptr, replace, replace_len);
+        count++;
+    }
+    
+    return count;
+}
+
 // Inspired by https://stackoverflow.com/a/11864144
 char *parse_try_regex_group(char *source, char *regex)
 {

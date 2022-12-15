@@ -57,6 +57,7 @@ void parse_populate_item_unit(store_item_s *item);
 char *parse_try_regex_group(char* source, char* regex);
 double parse_try_extract_size(char *source, char *unit_str);
 char *parse_replace_char(char *source, char find, char replace);
+int parse_replace_all_str(char **haystack, char *find, char *replace);
 
 /**
  * Writes the contens of a file to the content argumment
