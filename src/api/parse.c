@@ -40,7 +40,7 @@ int parse_salling_stores(char *raw_stores, store_s **stores)
 
         store->chain = STORE_CHAIN_BILKA;
         store->group = SALLING;
-        store->distance = nx_json_get(json_store, "distance_km")->num.dbl_value;
+        store->distance = nx_json_get(json_store, "distance_km")->num.dbl_value * 1000;
         strncpy(store->uid, nx_json_get(json_store, "id")->text_value, STORE_UID_SIZE);
         strncpy(store->name, nx_json_get(json_store, "name")->text_value, STORE_NAME_SIZE);
 
@@ -135,7 +135,7 @@ int parse_salling_items(char *raw_items, store_item_s **items)
     const nx_json *json_suggestions = nx_json_get(json, "suggestions");
     if (json_suggestions == NULL)
     {
-        puts("Something whent wrong searching for wares. Not everything will show up");
+        puts("Something went wrong searching for wares. Not everything will show up");
         return 0;
     }
 
