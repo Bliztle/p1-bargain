@@ -107,12 +107,12 @@ int _display_bargain_menu(char **options, int options_len, char *menu_text, char
             }
             continue;
         }
-        option--; // We subtract 1 from the option, because the user sees the options starting at 1, but we store them in an array starting at 0.
-        if (option > options_len - 1)
+        //option--; // We subtract 1 from the option, because the user sees the options starting at 1, but we store them in an array starting at 0.
+        if (option > options_len || option < 0)
         {
             printf("%s", INVALID_OPTION_TEXT);
             continue;
         }
-        return option;
+        return options_len - option;
     }
 }
