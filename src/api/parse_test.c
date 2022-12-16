@@ -9,6 +9,13 @@
 
 int main()
 {
+    /******************** String manipulation ********************/
+    char *milk = malloc(6*sizeof(char));
+    strcpy(milk, "Mælk");
+    parse_replace_all_str(&milk, "æ", "%C3%A6");
+    assert(strcmp(milk, "M%C3%A6lk") == 0);
+    
+
     /******************** Read entire file ********************/
     FILE *fp = fopen(FILE_NAME, "w");
     fputs(FILE_CONTENT, fp);
