@@ -91,7 +91,7 @@ void conf_create() {
 
     char temp_s[100];
 
-    printf("Please enter the save path for your shopping list\n");
+    printf("Please enter the save path for your shopping list.\nExample:\n/home/username/shoppinglists/\n");
     while (1) {
         printf(">");
         scanf(" %s", temp_s);
@@ -104,7 +104,7 @@ void conf_create() {
         break;
     }
 
-    printf("Please enter the address\n");
+    printf("Please enter your address like so:\nStreet # Postcode City\nExamplestreet 1 5000 Examplecity\n");
     while (1) {
         printf(">");
         scanf(" %[^\n]s", temp_s);
@@ -119,7 +119,7 @@ void conf_create() {
         break;
     }
 
-    printf("Please enter the distance\n");
+    printf("Please enter the max from your address to a store distance.\n");
     while (1) {
         printf(">");
         scanf(" %s", temp_s);
@@ -132,7 +132,7 @@ void conf_create() {
         break;
     }
 
-    printf("Please enter the deviance\n");
+    printf("Please enter the how much a found item may vary from its requested size in percent.\nEnter a decimal between 0 and 1.\nExample: 0.1\n");
     while (1) {
         printf(">");
         scanf(" %s", temp_s);
