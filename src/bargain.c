@@ -276,9 +276,11 @@ int bargain_export(store_s store, conf_settings_s settings) {
 
     snprintf(filename, 310, "%s%s-%s%s", settings.shopping_list_save_path, store.name, time, ".txt");
 
-    char *new_filename = parse_replace_char(filename, ' ', '-');
+    parse_replace_char(filename, ' ', '_');
+    parse_replace_char(filename, ':', '-');
+    parse_replace_char(filename, ',', '-');
 
-    FILE *export_file = fopen(new_filename, "w"); 
+    FILE *export_file = fopen(filename, "w"); 
 
     if (export_file == NULL)
     {
@@ -338,7 +340,7 @@ int bargain_export(store_s store, conf_settings_s settings) {
 
     fclose(export_file);
     
-    printf("File exported to %s\n", new_filename);
+    printf("File exported to %s\n", filename);
 
     return 1;
 }
