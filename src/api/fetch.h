@@ -70,6 +70,7 @@ basket_item_s *__fetch_mock_basket();
  */
 size_t fetch_write_callback(char *buffer, size_t size, size_t buffer_length, void *prelim_response);
 
+char *to_old_danish(char *url);
 char *encode_danish(char *url);
 
 /**

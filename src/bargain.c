@@ -22,7 +22,6 @@
 #define ASSUME_ITEMS_MISSING_DIGITS_MAX 4
 #define ASSUME_TOTAL_PRICE_DIGITS_MAX 10
 
-
 typedef int (*compfn)(const void *, const void *);
 
 void bargain_run_bargain()
@@ -86,9 +85,8 @@ store_s *filter_stores(store_s *stores, int store_count, int *bargain_counter)
         if (stores[i].found_items_count > 0)
         {
 
-            bargains[i - skipped] = stores[i];            // deep_copy_store(&stores[i]);
+            bargains[i - skipped] = stores[i]; // deep_copy_store(&stores[i]);
             (*bargain_counter)++;
-
         }
         else
         {
@@ -103,7 +101,7 @@ void bargain_menu_find_bargain()
 {
     store_s *stores = NULL;
     int store_count = bargain_find_bargain(&stores);
-    
+
     int bargain_count = 0;
     store_s *bargains = filter_stores(stores, store_count, &bargain_count);
 
@@ -113,7 +111,7 @@ void bargain_menu_find_bargain()
 
     char *menu_text = "============================================================================================================================\n                                                       Found Bargains                                                             \n============================================================================================================================\n[#] : Store                          | Address                                  | Distance | Total price  | Items found\n----------------------------------------------------------------------------------------------------------------------------";
 
-    int skipped = 0;         
+    int skipped = 0;
     for (int i = 0; i < bargain_count; i++)
     {
         size_t option_length = (100 + strlen(bargains[i].name) + strlen(bargains[i].address)) * sizeof(char);
@@ -135,14 +133,14 @@ void bargain_menu_find_bargain()
     {
         selected_bargain = display_bargain_menu(options, menu_text, "Enter a number to select a bargain.");
         if (selected_bargain == -1)
-        {   
+        {
             for (int i = 0; i < bargain_count; i++)
             {
                 free_store(&bargains[i]);
                 free(options[i]);
             }
             free(bargains);
-            printf("Goodbye!\n"); 
+            printf("Goodbye!\n");
             exit(EXIT_SUCCESS);
         }
         bargain_menu_print_bargain(bargains[selected_bargain]);
@@ -159,27 +157,29 @@ int bargain_find_bargain(store_s **stores)
     return store_count;
 }
 
-int bargain_check_string_length(char *input, int target) {
+int bargain_check_string_length(char *input, int target)
+{
 
     char dest[100];
     memset(dest, 0, sizeof(dest));
     strcpy(dest, input);
-    
+
     int amount = 0;
 
     for (int i = 0; i < 100; i++)
     {
-        if (((int) dest[i]) > 127) { // 127 is the largest ascii character included in the ASCII printable characters category - https://www.ascii-code.com/
+        if (((int)dest[i]) > 127)
+        { // 127 is the largest ascii character included in the ASCII printable characters category - https://www.ascii-code.com/
             amount++;
         }
     }
     // 'æ' || (int) input[index] == 198 || (int) input[index] == 'ø' || (int) input[index] == 'Ø' || (int) input[index] == 'å' || (int) input[index] == 'Å'
 
     return target + (amount / 2);
-
 }
 
-void bargain_print_bargain_result(store_s store) {
+void bargain_print_bargain_result(store_s store)
+{
 
     printf("|============================================================================================================|\n");
     printf("|                                                SHOPPING LIST                                               |\n");
@@ -189,15 +189,15 @@ void bargain_print_bargain_result(store_s store) {
 
     for (int i = 0; i < store.found_items_count; i++)
     {
-        printf("| %*d | %-*s  | %*d pcs. | %*.2lf dkk./%-*s | %*.2lf dkk.|\n", 
-                3, i + 1, 
-                bargain_check_string_length(store.found_items[i].name, 48), store.found_items[i].name, 
-                4, store.found_items[i].count, 
-                6, store.found_items[i].price_per_unit, 
-                10, bargain_get_unit(store.found_items[i].unit), 
-                7, store.found_items[i].total_price);
+        printf("| %*d | %-*s  | %*d pcs. | %*.2lf dkk./%-*s | %*.2lf dkk.|\n",
+               3, i + 1,
+               bargain_check_string_length(store.found_items[i].name, 48), store.found_items[i].name,
+               4, store.found_items[i].count,
+               6, store.found_items[i].price_per_unit,
+               10, bargain_get_unit(store.found_items[i].unit),
+               7, store.found_items[i].total_price);
     }
-    
+
     printf("|============================================================================================================|\n");
     printf("|                                                Missing Items                                               |\n");
     printf("|============================================================================================================|\n");
@@ -206,9 +206,9 @@ void bargain_print_bargain_result(store_s store) {
 
     for (int i = 0; i < store.missing_items_count; i++)
     {
-        printf("| %*d | %-*s |\n", 
-                3, i + 1, 
-                bargain_check_string_length(store.missing_items[i].name, 100), store.missing_items[i].name);
+        printf("| %*d | %-*s |\n",
+               3, i + 1,
+               bargain_check_string_length(store.missing_items[i].name, 100), store.missing_items[i].name);
     }
 
     printf("|============================================================================================================|\n");
@@ -217,8 +217,8 @@ void bargain_print_bargain_result(store_s store) {
     printf("| Name                                                 | Address                                             |\n");
 
     printf("| %-*s | %-*s |\n",
-            bargain_check_string_length(store.name, 52), store.name,
-            bargain_check_string_length(store.address, 51), store.address);
+           bargain_check_string_length(store.name, 52), store.name,
+           bargain_check_string_length(store.address, 51), store.address);
 
     printf("|------------------------------------------------------------------------------------------------------------|\n");
     printf("|              Distance              |            Items Found            |            Total Price            |\n");
@@ -229,9 +229,7 @@ void bargain_print_bargain_result(store_s store) {
            16, store.missing_items_count + store.found_items_count,
            17, store.found_items_total_price);
 
-    
     printf("|============================================================================================================|\n");
-
 }
 
 void bargain_menu_print_bargain(store_s store)
@@ -243,18 +241,21 @@ void bargain_menu_print_bargain(store_s store)
     {
         bargain_print_bargain_result(store);
         selected_option = display_menu(&options, "", "[1]: saves the shopping list as a text file to the localtion specified in user settings.\n");
-        if (selected_option == 0) {
+        if (selected_option == 0)
+        {
             printf("Exporting...\n");
             conf_settings_s settings;
 
             conf_read_settings(&settings);
-            if (bargain_export(store, settings)) {
+            if (bargain_export(store, settings))
+            {
 
                 printf("File exported to %s\n", settings.shopping_list_save_path);
                 printf("Have a nice day!\n");
                 exit(EXIT_SUCCESS);
-
-            } else {
+            }
+            else
+            {
 
                 printf("Failed exporting to %s\n", settings.shopping_list_save_path);
                 perror("error: ");
@@ -264,9 +265,10 @@ void bargain_menu_print_bargain(store_s store)
     }
 }
 
-int bargain_export(store_s store, conf_settings_s settings) {
+int bargain_export(store_s store, conf_settings_s settings)
+{
 
-    char filename[100];
+    char filename[310];
 
     time_t curtime;
 
@@ -276,11 +278,12 @@ int bargain_export(store_s store, conf_settings_s settings) {
 
     time[strlen(time) - 1] = 0;
 
-    snprintf(filename, 100, "%s%s-%s%s", settings.shopping_list_save_path, store.name, time, ".txt");
+    snprintf(filename, 310, "%s%s-%s%s", settings.shopping_list_save_path, store.name, time, ".txt");
 
     FILE *export_file = fopen(filename, "w");
 
-    if (export_file == NULL) {
+    if (export_file == NULL)
+    {
         return 0;
     }
 
@@ -319,26 +322,24 @@ int bargain_export(store_s store, conf_settings_s settings) {
     fprintf(export_file, "|              Distance             |            Items Found            |            Total Price            |\n");
 
     fprintf(export_file, "| %*d m.             | %*d/%-*d | %*.2lf dkk.            |\n",
-           18, store.distance,
-           16, store.found_items_count,
-           16, store.missing_items_count + store.found_items_count,
-           17, store.found_items_total_price);
+            18, store.distance,
+            16, store.found_items_count,
+            16, store.missing_items_count + store.found_items_count,
+            17, store.found_items_total_price);
 
-    
     fprintf(export_file, "|===========================================================================================================|\n");
 
     fclose(export_file);
 
     return 1;
-
 }
 
-/* 
+/*
 char *bargain_get_print_bargain_string(store_s store)
 {
     // realloc on a something not allocated by malloc is undefined behaviour.
     // So we need to allocate a string with the size of the initial data, and then copy it to the malloced string.
-    // char *bargain_string_start = 
+    // char *bargain_string_start =
     // int bargain_string_start_length = strlen(bargain_string_start);
     char *bargain_string = "";
 
@@ -453,7 +454,7 @@ void create_found_entries(store_s store, char **string_to_append_to, size_t size
     for (int i = 0; i < store.found_items_count; i++)
     {
 
-        char *item = calloc(strlen(temp) + get_size_of_found_line(store.found_items[i].name) + 6, sizeof(char)); 
+        char *item = calloc(strlen(temp) + get_size_of_found_line(store.found_items[i].name) + 6, sizeof(char));
 
         snprintf(item, ((1 + strlen(temp)) * sizeof(char)) + get_size_of_found_line(store.found_items[i].name), "%s%d | %s | %d | %.2lf dkk./%s | %.2lf dkk.\n",
         temp,
@@ -484,17 +485,17 @@ void create_missing_entries(store_s store, char **string_to_append_to, size_t si
     for (int i = 0; i < store.missing_items_count; i++)
     {
         size_to_add += sizeof(char) * (
-        5 
+        5
         + strlen(store.missing_items[i].name)
         + ASSUME_ITEMS_MISSING_DIGITS_MAX);
     }
-    
+
     char *temp = calloc(size_of_string + size_to_add, sizeof(char));
     snprintf(temp, size_of_string + strlen(missing_intro) * sizeof(char), "%s%s", *string_to_append_to, missing_intro);
 
     for (int i = 0; i < store.missing_items_count; i++)
     {
-        char *item = calloc(strlen(temp) + strlen(store.missing_items[i].name) + 5, sizeof(char)); 
+        char *item = calloc(strlen(temp) + strlen(store.missing_items[i].name) + 5, sizeof(char));
 
         snprintf(item, (strlen(temp) + 5 + strlen(store.missing_items[i].name) + ASSUME_ITEMS_MISSING_DIGITS_MAX) * sizeof(char),"%s%d | %s\n",
         temp,
@@ -508,7 +509,7 @@ void create_missing_entries(store_s store, char **string_to_append_to, size_t si
     strncpy(*string_to_append_to, temp, size_of_string + size_to_add);
 
     free(temp);
-    
+
 }
 
 void append_outro_to_string(store_s store, char **string_to_append_to, size_t size_of_string)
@@ -517,14 +518,14 @@ void append_outro_to_string(store_s store, char **string_to_append_to, size_t si
 
     // Add the total size of the finished string.
     int size_to_add = sizeof(char) * (
-        20 
+        20
         + strlen(items_outro)
-        + strlen(store.name) 
+        + strlen(store.name)
         + strlen(store.name)
         + strlen(store.name)
         + ASSUME_DISTANCE_DIGITS_MAX
-        + ASSUME_ITEMS_FOUND_DIGITS_MAX 
-        + (ASSUME_ITEMS_FOUND_DIGITS_MAX + ASSUME_ITEMS_MISSING_DIGITS_MAX) 
+        + ASSUME_ITEMS_FOUND_DIGITS_MAX
+        + (ASSUME_ITEMS_FOUND_DIGITS_MAX + ASSUME_ITEMS_MISSING_DIGITS_MAX)
         + ASSUME_TOTAL_PRICE_DIGITS_MAX);
 
     // Make room for final string in destination.
@@ -571,23 +572,13 @@ char *bargain_get_unit(int n)
 {
     switch (n)
     {
-        case 0:
-        {
-            return "UNKNOWN";
-        }
-        case 1:
-        {
-            return "KILOGRAMS";
-        }
-        case 2:
-        {
-            return "LITERS";
-        }
-        case 3:
-        {
-            return "UNITS";
-        }
+    case 1:
+        return "KILOGRAMS";
+    case 2:
+        return "LITERS";
+    case 3:
+        return "UNITS";
+    default:
+        return "UNKNOWN";
     }
-    printf("ERROR IN UNIT ENUM, GOT '%d', EXPECTED '0' OR '1' OR '2' OR '3'.\n");
-    exit(EXIT_FAILURE);
 }

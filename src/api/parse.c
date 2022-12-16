@@ -237,6 +237,59 @@ char *parse_replace_char(char *source, char find, char replace)
     return source;
 }
 
+// Shamelessly stolen from https://stackoverflow.com/a/779960
+char *str_replace(char *orig, char *rep, char *with) {
+    char *result; // the return string
+    char *ins;    // the next insert point
+    char *tmp;    // varies
+    int len_rep;  // length of rep (the string to remove)
+    int len_with; // length of with (the string to replace rep with)
+    int len_front; // distance between rep and end of last rep
+    int count;    // number of replacements
+
+    // sanity checks and initialization
+    if (!orig || !rep)
+        return NULL;
+    len_rep = strlen(rep);
+    if (len_rep == 0)
+        return NULL; // empty rep causes infinite loop during count
+    if (!with)
+        with = "";
+    len_with = strlen(with);
+
+    // count the number of replacements needed
+    ins = orig;
+    for (count = 0; tmp = strstr(ins, rep); ++count) {
+        ins = tmp + len_rep;
+    }
+
+    tmp = result = malloc(strlen(orig) + (len_with - len_rep) * count + 1);
+
+    if (!result)
+        return NULL;
+
+    // first time through the loop, all the variable are set correctly
+    // from here on,
+    //    tmp points to the end of the result string
+    //    ins points to the next occurrence of rep in orig
+    //    orig points to the remainder of orig after "end of rep"
+    while (count--) {
+        ins = strstr(orig, rep);
+        len_front = ins - orig;
+        tmp = strncpy(tmp, orig, len_front) + len_front;
+        tmp = strcpy(tmp, with) + len_with;
+        orig += len_front + len_rep; // move to next "end of rep"
+    }
+    strcpy(tmp, orig);
+    return result;
+}
+
+int parse_replace_all_str(char **haystack, char *find, char *replace) {
+    char *new = str_replace(*haystack, find, replace);
+    *haystack = realloc(*haystack, strlen(new) + 1);
+    strcpy(*haystack, new);
+}
+
 // Inspired by https://stackoverflow.com/a/11864144
 char *parse_try_regex_group(char *source, char *regex)
 {
@@ -245,8 +298,8 @@ char *parse_try_regex_group(char *source, char *regex)
     regmatch_t groupArray[maxGroups];
 
     // Match on encoded strings, as REG_ICASE doesn't work on UTF-8
-    char *_source = encode_danish(source);
-    char *_regex = encode_danish(regex);
+    char *_source = to_old_danish(source);
+    char *_regex = to_old_danish(regex);
 
     char *group = NULL;
 
