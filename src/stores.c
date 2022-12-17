@@ -12,6 +12,7 @@ typedef int (*compfn)(const void *, const void *);
 
 void stores_populate_store_items(store_s *stores, int store_count)
 {
+    printf("Searching %d stores for bargains, please wait...\n", store_count);
     for (int n = 0; n < store_count; n++)
     {
         // switch in case we add more chains
@@ -29,6 +30,7 @@ void stores_populate_store_items(store_s *stores, int store_count)
         }
 
         items_filter_items(&stores[n], 0);
+        printf("%d/%d\n", n, store_count);
     }
 }
 

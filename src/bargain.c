@@ -159,8 +159,7 @@ void bargain_menu_find_bargain()
                 free(options[i]);
             }
             free(bargains);
-            printf("Goodbye!\n");
-            exit(EXIT_SUCCESS);
+            return;
         }
         bargain_menu_print_bargain(bargains[selected_bargain]);
     }
