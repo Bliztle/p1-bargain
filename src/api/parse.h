@@ -74,12 +74,13 @@ int parse_read_file_to_end(char *file_name, char **content);
 /**
 * Parses coordinates from Google API into latitude and longtitude 
 *
+* @param formatted_address destination pointer for formatted address
 * @param lat pointer to latitude
 * @param lon pointer longitude
 * @param raw_coordinates Raw json to parse into latitude and longtitude
 *
 * @return returns true or false
 */
-int parse_coordinates(double *lat, double *lon, char *raw_coordinates);
+int parse_coordinates(conf_address_t *formatted_address, double *lat, double *lon, char *raw_coordinates);
 
 #endif

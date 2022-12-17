@@ -115,7 +115,8 @@ void conf_create() {
 
         char *raw_coordinates;
         fetch_coordinates(temp_s, &raw_coordinates);
-        parse_coordinates(&settings.address_lat, &settings.address_lon, raw_coordinates);
+        parse_coordinates(&settings.formatted_address, &settings.address_lat, &settings.address_lon, raw_coordinates);
+        
         break;
     }
 

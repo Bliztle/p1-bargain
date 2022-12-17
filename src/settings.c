@@ -45,6 +45,8 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
 
     char str3[MAX_INPUT_SIZE] = "\nEnter new setting";
 
+    char *raw_coordinates;
+
     switch (setting) {
         case PATH:
             sprintf(str2, "%s", settings->shopping_list_save_path);
@@ -52,7 +54,13 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
             break;
         
         case ADDRESS:
-            sprintf(str2, "%s", settings->address);
+            
+            // TODO: Store formatted address in file instead of calling API every time.
+            fetch_coordinates(settings->address, &raw_coordinates);
+            parse_coordinates(&settings->formatted_address, &settings->address_lat, &settings->address_lon, raw_coordinates);
+
+            sprintf(str2, "%s", settings->formatted_address);
+            
             strcpy(str3, "\nPlease enter the full address for the best results");
             break;
 
@@ -104,12 +112,13 @@ void settings_edit(conf_settings_s *settings, int setting) { // Edit the given s
                     char* raw_coordinates;
                     double lat;
                     double lon;
+                    conf_address_t formated_address;
 
                     sprintf(settings->address, "%s", input);
 
                     fetch_coordinates(input, &raw_coordinates);
 
-                    parse_coordinates(&lat, &lon, raw_coordinates);
+                    parse_coordinates(&formated_address, &lat, &lon, raw_coordinates);
 
                     settings->address_lat = lat;
                     settings->address_lon = lon;
@@ -182,7 +191,7 @@ int settings_validate_address(char *input) { // Checks if it was able to fetch a
         return 0;
     }
 
-    int status_parse = parse_coordinates(&lat, &lon, raw_coordinates);
+    int status_parse = parse_coordinates(NULL, &lat, &lon, raw_coordinates);
 
     if (!status_parse) {
         printf("Error: Invalid address\n");
