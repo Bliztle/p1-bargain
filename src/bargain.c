@@ -245,9 +245,24 @@ void bargain_menu_print_bargain(store_s store)
             conf_read_settings(&settings);
             if (bargain_export(store, settings))
             {
+                char s[MAX_INPUT_SIZE];
+                printf("Go back with !q, or exit with !e\n");
+                
+                while (1) {
 
-                printf("Have a nice day!\n");
-                exit(EXIT_SUCCESS);
+                    scanf("%s", &s);
+
+                    if (strcmp(s, "!e") == 0) {
+                        printf("Have a nice day!\n");
+                        exit(EXIT_SUCCESS);
+                    }
+                    else if (strcmp(s, "!q") == 0) {
+                        return;
+                    }
+                    else {
+                        printf("Please enter a valid option.\n");
+                    }
+                }
             }
             else
             {
