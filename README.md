@@ -1,7 +1,7 @@
 ![example event parameter](https://github.com/Bliztle/p1-bargain/actions/workflows/cmake-tests.yml/badge.svg?event=push)
 
 # p1-bargain
-This is a description of our P1 project.
+This project was made by a group of 1st semester computer science students at Aalborg University, as part of an exam project. It is accompanied by a report looking into bargain hunting in 2022.
 
 ## Git
 This repo contains sub-repositories for most dependencies, and as such, should be cloned using the recursive flag
@@ -28,3 +28,8 @@ General linux install options. Look up the relevant variant for your distro
 > `sudo apt install openssl -y`
 
 > `sudo apt install libssl-dev -y`
+
+## Known issues
+- Segmentation fault when changing address or maximum distance, or when finding bargains
+
+    In the tail end of the week, it is possible to have ran out of API calls to COOP. The authors are actively keeping an eye on this, and will try to update the keys before this happens. Should it happen anyway, either raise an issue on github or create an account at <https://developer.cl.coop.dk/> and replace the `COOP_TOKEN` macro at the top of `src/api/fetch.c`. This key is non-private and is included to help developers during setup, but should be replaced at the earliest convenience.
