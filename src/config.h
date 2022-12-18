@@ -11,6 +11,7 @@ typedef double conf_deviance_t;
 typedef struct {
     conf_save_path_t shopping_list_save_path;
     conf_address_t address;
+    conf_address_t formatted_address;
     coord_lat_t address_lat;
     coord_lon_t address_lon;
     conf_max_distance_t max_distance;

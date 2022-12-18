@@ -370,7 +370,7 @@ int parse_read_file_to_end(char *file_name, char **content)
     return 0;
 }
 
-int parse_coordinates(double *lat, double *lon, char *raw_coordinates) {
+int parse_coordinates(conf_address_t *formatted_address, double *lat, double *lon, char *raw_coordinates) {
     const nx_json* json = nx_json_parse_utf8(raw_coordinates);
 
     const nx_json* results = nx_json_get(json, "results");
@@ -379,10 +379,18 @@ int parse_coordinates(double *lat, double *lon, char *raw_coordinates) {
 
     // Save the first result
     const nx_json* result_first_child = results->children.first;
+    const nx_json* result_formatted_address = result_first_child->children.first->next;
+    
+
 
     // Get value of lat and long and put them into the settings struct
     *lat = nx_json_get(nx_json_get(nx_json_get(result_first_child, "geometry"), "location"), "lat")->num.dbl_value;
     *lon = nx_json_get(nx_json_get(nx_json_get(result_first_child, "geometry"), "location"), "lng")->num.dbl_value;
+
+    if(formatted_address != NULL) {
+        strcpy(*formatted_address, result_formatted_address->text_value);
+        printf("\nIf the found address is wrong, then please try again in the settings menu\nFound the following address:\n%s\n\n", *formatted_address);
+    }
 
     // Cleanup
     nx_json_free(json);
