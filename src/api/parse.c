@@ -223,7 +223,7 @@ double parse_try_extract_size(char *source, char *unit_str)
     char regex_str[20];
     snprintf(regex_str, 20, "([0-9,.]+)[ ]?%s", unit_str);
     char *count_str = parse_try_regex_group(parse_replace_char(source, ',', '.'), regex_str);
-    int count = count_str ? strtod(count_str, NULL) : 0;
+    double count = count_str ? strtod(count_str, NULL) : 0;
     free(count_str);
     return count;
 }
