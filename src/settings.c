@@ -183,7 +183,7 @@ int settings_validate_address(char *input) { // Checks if it was able to fetch a
     char *raw_coordinates;
     double lat, lon;
 
-    fetch_status_e status_fetch = fetch_coordinates(input, &raw_coordinates) != FETCH_STATUS_SUCCESS; 
+    fetch_status_e status_fetch = fetch_coordinates(input, &raw_coordinates); 
   
     if (status_fetch != FETCH_STATUS_SUCCESS) {
         printf("Error: Fetch status %d\n", status_fetch);
