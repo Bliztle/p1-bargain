@@ -5,7 +5,7 @@ This project was made by a group of 1st semester computer science students at Aa
 
 ## Git
 This repo contains sub-repositories for most dependencies, and as such, should be cloned using the recursive flag
-> `git clone https://github.com/Bliztle/p1-bargain --recursive`
+> git clone https://github.com/Bliztle/p1-bargain --recursive
 
 The repo is set up such that no one but the owner has permissions to push directly to the main branch. Instead, everyone must push their changes to seperate branches, and then create a pull request for someone else to sign off on.
 
@@ -25,9 +25,25 @@ Openssl isn't included by default, due to being too OS specific. It should come 
 ### Linux
 General linux install options. Look up the relevant variant for your distro
 
-> `sudo apt install openssl -y`
+> sudo apt update && sudo apt upgrade -y
 
-> `sudo apt install libssl-dev -y`
+> sudo apt install openssl -y
+
+> sudo apt install libssl-dev -y
+
+> sudo apt install cmake -y
+
+> git clone https://github.com/Bliztle/p1-bargain --recursive && cd p1-bargain
+
+And for building the project:
+
+> cmake . -B build
+
+> make -C build
+
+The executable will be placed in the `/build/src` folder. To run it, execute the following line:
+
+> ./build/src/main
 
 ## Known issues
 - Segmentation fault when changing address or maximum distance, or when finding bargains
