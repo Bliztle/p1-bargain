@@ -340,6 +340,8 @@ void fetch_get_coop_items(store_s *store, int *coop_count)
             *coop_count++;
             if (status == FETCH_STATUS_SUCCESS && json != NULL)
                 return fetch_get_coop_items(store, coop_count); // Successful fetch, data was cached. Last minute weird errors are occurring when continuing with *json, but never when reading cache. Posibly memory things above my head.
+        } else {
+            printf("Max COOP stores requested, using cached data if available.\n");
         }
         store->items_count = 0;
         store->items = NULL;
