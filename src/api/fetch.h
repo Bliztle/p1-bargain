@@ -157,7 +157,7 @@ void fetch_print_store(store_s *store);
  */
 void fetch_print_stores(store_s *stores, int count);
 
-void fetch_get_coop_items(store_s *store);
+void fetch_get_coop_items(store_s *store, int *coop_count);
 
 fetch_status_e fetch_renew_coop_items(char *store_id, const nx_json **json);
 

@@ -329,22 +329,21 @@ void fetch_print_store(store_s *store)
            store->distance);
 }
 
-void fetch_get_coop_items(store_s *store)
+void fetch_get_coop_items(store_s *store, int *coop_count)
 {
-
     // Populate nx_json. If everything fails return zero items
     const nx_json *json = fetch_get_cached_coop_items(store->uid);
     if (json == NULL)
     {
-        fetch_status_e status = fetch_renew_coop_items(store->uid, &json);
-        if (status == FETCH_STATUS_SUCCESS && json != NULL)
-            return fetch_get_coop_items(store); // Successful fetch, data was cached. Last minute weird errors are occurring when continuing with *json, but never when reading cache. Posibly memory things above my head.
-        else
-        {
-            store->items_count = 0;
-            store->items = NULL;
-            return;
+        if ((*coop_count < 9)) {
+            fetch_status_e status = fetch_renew_coop_items(store->uid, &json);
+            *coop_count++;
+            if (status == FETCH_STATUS_SUCCESS && json != NULL)
+                return fetch_get_coop_items(store, coop_count); // Successful fetch, data was cached. Last minute weird errors are occurring when continuing with *json, but never when reading cache. Posibly memory things above my head.
         }
+        store->items_count = 0;
+        store->items = NULL;
+        return;
     }
 
     store->items_count = parse_coop_items(json, &store->items);
