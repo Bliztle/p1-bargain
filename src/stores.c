@@ -12,6 +12,7 @@ typedef int (*compfn)(const void *, const void *);
 
 void stores_populate_store_items(store_s *stores, int store_count)
 {
+    int coop_count = 0;
     printf("Searching %d stores for bargains, please wait...\n", store_count);
     for (int n = 0; n < store_count; n++)
     {
@@ -19,18 +20,18 @@ void stores_populate_store_items(store_s *stores, int store_count)
         switch (stores[n].group)
         {
         case COOP:
-            fetch_get_coop_items(&stores[n]);
+            fetch_get_coop_items(&stores[n], &coop_count);
             break;
         case SALLING:
             fetch_get_salling_items(&(stores[n])); // TODO: Implement when function get_salling_items has been implemented.
             break;
         default:
-            printf("Store %d - Store[%d].group did not match any known case.\n", stores[n].uid, n);
+            printf("Store %s - Store[%d].group did not match any known case.\n", stores[n].uid, n);
             break;
         }
 
         items_filter_items(&stores[n], 0);
-        printf("%d/%d\n", n, store_count);
+        printf("%d/%d\n", n + 1, store_count);
     }
 }
 
